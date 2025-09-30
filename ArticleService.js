@@ -29,9 +29,9 @@ export function getArticleList(page, pageSize, keyword) {
 
 //------------getArticle--------------------------------------
 
-export function getArticle() {
+export function getArticle(id) {
   return axios
-    .get(URL + '/articles', {})
+    .get(`${URL}'/articles/'${id}`, {})
     .then((response) => {
       console.log('성공! :', response.data);
       return response.data;
