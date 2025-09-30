@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // https://panda-market-api-crud.vercel.app/docs
-const URL = `https://panda-market-api-crud.vercel.app/docs`;
+const URL = `https://panda-market-api-crud.vercel.app`;
 
 export function getArticleList(page, pageSize, keyword) {
   return axios
@@ -13,13 +13,12 @@ export function getArticleList(page, pageSize, keyword) {
       },
     })
     .then((response) => {
-      console.log('성공! :', response.data);
-      return response.data;
+      console.log(`성공!`, response.data);
     })
     .catch((error) => {
       console.error('실패! :', error.message);
       if (error.response) {
-        console.log(`${error.response.status}`);
+        console.log(`실패 어쩌구 ${error.response.status}`);
         console.log(error.response.data);
       }
     })
@@ -47,7 +46,15 @@ export function getArticle() {
     });
 }
 
-// export function createArticle() {
+export function createArticle(articleData) {
+  const newArticleData = {
+    title: '고양이',
+    content: '검은 고양이',
+    image: 'https://www.catnews.net/bbs/board.php?bo_table=G202&wr_id=55736',
+  };
+  return axios.post(URL + '/articles', newArticleData);
+}
+
 // return axios
 // };
 // export function patchArticle() {
