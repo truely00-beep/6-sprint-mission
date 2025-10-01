@@ -41,10 +41,26 @@ async function getProduct(ID) {
   }
 }
 
+//================ 프로덕트 생성 ================
+async function createProduct(myNewProduct) {
+  try {
+    const response = await axios.post(baseURL + '/products', myNewProduct);
+    const createdProductData = response.data;
+    console.log('생성 성공!!!:', createdProductData);
+    return createdProductData;
+  } catch (error) {
+    console.error('실패!!!:', error.message);
+    console.log('에러 코드:', error.response.status);
+    console.log('에러 내용:', error.response.data);
+  } finally {
+    console.log('======== 생성 실험 끝 ========');
+  }
+}
+
 export {
   getProductList,
   getProduct,
-  // createProduct,
+  createProduct,
   // patchProduct,
   // deleteProduct,
 };

@@ -51,4 +51,15 @@ console.log('=====테스트 시작=====');
 // getProductList(1, 10, '');
 
 //======= 겟 프로덕트(ID) =======
-getProduct(2382);
+// getProduct();
+
+//======= 프로덕트 생성 ========
+
+//예시 가구
+const myNewProduct = new Product(
+  '마하의 관',
+  '보이드의 방주 안에 실려있던 관을 본뜬 침대.',
+  900000,
+  ['가구'],
+  ['https://upload2.inven.co.kr/upload/2016/09/29/data/i13735191954.png']
+);
