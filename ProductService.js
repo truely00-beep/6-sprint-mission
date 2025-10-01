@@ -2,8 +2,8 @@ import axios from 'axios';
 
 const baseURL = `https://panda-market-api-crud.vercel.app`; // /products/   ${baseURL}/products
 
-//==========겟 프로덕트 리스트=======
-export async function getProductList(page, pageSize, keyword) {
+//=============== 겟 프로덕트 리스트 ============
+async function getProductList(page, pageSize, keyword) {
   try {
     const response = await axios.get(`${baseURL}/products`, {
       params: {
@@ -24,8 +24,12 @@ export async function getProductList(page, pageSize, keyword) {
   }
 }
 
-//==========겟 프로덕트==========
+//================ 겟 프로덕트 ================
 
-/*
-export {getProductList, getProduct, createProduct, patchProduct, deleteProduct}
-*/
+export {
+  getProductList,
+  // getProduct,
+  // createProduct,
+  // patchProduct,
+  // deleteProduct,
+};

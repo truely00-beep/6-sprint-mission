@@ -24,11 +24,11 @@ function getArticleList(page, pageSize, keyword) {
     });
 }
 
-//------------getArticle(id)--------------------------------------
+//------------getArticle(ID)--------------------------------------
 
-function getArticle(id) {
+function getArticle(ID) {
   return axios
-    .get(`${baseURL}/articles/${id}`)
+    .get(`${baseURL}/articles/${ID}`)
     .then((response) => {
       console.log('성공! :', response.data);
       return response.data;
@@ -66,9 +66,9 @@ function createArticle(articleData) {
 }
 
 //--------------------patchArticle------------------
-function patchArticle(id, articleData) {
+function patchArticle(ID, articleData) {
   return axios
-    .patch(`${baseURL}/articles/${id}`, articleData)
+    .patch(`${baseURL}/articles/${ID}`, articleData)
     .then((response) => {
       return console.log(`성공!!:`, response.data);
     })
@@ -85,9 +85,9 @@ function patchArticle(id, articleData) {
 }
 
 //-----------------deleteArticle----------------------
-function deleteArticle(id) {
+function deleteArticle(ID) {
   return axios
-    .delete(`${baseURL}/articles/${id}`)
+    .delete(`${baseURL}/articles/${ID}`)
     .then((response) => {
       return console.log(`성공!!:`, response.data);
     })
