@@ -8,7 +8,7 @@ import {
   patchArticle,
   deleteArticle,
 } from './ArticleService.js';
-import { getProductList } from './ProductService.js';
+import { getProduct, getProductList } from './ProductService.js';
 
 //------------------------------------------------------------
 
@@ -36,7 +36,7 @@ const powerNeo = new ElectronicProduct(
 // createArticle(articleData);
 
 //-------------- 포스트 한것 구하기--------------4715, 4718 ,34,35,36
-getArticle(4715);
+// getArticle(4715);
 
 // ---------------patch 하기-----------------4718
 // patchArticle(4715, articleData);
@@ -47,5 +47,8 @@ getArticle(4715);
 // deleteArticle(4736);
 
 console.log('=====테스트 시작=====');
-//====================getProductList(page,pageSize,keyword)
+//============ getProductList (page, pageSize, keyword) ==========
 // getProductList(1, 10, '');
+
+//======= 겟 프로덕트(ID) =======
+//getProduct()
