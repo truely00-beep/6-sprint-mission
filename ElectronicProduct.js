@@ -11,6 +11,6 @@ export default class ElectronicProduct extends Product {
     manufacturer
   ) {
     super(name, description, price, tags, images, favoriteCount);
-    this.manufacturer = manufacturer;
+    this.manufacturer = manufacturer || '-';
   }
 }

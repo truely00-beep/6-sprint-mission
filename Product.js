@@ -5,7 +5,7 @@ export default class Product {
     this.price = price;
     this.tags = tags || [];
     this.images = images || [];
-    this.favoriteCount = favoriteCount;
+    this.favoriteCount = favoriteCount || 0;
   }
 
   favorite() {

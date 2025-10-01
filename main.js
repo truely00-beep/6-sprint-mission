@@ -77,9 +77,24 @@ async function 테스트() {
     temp.forEach((item) => {
       let instance;
       if (item.tags && item.tags.includes('전자제품')) {
-        instance = new ElectronicProduct(item);
+        instance = new ElectronicProduct(
+          item.name,
+          item.description,
+          item.price,
+          item.tags,
+          item.image,
+          item.favoriteCount,
+          item.manufacturer
+        );
       } else {
-        instance = new Product(item);
+        instance = new Product(
+          item.name,
+          item.description,
+          item.price,
+          item.tags,
+          item.image,
+          item.favoriteCount
+        );
       }
       products.push(instance);
     });
