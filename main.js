@@ -74,15 +74,18 @@ const products = [];
 
 async function 테스트() {
   try {
-    const temp = await getProductList(1, 10, '');
+    let temp = [];
+    temp = await getProductList(1, 10, '');
     temp.forEach((item) => {
+      let instance;
       if (item.tags && item.tags.includes('전자제품')) {
         instance = new ElectronicProduct(item);
       } else {
         instance = new Product(item);
       }
-      products.push(Instance);
+      products.push(instance);
     });
+    console.log('성공!: ', products);
   } catch (error) {
     console.error('실패!!!: ', error.message);
   } finally {
@@ -91,23 +94,3 @@ async function 테스트() {
 }
 
 테스트();
-
-/*
-논리는 대충 const products = [] 에 모든 결과물을 넣게됨.
-
-const temp = await getProductList(1,10,'')
-  
-해서 temp [] 에 들어간 값들을 ForEach문으로 하나하나 돌면서
-
-if (item.tags && item.tags.includes('전자제품')) {
-
-const eletronicProdutcs 에 넣어줌
-
-이후에 한번 더 이프문으로
-
-if (electronicProducts) { products.push(new ElectronicProduct(item))
-}else { products.push(new Product (item))} 
-
-마지막에 console.log('상황확인', products)
-
-*/

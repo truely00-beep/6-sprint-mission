@@ -3,8 +3,8 @@ export default class Product {
     this.name = name;
     this.description = description;
     this.price = price;
-    this.tags = tags;
-    this.images = images;
+    this.tags = tags || [];
+    this.images = images || [];
     this.favoriteCount = favoriteCount;
   }
 

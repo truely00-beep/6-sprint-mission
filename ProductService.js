@@ -13,7 +13,7 @@ async function getProductList(page, pageSize, keyword) {
         keyword,
       },
     });
-    const productData = response.data.products;
+    const productData = response.data.list;
     console.log('성공!: ', response.data); //내용 출력
     return productData; //다른곳에서 쓸 수 있게 리턴해준다. ?
   } catch (error) {
@@ -23,7 +23,7 @@ async function getProductList(page, pageSize, keyword) {
       console.log('에러 내용: ', error.response.data);
     }
   } finally {
-    console.log(`======겟 프로덕트 테스트 완료======`);
+    console.log(`======겟 프로덕트 리스트 테스트 완료======`);
   }
 }
 
