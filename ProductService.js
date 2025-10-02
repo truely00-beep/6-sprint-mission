@@ -29,9 +29,9 @@ async function getProductList(page, pageSize, keyword) {
 
 //================ 겟 프로덕트 ================
 
-async function getProduct(ID) {
+async function getProduct(id) {
   try {
-    const response = await axios.get(BASE_URL + '/products/' + ID);
+    const response = await axios.get(BASE_URL + '/products/' + id);
     const productData = response.data;
     console.log('성공!: ', productData);
     return productData;
@@ -64,9 +64,9 @@ async function createProduct(myProduct) {
 }
 
 //========= 프로덕트 패치하기 ==========
-async function patchProduct(ID, myProduct) {
+async function patchProduct(id, myProduct) {
   try {
-    const response = await axios.patch(`${BASE_URL}/products/${ID}`, myProduct);
+    const response = await axios.patch(`${BASE_URL}/products/${id}`, myProduct);
     const productData = response.data;
     console.log('성공!: ', productData);
   } catch (error) {
@@ -81,9 +81,9 @@ async function patchProduct(ID, myProduct) {
 }
 
 // ========= 프로덕트 삭제 =========
-async function deleteProduct(ID) {
+async function deleteProduct(id) {
   try {
-    const response = await axios.delete(BASE_URL + '/products/' + ID);
+    const response = await axios.delete(BASE_URL + '/products/' + id);
     const responseData = response.data;
     console.log('성공!: ', responseData);
   } catch (error) {

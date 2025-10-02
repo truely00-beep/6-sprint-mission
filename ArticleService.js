@@ -30,13 +30,13 @@ function getArticleList(page, pageSize, keyword) {
     });
 }
 
-//------------getArticle(ID)--------------------------------------
+//------------getArticle(id)--------------------------------------
 
-function getArticle(ID) {
+function getArticle(id) {
   //함수 호출때 getArticle(‘여기’) 적은 아이디가, 여기로 들어갈 예정
   return (
     axios
-      .get(`${BASE_URL}/articles/${ID}`)
+      .get(`${BASE_URL}/articles/${id}`)
       //여긴 쿼리 부분에 특정 게시물이 올라온 주소의 아이디를 바로 넣을 것이기 때문에
       //finURL말고 이렇게 사용.(맞는지는 잘 모르나 일단 잘 동작했습니다.)
       .then((response) => {
@@ -77,9 +77,9 @@ function createArticle(articleData) {
 }
 
 //--------------------patchArticle------------------
-function patchArticle(ID, articleData) {
+function patchArticle(id, articleData) {
   return axios
-    .patch(`${BASE_URL}/articles/${ID}`, articleData)
+    .patch(`${BASE_URL}/articles/${id}`, articleData)
     .then((response) => {
       return console.log(`성공!: `, response.data);
     })
@@ -96,9 +96,9 @@ function patchArticle(ID, articleData) {
 }
 
 //-----------------deleteArticle----------------------
-function deleteArticle(ID) {
+function deleteArticle(id) {
   return axios
-    .delete(`${BASE_URL}/articles/${ID}`)
+    .delete(`${BASE_URL}/articles/${id}`)
     .then((response) => {
       return console.log(`성공!: `, response.data);
     })
