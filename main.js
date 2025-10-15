@@ -131,7 +131,6 @@ async function testProductAPIs() {
       });
     }
 
-    // getProductList()를 통해서 받아온 상품 리스트를 각각 인스턴스로 만들어 products 배열에 저장
     // 해시태그에 "전자제품"이 포함되어 있는 상품들은 ElectronicProduct 클래스 사용
     // 나머지 상품들은 모두 Product 클래스를 사용
     products = productList.list.map((item) => {
