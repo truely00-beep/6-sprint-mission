@@ -102,7 +102,7 @@
 
 - [x] **Article 요청 함수 구현하기 (심화)**
 
--[x] Article 클래스에 createdAt(생성일자) 프로퍼티를 만들어 주세요.
+- [x] Article 클래스에 createdAt(생성일자) 프로퍼티를 만들어 주세요.
 
     - [x] 새로운 객체가 생성되어 constructor가 호출될 시 createdAt에 현재 시간을 저장합니다.
 
