@@ -92,8 +92,8 @@
 
 ## 스크린샷
 
-(![image](<img width="617" height="867" alt="image" src="https://github.com/user-attachments/assets/150c370c-085b-47d8-a475-65a106cdc084" />
-))
+(![image]<img width="617" height="867" alt="image" src="https://github.com/user-attachments/assets/150c370c-085b-47d8-a475-65a106cdc084" />
+)
 
 ## 멘토에게
 
