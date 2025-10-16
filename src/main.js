@@ -87,4 +87,17 @@ async function testProduct() {
   console.log("");
 }
 
-testProduct();
+//Atricle Instance Test
+async function articleInstance() {
+  const list = await getArticleList(1, 5);
+  const Articles = list.map((item) => {
+    return new Article(
+      item.title,
+      item.content,
+      item.writer ?? "익명",
+      item.likeCount ?? 0,
+      item.createdAt ?? new Date()
+    );
+  });
+  console.log(Articles);
+}
