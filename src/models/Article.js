@@ -15,10 +15,10 @@ export class Article {
 
   set title(name) {
     if (typeof name === "string") {
-      if (name !== "[인기]") {
+      if (!name.includes("[인기]")) {
         this.#title = name;
       } else {
-        console.log("[인기]는 입력할 수 없습니다.");
+        console.log(`'[인기]' 는 입력할 수 없습니다.`);
       }
     } else {
       console.log("문자열을 입력하세요.");
@@ -31,12 +31,13 @@ export class Article {
 
   like() {
     this.#likeCount++;
-
     if (this.#likeCount >= 3) {
-      if (!this.#title.includes("[인기]")) this.#title = "[인기]" + this.#title;
+      if (!this.#title.includes("[인기]")) {
+        this.#title = "[인기] " + this.#title;
+      }
     } else {
       if (this.#title.includes("[인기]")) {
-        this.#title = this.#title.replace("[인기]", "");
+        this.#title = this.#title.replace("[인기] ", "");
       }
     }
   }
