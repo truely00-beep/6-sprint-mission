@@ -1,0 +1,23 @@
+{
+  "name": "6-sprint-mission",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wndms328-lgtm/6-sprint-mission.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/wndms328-lgtm/6-sprint-mission/issues"
+  },
+  "homepage": "https://github.com/wndms328-lgtm/6-sprint-mission#readme",
+  "dependencies": {
+    "axios": "^1.12.2"
+  }
+}
