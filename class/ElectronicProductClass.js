@@ -8,9 +8,10 @@ export default class ElectronicProduct extends Product {
     tags,
     images,
     favoriteCount,
+    createdAt,
     manufacturer = '미상'
   ) {
-    super(name, description, price, tags, images, favoriteCount);
+    super(name, description, price, tags, images, favoriteCount, createdAt);
     this.manufacturer = manufacturer;
   }
 
@@ -23,6 +24,7 @@ export default class ElectronicProduct extends Product {
       tags: this.tags,
       images: this.images,
       favoriteCount: this.favoriteCount,
+      createdAt: this.createdAt,
       manufacturer: this.manufacturer,
     };
   }

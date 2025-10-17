@@ -1,7 +1,7 @@
 import { getProductList } from './service/ProductService.js';
-import Product from './lib/ProductClass.js';
-import ElectronicProduct from './lib/ElectronicProductClass.js';
-import { StrFuns, print } from '../lib/myFuns.js'; // my own functions
+import Product from './class/ProductClass.js';
+import ElectronicProduct from './class/ElectronicProductClass.js';
+import { StrFuns, print } from './lib/myFuns.js'; // my own functions
 
 // query parameters: only 4 allowed
 const params = {
@@ -45,8 +45,8 @@ for (let i = 0; i < products.length; i++) {
 }
 
 //print result
-print(productInstance); // view the array for Product Instances
-print(eProductInstance); // view the array for Electronic Product Instances
+//print(productInstance); // view the array for Product Instances
+//print(eProductInstance); // view the array for Electronic Product Instances
 print_summary(nP, nEP);
 
 // print(eProductInstance[0].viewAll()); // view all properties including private

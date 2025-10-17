@@ -1,4 +1,4 @@
-import { addParams } from '../../lib/myFuns.js';
+import { addParams } from '../lib/myFuns.js';
 
 //let url = new URL('https://panda-market-api-crud.vercel.app/articles');
 let url = 'https://panda-market-api-crud.vercel.app/articles';
