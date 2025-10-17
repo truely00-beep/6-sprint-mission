@@ -1,102 +1,124 @@
 // ProductService.js
-
-const BASE_URL = "https://panda-market-api-crud.vercel.app/product";
+const PRODUCT_API_BASE_URL =
+  "https://panda-market-api-crud.vercel.app/products";
 
 /**
- * 공통 응답 처리: 2XX 상태가 아닐 경우 에러를 throw 합니다.
+ * 응답 상태 코드가 2XX가 아닐 경우 에러 메시지를 던지는 헬퍼 함수
+ * @param {Response} response fetch 응답 객체
+ * @throws {Error} 상태 코드가 2XX가 아닐 경우
  */
-const handleResponse = async (response) => {
+async function handleResponse(response) {
   if (!response.ok) {
-    const error = new Error(
-      `HTTP error! Status: ${response.status} ${response.statusText}`
+    const errorText = await response.text();
+    console.error(
+      `[Error] API 요청 실패: ${response.status} ${response.statusText}`,
     );
-    error.response = response;
-    throw error;
+    throw new Error(
+      `API 요청 실패: ${response.status} ${response.statusText} - ${errorText}`,
+    );
   }
   return response.json();
-};
+}
 
 /**
- * [GET] 상품 목록을 조회합니다. (async/await)
+ * 상품 목록을 조회합니다.
+ * @param {object} params 쿼리 파라미터 객체
+ * @param {number} [params.page=1] 페이지 번호
+ * @param {number} [params.pageSize=10] 페이지 당 상품 수
+ * @param {string} [params.keyword] 검색 키워드
+ * @returns {Promise<object>} 상품 목록 데이터
  */
-export const getProductList = async (params = {}) => {
-  try {
-    const url = new URL(BASE_URL);
-    Object.keys(params).forEach((key) => {
-      if (params[key] !== undefined && params[key] !== null) {
-        url.searchParams.append(key, params[key]);
-      }
-    });
+export async function getProductList(params = {}) {
+  const url = new URL(PRODUCT_API_BASE_URL);
+  Object.keys(params).forEach((key) => {
+    if (params[key] !== undefined) url.searchParams.append(key, params[key]);
+  });
 
-    const response = await fetch(url.toString(), { method: "GET" });
-    const data = await handleResponse(response);
-    return data.data;
+  try {
+    const response = await fetch(url);
+    return await handleResponse(response);
   } catch (error) {
     console.error(`getProductList 오류:`, error.message);
     throw error;
   }
-};
+}
 
 /**
- * [GET] 특정 상품을 조회합니다. (async/await)
+ * 특정 상품을 조회합니다.
+ * @param {string} id 상품 ID
+ * @returns {Promise<object>} 상품 데이터
  */
-export const getProduct = async (id) => {
+export async function getProduct(id) {
   try {
-    const response = await fetch(`${BASE_URL}/${id}`, { method: "GET" });
-    const data = await handleResponse(response);
-    return data.data;
+    const response = await fetch(`${PRODUCT_API_BASE_URL}/${id}`);
+    return await handleResponse(response);
   } catch (error) {
-    console.error(`getProduct (ID: ${id}) 오류:`, error.message);
+    console.error(`getProduct 오류 (ID: ${id}):`, error.message);
     throw error;
   }
-};
+}
 
 /**
- * [POST] 새로운 상품을 생성합니다. (async/await)
+ * 새로운 상품을 생성합니다.
+ * @param {object} productData 생성할 상품 데이터 (name, description, price, tags, images)
+ * @returns {Promise<object>} 생성된 상품 데이터
  */
-export const createProduct = async (productData) => {
+export async function createProduct(productData) {
   try {
-    const response = await fetch(BASE_URL, {
+    const response = await fetch(PRODUCT_API_BASE_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(productData),
     });
-    const data = await handleResponse(response);
-    return data.data;
+    return await handleResponse(response);
   } catch (error) {
     console.error("createProduct 오류:", error.message);
     throw error;
   }
-};
+}
 
 /**
- * [PATCH] 특정 상품을 수정합니다. (async/await)
+ * 상품 정보를 부분 수정합니다.
+ * @param {string} id 상품 ID
+ * @param {object} patchData 수정할 데이터
+ * @returns {Promise<object>} 수정된 상품 데이터
  */
-export const patchProduct = async (id, updateData) => {
+export async function patchProduct(id, patchData) {
   try {
-    const response = await fetch(`${BASE_URL}/${id}`, {
+    const response = await fetch(`${PRODUCT_API_BASE_URL}/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updateData),
+      body: JSON.stringify(patchData),
     });
-    const data = await handleResponse(response);
-    return data.data;
+    return await handleResponse(response);
   } catch (error) {
-    console.error(`patchProduct (ID: ${id}) 오류:`, error.message);
+    console.error(`patchProduct 오류 (ID: ${id}):`, error.message);
     throw error;
   }
-};
+}
 
 /**
- * [DELETE] 특정 상품을 삭제합니다. (async/await)
+ * 상품을 삭제합니다.
+ * @param {string} id 상품 ID
+ * @returns {Promise<void>}
  */
-export const deleteProduct = async (id) => {
+export async function deleteProduct(id) {
   try {
-    const response = await fetch(`${BASE_URL}/${id}`, { method: "DELETE" });
-    const data = await handleResponse(response);
-    return data.data;
+    const response = await fetch(`${PRODUCT_API_BASE_URL}/${id}`, {
+      method: "DELETE",
+    });
+    if (!response.ok) {
+      // DELETE는 보통 body가 없으므로 text() 대신 상태만 확인
+      console.error(
+        `[Error] API 요청 실패: ${response.status} ${response.statusText}`,
+      );
+      throw new Error(
+        `API 요청 실패: ${response.status} ${response.statusText}`,
+      );
+    }
+    console.log(`Product ID ${id} 삭제 성공.`);
   } catch (error) {
-    console.error(`deleteProduct (ID: ${id}) 오류:`, error.message);
+    console.error(`deleteProduct 오류 (ID: ${id}):`, error.message);
     throw error;
   }
-};
+}
