@@ -20,29 +20,47 @@ export class Product {
     this.#favoriteCount = 0;
   }
 
-  getNmae() {
+  get name() {
     return this.#name;
   }
+  // getNmae() {
+  //   return this.#name;
+  // }
 
-  getDescription() {
+  get description() {
     return this.#description;
   }
+  // getDescription() {
+  //   return this.#description;
+  // }
 
-  getPrice() {
+  get price() {
     return this.#price;
   }
+  // getPrice() {
+  //   return this.#price;
+  // }
 
-  getTags() {
+  get rags() {
     return this.#tags;
   }
+  // getTags() {
+  //   return this.#tags;
+  // }
 
-  getImages() {
+  get images() {
     return this.#images;
   }
+  // getImages() {
+  //   return this.#images;
+  // }
 
-  getFavoriteCount() {
+  get favoriteCount() {
     return this.#favoriteCount;
   }
+  // getFavoriteCount() {
+  //   return this.#favoriteCount;
+  // }
 
   favorite() {
     this.#favoriteCount += 1;

@@ -17,25 +17,40 @@ export class Article {
     this.#createdAt = new Date();
   }
 
-  getTitle() {
+  get title() {
     return this.#title;
   }
+  // getTitle() {
+  //   return this.#title;
+  // }
 
-  getContent() {
-    return this.#content;
-  }
-
-  getWriter() {
+  get writer() {
     return this.#writer;
   }
+  // getWriter() {
+  //   return this.#writer;
+  // }
 
-  getLikeCount() {
+  get content() {
+    return this.#content;
+  }
+  // getContent() {
+  //   return this.#content;
+  // }
+
+  get LikeCount() {
     return this.#likeCount;
   }
+  // getLikeCount() {
+  //   return this.#likeCount;
+  // }
 
-  getCreatedAt() {
+  get CreatedAt() {
     return this.#createdAt;
   }
+  // getCreatedAt() {
+  //   return this.#createdAt;
+  // }
 
   like() {
     this.#likeCount += 1;
