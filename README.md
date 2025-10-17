@@ -15,7 +15,7 @@
 - cosntructor, 프로퍼티와 메소드 포함
 - 추상화/캡슐화/상속/다형성 고려
 
-#### API 요청 함수 구현
+#### API 요청 함수 구현 및 테스트
 
 - GET, POST, PATCH, DELETE 메소드 이용
 - Article API 요청 함수: fetch, then/catch 이용, HTTP 오류 처리
@@ -33,5 +33,5 @@
 
 - ./class/ArticleClass.js, ProductClass.js, ElectronicProductClass.js
 - ./service/ArticleService.js, ProductService.js
-- ./lib/myFuns.js
+- ./lib/myFuns.js (사용자 정의 함수)
 - main.js, test_ArticleService.js, test_ProductService.js
