@@ -14,6 +14,7 @@ async function main() {
     skipDuplicates: true,
   });
 
+  //셀러 아이디 부여
   const productsWithSeller = PRODUCTS.map((products) => {
     //유저 수 만큼 랜덤인덱스 뽑기
     const randomIndex = Math.floor(Math.random() * USERS.length);
