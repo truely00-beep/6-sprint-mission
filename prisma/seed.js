@@ -14,10 +14,23 @@ async function main() {
     skipDuplicates: true,
   });
 
+  const productsWithSeller = PRODUCTS.map((products) => {
+    //유저 수 만큼 랜덤인덱스 뽑기
+    const randomIndex = Math.floor(Math.random() * USERS.length);
+    //유저스의 랜덤 인덱스에서의 아이디를 랜덤 셀러아이디에 부여
+    const randomSellerId = USERS[randomIndex].id;
+
+    return {
+      ...products,
+      sellerId: randomSellerId,
+    };
+  });
+
   await prisma.products.createMany({
-    data: PRODUCTS,
+    data: productsWithSeller,
     skipDuplicates: true,
   });
+  console.log('시딩 완료!');
 }
 
 //실행기능

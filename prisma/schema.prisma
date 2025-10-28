@@ -33,7 +33,7 @@ model Products {
   name        String
   description String
   price       Float
-  tags        String[]
+  tags        String
   status      ProductStatus @default(SALE)
   seller      Users         @relation(fields: [sellerId], references: [id])
   sellerId    String
