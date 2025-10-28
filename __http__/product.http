@@ -1,0 +1,27 @@
+GET http://localhost:3000/products?search=세트&&order=oldest
+
+###
+GET http://localhost:3000/products/57381224-5556-4d83-bcda-ea4f43e9537e
+
+###
+POST http://localhost:3000/products
+Content-Type: application/json
+
+{
+  "name": "New Product",
+  "description": "This is a newly added product.",
+  "price": 2000,
+  "tags": "tag1"
+}
+
+###
+PATCH http://localhost:3000/products/57381224-5556-4d83-bcda-ea4f43e9537e
+Content-Type: application/json
+
+{
+  "price": 2000,
+  "tags": "patch1"
+}
+
+###
+DELETE http://localhost:3000/products/b31b6286-5498-4a7e-9cc8-2d641e123db9
