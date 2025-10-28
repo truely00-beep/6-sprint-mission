@@ -1,9 +1,4 @@
-import { prisma } from '@prisma/client';
-//import asyncHandler from 'express-async-handler';
-//createProduct
-//getAllProducts getProductById
-//patchProductsById
-//deleteProductById
+import { Prisma } from '@prisma/client';
 /**
 200 OK: 일반적인 성공 (GET, UPDATE 후)
 201 Created: 새로운 리소스 생성 성공 (POST)
@@ -13,18 +8,18 @@ import { prisma } from '@prisma/client';
  */
 
 //POST
-export const postNewProduct = async (req, res) => {
+const postNewProduct = async (req, res) => {
   const inputData = req.body;
-  const newProduct = await prisma.products.create({
+  const newProduct = await Prisma.products.create({
     data: inputData,
   });
   res.status(201).send({ message: '상품이 안전하게 등록되었습니다.', data: newProduct });
 };
 
 //GET
-export const getAllProducts = async (req, res) => {
+const getAllProduct = async (req, res) => {
   const { offset = 0, limit = 0 } = req.query;
-  const getProductData = await prisma.products.findMany({
+  const getProductData = await Prisma.products.findMany({
     skip: parseInt(offset),
     take: parseInt(limit),
   });
@@ -32,19 +27,21 @@ export const getAllProducts = async (req, res) => {
 };
 
 //GET id
-export const getProductById = async (req, res) => {
+const getProductById = async (req, res) => {
   const id = req.params.id;
-  const getProductData = await prisma.products.findUnique({
+  const getProductData = await Prisma.products.findUnique({
     where: { id },
   });
-  res.status(200).send({ message: '판매 제품 불러오기, 성공!', data: getProductData });
+  if (!getProductData) {
+    res.status(404).send('에러!: 제품을 찾을 수 없습니다.');
+  } else res.status(200).send({ message: '판매 제품 불러오기, 성공!', data: getProductData });
 };
 
 //PATCH id
-export const patchProductById = async (req, res) => {
+const patchProductById = async (req, res) => {
   const id = req.params.id;
   const inputData = req.body;
-  const patchProductData = await prisma.products.update({
+  const patchProductData = await Prisma.products.update({
     where: { id },
     data: inputData,
   });
@@ -52,10 +49,12 @@ export const patchProductById = async (req, res) => {
 };
 
 //DELETE id
-export const deleteProductById = async (req, res) => {
+const deleteProductById = async (req, res) => {
   const id = req.params.id;
-  const deletedProductData = await prisma.products.delete({
+  const deletedProductData = await Prisma.products.delete({
     where: { id },
   });
   res.status(204).end();
 };
+
+export { postNewProduct, getAllProduct, getProductById, patchProductById, deleteProductById };
