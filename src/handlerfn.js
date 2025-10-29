@@ -1,21 +1,9 @@
-import { Prisma } from '@prisma/client';
-
 export function asyncHandler(handler) {
-  return async function (req, res) {
+  return async function (req, res, next) {
     try {
-      await handler(req, res);
+      await handler(req, res, next);
     } catch (e) {
-      console.error(e);
-
-      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2025') {
-        res.sendStatus(404);
-      } else if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
-        res.status(400).send({ message: e.message });
-      } else if (e.name === 'StructError') {
-        res.status(400).send({ message: e.message });
-      } else {
-        res.status(500).send({ message: e.message });
-      }
+      next(e);
     }
   };
 }

@@ -1,14 +1,14 @@
 GET http://localhost:3000/articles?order=newest
 
 ###
-GET http://localhost:3000/articles/b5d98b7b-9258-4d75-a510-decfacea93d6
+GET http://localhost:3000/articles/5d98b7b-9258-4d75-a510-decfacea93d6
 
 ###
 POST http://localhost:3000/articles
 Content-Type: application/json
 
 {
-  "title": "New Article",
+
   "content": "This is the content of the new article."
 }
 
