@@ -1,6 +1,5 @@
+import { PrismaClient } from '@prisma/client';
 import prisma from '../lib/prismaClient.js';
-//import asyncHandler from 'express-async-handler';
-
 /**
 200 OK: 일반적인 성공 (GET, UPDATE 후)
 201 Created: 새로운 리소스 생성 성공 (POST)
@@ -9,33 +8,37 @@ import prisma from '../lib/prismaClient.js';
 404 Not Found: 요청한 리소스가 없음
  */
 
-//POST
+//POST==========
 const createArticle = async (req, res) => {
-  const inputData = req.body;
-  const articleData = await prisma.article.create({
-    data: inputData,
-  });
-  res.status(201).send({ message: '게시글이 안전하게 등록되었습니다.', data: articleData });
+  try {
+    const inputData = req.body;
+    const articleData = await prisma.article.create({
+      data: inputData,
+    });
+    res.status(201).send({ message: '게시글이 안전하게 등록되었습니다.', data: articleData });
+  } catch (error) {
+    return next(error);
+  }
 };
 
-//GET
+//GET==========
 const getListArticles = async (req, res) => {
-  const { offset = 0, limit = 0, order = 'recent' } = req.query;
-  let orderBy;
-  switch (order) {
-    case 'recent': {
-      orderBy = { createdAt: 'desc' };
-      break;
-    }
-    case 'oldest': {
-      orderBy = { createdAt: 'asc' };
-      break;
-    }
-    default:
-      orderBy = { createdAt: 'desc' };
-  }
-
   try {
+    const { offset = 0, limit = 0, order = 'recent' } = req.query;
+    let orderBy;
+    switch (order) {
+      case 'recent': {
+        orderBy = { createdAt: 'desc' };
+        break;
+      }
+      case 'oldest': {
+        orderBy = { createdAt: 'asc' };
+        break;
+      }
+      default:
+        orderBy = { createdAt: 'desc' };
+    }
+
     const articleData = await prisma.article.findMany({
       orderBy,
       skip: parseInt(offset),
@@ -53,43 +56,42 @@ const getListArticles = async (req, res) => {
   }
 };
 
-//GET id
+//GET id==========
 const getArticleById = async (req, res) => {
-  const id = req.params.id;
-  const articleData = await prisma.article.findUnique({
-    where: { id },
-  });
-  if (!articleData) {
-    return res.status(404).send('에러!: 게시글을 찾을 수 없습니다. :( ');
-  } else res.status(200).send({ message: '게시글 불러오기, 성공!', data: articleData });
+  try {
+    const id = req.params.id;
+    const articleData = await prisma.article.findUnique({
+      where: { id },
+    });
+  } catch (error) {
+    return next(error);
+  }
+  res.status(200).send({ message: '게시글 불러오기, 성공!', data: articleData });
 };
 
-//PATCH id
+//PATCH id==========
 const patchArticleById = async (req, res, next) => {
-  const id = req.params.id;
-  const inputData = req.body;
   try {
+    const id = req.params.id;
+    const inputData = req.body;
+
     await prisma.article.update({
       where: { id },
       data: inputData,
     });
-    //   if (!articleData) {
-    //     return res.status(404).send('에러!: 게시글을 찾을 수 없습니다. :( '); } else
     res.status(200).send({ message: '게시글 수정, 성공!' });
   } catch (error) {
     return next(error);
   }
 };
 
-//DELETE id
+//DELETE id==========
 const deleteArticleById = async (req, res, next) => {
-  const id = req.params.id;
   try {
+    const id = req.params.id;
     await prisma.article.delete({
       where: { id },
     });
-    //   if (!articleData) {
-    // return res.status(404).send('에러!: 게시글을 찾을 수 없습니다. :( ');} else
     res.status(204).end();
   } catch (error) {
     return next(error);

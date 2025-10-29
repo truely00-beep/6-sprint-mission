@@ -19,18 +19,18 @@
 
 - [x] 상품 등록 API를 만들어 주세요. == POST ==
 
-  - [] name, description, price, tags를 입력하여 상품을 등록합니다.
+  - [x] name, description, price, tags를 입력하여 상품을 등록합니다.
 
-- [x] 상품 목록 조회 API를 만들어 주세요. == GET ALL/LIST ==
+- [x] 상품 목록 조회 API를 만들어 주세요. == GET LIST ==
 
   - [x] id, name, price, createdAt를 조회합니다.
   - [x] offset 방식의 페이지네이션 기능을 포함해 주세요.
-  - [] 최신순(recent)으로 정렬할 수 있습니다.
-  - [] name, description에 포함된 단어로 검색할 수 있습니다.
+  - [x] 최신순(recent)으로 정렬할 수 있습니다.
+  - [x] name, description에 포함된 단어로 검색할 수 있습니다.
 
 - [x] 상품 상세 조회 API를 만들어 주세요. == GET ID ==
 
-  - [] id, name, description, price, tags, createdAt를 조회합니다.
+  - [x] id, name, description, price, tags, createdAt를 조회합니다.
 
 - [x] 상품 수정 API를 만들어 주세요. == PATCH ID ==
 
@@ -54,7 +54,7 @@
 
 - [x] 게시글 목록 조회 API를 만들어 주세요. GET ALL/LIST ==
 
-  - [] id, title, content, createdAt를 조회합니다.
+  - [x] id, title, content, createdAt를 조회합니다.
   - [x] offset 방식의 페이지네이션 기능을 포함해 주세요.
   - [] 최신순(recent)으로 정렬할 수 있습니다.
   - [] title, content에 포함된 단어로 검색할 수 있습니다.

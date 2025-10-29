@@ -1,41 +1,59 @@
-import { PrismaClientExtends } from '@prisma/client/extension';
+import { PrismaClient } from '@prisma/client';
 import prisma from '../lib/prismaClient.js';
 /**
-200 OK: 일반적인 성공 (GET, UPDATE 후)
-201 Created: 새로운 리소스 생성 성공 (POST)
-204 No Content: 성공했지만 돌려줄 데이터가 없음 (DELETE)
-400 Bad Request: 클라이언트 요청 오류 (유효성 검사 실패 등)
-404 Not Found: 요청한 리소스가 없음
+ 200 OK: 일반적인 성공 (GET, UPDATE 후)
+ 201 Created: 새로운 리소스 생성 성공 (POST)
+ 204 No Content: 성공했지만 돌려줄 데이터가 없음 (DELETE)
+ 400 Bad Request: 클라이언트 요청 오류 (유효성 검사 실패 등)
+ 404 Not Found: 요청한 리소스가 없음
  */
 
-//POST
-const createProduct = async (req, res) => {
-  const inputData = req.body;
-  const productData = await prisma.product.create({
-    data: inputData,
-  });
-  res.status(201).send({ message: '상품이 안전하게 등록되었습니다.', data: productData });
+//포함 검색
+const where = search
+  ? {
+      OR: [{ name: { contains: search } }, { description: { contains: search } }],
+    }
+  : undefined;
+
+//POST==========
+const createProduct = async (req, res, next) => {
+  try {
+    const { name, description, price, tags } = req.body;
+    const productData = await prisma.product.create({
+      data: {
+        name,
+        description,
+        price,
+        tags,
+      },
+    });
+    res.status(201).send({ message: '상품이 안전하게 등록되었습니다.', data: productData });
+  } catch (error) {
+    return next(error);
+  }
 };
 
-//GET
+//GET==========
 const getListProducts = async (req, res, next) => {
-  const { offset = 0, limit = 0, order = 'recent' } = req.query;
-  let orderBy;
-  switch (order) {
-    case 'recent': {
-      orderBy = { createdAt: 'desc' };
-      break;
-    }
-    case 'oldest': {
-      orderBy = { createdAt: 'asc' };
-      break;
-    }
-    default:
-      orderBy = { createdAt: 'desc' };
-  }
-
   try {
+    const { offset = 0, limit = 0, order = 'recent', search } = req.query;
+    //최신순 정렬
+    let orderBy;
+    switch (order) {
+      case 'recent': {
+        orderBy = { createdAt: 'desc' };
+        break;
+      }
+      case 'oldest': {
+        orderBy = { createdAt: 'asc' };
+        break;
+      }
+      default:
+        orderBy = { createdAt: 'desc' };
+    }
+
     const productData = await prisma.product.findMany({
+      where,
       orderBy,
       skip: parseInt(offset),
       take: parseInt(limit),
@@ -52,43 +70,49 @@ const getListProducts = async (req, res, next) => {
   }
 };
 
-//GET id
+//GET id==========
 const getProductById = async (req, res, next) => {
-  const id = req.params.id;
-  const productData = await prisma.product.findUnique({
-    where: { id },
-  });
-  if (!productData) {
-    return res.status(404).send('에러!: 제품을 찾을 수 없습니다. :( ');
-  } else res.status(200).send({ message: '판매 제품 불러오기, 성공!', data: productData });
-};
-
-//PATCH id
-const patchProductById = async (req, res, next) => {
-  const id = req.params.id;
-  const inputData = req.body;
   try {
+    const id = req.params.id;
+    const productData = await prisma.product.findUniqueOrThrow({
+      where: id,
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        price: true,
+        tags: true,
+        createdAt: true,
+      },
+    });
+    res.status(200).send({ message: '판매 제품 불러오기, 성공!', data: productData });
+  } catch (error) {
+    return next(error);
+  }
+};
+//PATCH id==========
+const patchProductById = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const inputData = req.body;
+
     await prisma.product.update({
       where: { id },
       data: inputData,
     });
-    // if (!productData) {
-    // return res.status(404).send('에러!: 제품을 찾을 수 없습니다. :( ');} else
     res.status(200).send({ message: '판매 제품 수정, 성공!' });
   } catch (error) {
     return next(error);
   }
 };
 
-//DELETE id
+//DELETE id==========
 const deleteProductById = async (req, res, next) => {
-  const id = req.params.id;
   try {
+    const id = req.params.id;
     await prisma.product.delete({
       where: { id },
     });
-    // if (!productData) {
-    //   return res.status(404).send('에러!: 제품을 찾을 수 없습니다. :( ');} else
     res.status(204).end();
   } catch (error) {
     return next(error);
