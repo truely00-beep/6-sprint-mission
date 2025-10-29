@@ -10,7 +10,7 @@ import { Prisma } from '@prisma/client';
  */
 
 //POST
-const postNewArticle = async (req, res) => {
+const createArticle = async (req, res) => {
   const inputData = req.body;
   const articleData = await Prisma.article.create({
     data: inputData,
@@ -19,7 +19,7 @@ const postNewArticle = async (req, res) => {
 };
 
 //GET
-const getAllArticles = async (req, res) => {
+const getListArticles = async (req, res) => {
   const { offset = 0, limit = 0 } = req.query;
   const articleData = await Prisma.article.findMany({
     skip: parseInt(offset),
@@ -71,4 +71,4 @@ const deleteArticleById = async (req, res, next) => {
   }
 };
 
-export { postNewArticle, getAllArticles, getArticleById, patchArticleById, deleteArticleById };
+export { createArticle, getListArticles, getArticleById, patchArticleById, deleteArticleById };

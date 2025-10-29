@@ -1,8 +1,8 @@
-import { Prisma } from '@prisma/client/extension';
+import { Prisma } from '@prisma/client';
 //import asyncHandler from 'express-async-handler';
 
-//postNew<제목>
-//getAll<제목>
+//create<제목>
+//getList<제목>
 
 //get<제목>ById
 //patch<제목>ById

@@ -1,12 +1,10 @@
-import { Prisma } from '@prisma/client/extension';
+import { Prisma } from '@prisma/client';
 //import asyncHandler from 'express-async-handler';
 
-//postNew<제목>
-//getAll<제목>
-
-//get<제목>ById
-//patch<제목>ById
-//delete<제목>ById
+//create<제목>Comment //create<제목>Comment
+//getlist<제목>Comment //getlist<제목>Comment
+//patchCommentById
+//deleteCommentById
 /**
 200 OK: 일반적인 성공 (GET, UPDATE 후)
 201 Created: 새로운 리소스 생성 성공 (POST)
@@ -16,13 +14,23 @@ import { Prisma } from '@prisma/client/extension';
  */
 
 //POST
+// const createCommentForProduct = async (req,res) => {
+//     const inputData = req.body
+//     try {
+//         await Prisma.comment.create({
+//             data: {}
+//                 inputData
+//         })
+//     }
+// }
 
+// const createCommentForArticle =
 //GET
-
+// const getlist
 //GET id
 
 //PATCH id
 
 //DELETE id
 
-export {};
+// export {};

@@ -8,7 +8,7 @@ import { Prisma } from '@prisma/client';
  */
 
 //POST
-const postNewProduct = async (req, res) => {
+const createProduct = async (req, res) => {
   const inputData = req.body;
   const productData = await Prisma.product.create({
     data: inputData,
@@ -17,7 +17,7 @@ const postNewProduct = async (req, res) => {
 };
 
 //GET
-const getAllProducts = async (req, res) => {
+const getListProducts = async (req, res) => {
   const { offset = 0, limit = 0 } = req.query;
   const productData = await Prisma.product.findMany({
     skip: parseInt(offset),
@@ -69,4 +69,4 @@ const deleteProductById = async (req, res, next) => {
   }
 };
 
-export { postNewProduct, getAllProducts, getProductById, patchProductById, deleteProductById };
+export { createProduct, getListProducts, getProductById, patchProductById, deleteProductById };

@@ -1,7 +1,7 @@
 import express from 'express';
 import {
-  postNewArticle,
-  getAllArticles,
+  createArticle,
+  getListArticles,
   getArticleById,
   patchArticleById,
   deleteArticleById,
@@ -12,8 +12,8 @@ const router = express.Router();
 router
   .route('/')
   //POST  //GET
-  .get(getAllArticles)
-  .post(postNewArticle);
+  .get(getListArticles)
+  .post(createArticle);
 
 router
   .route('/:id')
