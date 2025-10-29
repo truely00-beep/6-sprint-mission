@@ -1,15 +1,23 @@
-/*
 import express from 'express';
-const router = express.Router()
+import {
+  postNewArticle,
+  getAllArticles,
+  getArticleById,
+  patchArticleById,
+  deleteArticleById,
+} from '../controllers/articlesController.js';
 
-router.route('/')
-//POST  //GET
-.get()
-.post()
+const router = express.Router();
 
-router.route('/:id)
-//GET id //PATCH id //DELETE id
-.get()
-.patch()
-.delete()
-*/
+router
+  .route('/')
+  //POST  //GET
+  .get(getAllArticles)
+  .post(postNewArticle);
+
+router
+  .route('/:id')
+  //GET id //PATCH id //DELETE id
+  .get(getArticleById)
+  .patch(patchArticleById)
+  .delete(deleteArticleById);
