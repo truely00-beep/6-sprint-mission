@@ -9,11 +9,6 @@ import prisma from '../lib/prismaClient.js';
  */
 
 //포함 검색
-const where = search
-  ? {
-      OR: [{ name: { contains: search } }, { description: { contains: search } }],
-    }
-  : undefined;
 
 //POST==========
 const createProduct = async (req, res, next) => {
@@ -37,7 +32,15 @@ const createProduct = async (req, res, next) => {
 const getListProducts = async (req, res, next) => {
   try {
     const { offset = 0, limit = 0, order = 'recent', search } = req.query;
+
+    const where = search
+      ? {
+          OR: [{ name: { contains: search } }, { description: { contains: search } }],
+        }
+      : undefined;
+
     //최신순 정렬
+
     let orderBy;
     switch (order) {
       case 'recent': {

@@ -9,11 +9,14 @@ import prisma from '../lib/prismaClient.js';
  */
 
 //POST==========
-const createArticle = async (req, res) => {
+const createArticle = async (req, res, next) => {
   try {
-    const inputData = req.body;
+    const { title, content } = req.body;
     const articleData = await prisma.article.create({
-      data: inputData,
+      data: {
+        title,
+        content,
+      },
     });
     res.status(201).send({ message: '게시글이 안전하게 등록되었습니다.', data: articleData });
   } catch (error) {
@@ -21,10 +24,17 @@ const createArticle = async (req, res) => {
   }
 };
 
-//GET==========
-const getListArticles = async (req, res) => {
+//GET List==========
+const getListArticles = async (req, res, next) => {
   try {
-    const { offset = 0, limit = 0, order = 'recent' } = req.query;
+    const { offset = 0, limit = 0, order = 'recent', search } = req.query;
+
+    const where = search
+      ? {
+          OR: [{ title: { contains: search } }, { content: { contains: search } }],
+        }
+      : undefined;
+
     let orderBy;
     switch (order) {
       case 'recent': {
@@ -40,6 +50,7 @@ const getListArticles = async (req, res) => {
     }
 
     const articleData = await prisma.article.findMany({
+      where,
       orderBy,
       skip: parseInt(offset),
       take: parseInt(limit),
@@ -57,16 +68,22 @@ const getListArticles = async (req, res) => {
 };
 
 //GET id==========
-const getArticleById = async (req, res) => {
+const getArticleById = async (req, res, next) => {
   try {
     const id = req.params.id;
     const articleData = await prisma.article.findUnique({
       where: { id },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        createdAt: true,
+      },
     });
+    res.status(200).send({ message: '게시글 불러오기, 성공!', data: articleData });
   } catch (error) {
     return next(error);
   }
-  res.status(200).send({ message: '게시글 불러오기, 성공!', data: articleData });
 };
 
 //PATCH id==========

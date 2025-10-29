@@ -50,18 +50,18 @@
 
 - [x] 게시글 등록 API를 만들어 주세요. == POST ==
 
-  - [] title, content를 입력해 게시글을 등록합니다.
+  - [x] title, content를 입력해 게시글을 등록합니다.
 
-- [x] 게시글 목록 조회 API를 만들어 주세요. GET ALL/LIST ==
+- [x] 게시글 목록 조회 API를 만들어 주세요. LIST
 
   - [x] id, title, content, createdAt를 조회합니다.
   - [x] offset 방식의 페이지네이션 기능을 포함해 주세요.
-  - [] 최신순(recent)으로 정렬할 수 있습니다.
-  - [] title, content에 포함된 단어로 검색할 수 있습니다.
+  - [x] 최신순(recent)으로 정렬할 수 있습니다.
+  - [x] title, content에 포함된 단어로 검색할 수 있습니다.
 
 - [x] 게시글 상세 조회 API를 만들어 주세요. == GET ID ==
 
-  - [] id, title, content, createdAt를 조회합니다.
+  - [x] id, title, content, createdAt를 조회합니다.
 
 - [x] 게시글 수정 API를 만들어 주세요. == PATCH ID ==
 
