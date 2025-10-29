@@ -10,7 +10,7 @@ import { Prisma } from '@prisma/client';
 //POST
 const postNewProduct = async (req, res) => {
   const inputData = req.body;
-  const productData = await Prisma.products.create({
+  const productData = await Prisma.product.create({
     data: inputData,
   });
   res.status(201).send({ message: '상품이 안전하게 등록되었습니다.', data: productData });
@@ -19,7 +19,7 @@ const postNewProduct = async (req, res) => {
 //GET
 const getAllProducts = async (req, res) => {
   const { offset = 0, limit = 0 } = req.query;
-  const productData = await Prisma.products.findMany({
+  const productData = await Prisma.product.findMany({
     skip: parseInt(offset),
     take: parseInt(limit),
   });
@@ -29,7 +29,7 @@ const getAllProducts = async (req, res) => {
 //GET id
 const getProductById = async (req, res) => {
   const id = req.params.id;
-  const productData = await Prisma.products.findUnique({
+  const productData = await Prisma.product.findUnique({
     where: { id },
   });
   if (!productData) {
@@ -42,7 +42,7 @@ const patchProductById = async (req, res, next) => {
   const id = req.params.id;
   const inputData = req.body;
   try {
-    await Prisma.products.update({
+    await Prisma.product.update({
       where: { id },
       data: inputData,
     });
@@ -58,7 +58,7 @@ const patchProductById = async (req, res, next) => {
 const deleteProductById = async (req, res, next) => {
   const id = req.params.id;
   try {
-    await Prisma.products.delete({
+    await Prisma.product.delete({
       where: { id },
     });
     // if (!productData) {

@@ -12,7 +12,7 @@ import { Prisma } from '@prisma/client';
 //POST
 const postNewArticle = async (req, res) => {
   const inputData = req.body;
-  const articleData = await Prisma.articles.create({
+  const articleData = await Prisma.article.create({
     data: inputData,
   });
   res.status(201).send({ message: '게시글이 안전하게 등록되었습니다.', data: articleData });
@@ -21,7 +21,7 @@ const postNewArticle = async (req, res) => {
 //GET
 const getAllArticles = async (req, res) => {
   const { offset = 0, limit = 0 } = req.query;
-  const articleData = await Prisma.articles.findMany({
+  const articleData = await Prisma.article.findMany({
     skip: parseInt(offset),
     take: parseInt(limit),
   });
@@ -31,7 +31,7 @@ const getAllArticles = async (req, res) => {
 //GET id
 const getArticleById = async (req, res) => {
   const id = req.params.id;
-  const articleData = await Prisma.articles.findUnique({
+  const articleData = await Prisma.article.findUnique({
     where: { id },
   });
   if (!articleData) {
@@ -44,7 +44,7 @@ const patchArticleById = async (req, res, next) => {
   const id = req.params.id;
   const inputData = req.body;
   try {
-    await Prisma.articles.update({
+    await Prisma.article.update({
       where: { id },
       data: inputData,
     });
@@ -60,7 +60,7 @@ const patchArticleById = async (req, res, next) => {
 const deleteArticleById = async (req, res, next) => {
   const id = req.params.id;
   try {
-    await Prisma.articles.delete({
+    await Prisma.article.delete({
       where: { id },
     });
     //   if (!articleData) {

@@ -14,35 +14,35 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-//--- Users ---
-model Users {
-  id              String     @id @default(uuid())
+//--- User ---
+model User {
+  id              String    @id @default(uuid())
   firstName       String
   lastName        String
-  email           String     @unique
+  email           String    @unique
   description     String?
   address         String
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
-  sellingProducts Products[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  sellingProducts Product[]
 }
 
 //--- 중고 마켓 --- //id, name, description, price, tags, createdAt, updatedAt필드를 가집니다.
-model Products {
+model Product {
   id          String        @id @default(uuid())
   name        String
   description String
   price       Float
   tags        String
   status      ProductStatus @default(SALE)
-  seller      Users         @relation(fields: [sellerId], references: [id])
+  seller      User          @relation(fields: [sellerId], references: [id])
   sellerId    String
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 }
 
 //--- 자유 게시판 --- //id, title, content, createdAt, updatedAt 필드를 가집니다.
-model Articles {
+model Article {
   id        String   @id @default(uuid())
   title     String
   content   String

@@ -5,7 +5,7 @@ import {
   getArticleById,
   patchArticleById,
   deleteArticleById,
-} from '../controllers/articlesController.js';
+} from '../controllers/articleController.js';
 
 const router = express.Router();
 
