@@ -21,3 +21,5 @@ router
   .get(getArticleById)
   .patch(patchArticleById)
   .delete(deleteArticleById);
+
+export default router;

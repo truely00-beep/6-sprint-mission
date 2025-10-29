@@ -17,7 +17,7 @@
   - [x] id, name, description, price, tags, createdAt, updatedAt필드를 가집니다.
         필요한 필드가 있다면 자유롭게 추가해 주세요.
 
-- [] 상품 등록 API를 만들어 주세요. == POST ==
+- [x] 상품 등록 API를 만들어 주세요. == POST ==
 
   - [] name, description, price, tags를 입력하여 상품을 등록합니다.
 
@@ -28,7 +28,7 @@
   - [] 최신순(recent)으로 정렬할 수 있습니다.
   - [] name, description에 포함된 단어로 검색할 수 있습니다.
 
-- [] 상품 상세 조회 API를 만들어 주세요. == GET ID ==
+- [x] 상품 상세 조회 API를 만들어 주세요. == GET ID ==
 
   - [] id, name, description, price, tags, createdAt를 조회합니다.
 
@@ -48,24 +48,24 @@
 
   - [x] id, title, content, createdAt, updatedAt 필드를 가집니다.
 
-- [] 게시글 등록 API를 만들어 주세요. == POST ==
+- [x] 게시글 등록 API를 만들어 주세요. == POST ==
 
   - [] title, content를 입력해 게시글을 등록합니다.
 
-- [] 게시글 목록 조회 API를 만들어 주세요. GET ALL/LIST ==
+- [x] 게시글 목록 조회 API를 만들어 주세요. GET ALL/LIST ==
 
   - [] id, title, content, createdAt를 조회합니다.
-  - [] offset 방식의 페이지네이션 기능을 포함해 주세요.
+  - [x] offset 방식의 페이지네이션 기능을 포함해 주세요.
   - [] 최신순(recent)으로 정렬할 수 있습니다.
   - [] title, content에 포함된 단어로 검색할 수 있습니다.
 
-- [] 게시글 상세 조회 API를 만들어 주세요. == GET ID ==
+- [x] 게시글 상세 조회 API를 만들어 주세요. == GET ID ==
 
   - [] id, title, content, createdAt를 조회합니다.
 
-- [] 게시글 수정 API를 만들어 주세요. == PATCH ID ==
+- [x] 게시글 수정 API를 만들어 주세요. == PATCH ID ==
 
-- [] 게시글 삭제 API를 만들어 주세요. == DELETE ID ==
+- [x] 게시글 삭제 API를 만들어 주세요. == DELETE ID ==
 
 ### 댓글
 
@@ -104,15 +104,15 @@
 
 ### 에러 처리
 
-- [] 모든 예외 상황을 처리할 수 있는 에러 핸들러 미들웨어를 구현합니다.
-- [] 서버 오류(500), 사용자 입력 오류(400 시리즈), 리소스 찾을 수 없음(404) 등 상황에 맞는 상태값을 반환합니다.
+- [x] 모든 예외 상황을 처리할 수 있는 에러 핸들러 미들웨어를 구현합니다.
+- [x] 서버 오류(500), 사용자 입력 오류(400 시리즈), 리소스 찾을 수 없음(404) 등 상황에 맞는 상태값을 반환합니다.
 
 ## 라우터
 
 ### 라우트 중복 제거
 
-- [] 중복되는 라우트 경로(예: /users에 대한 get 및 post 요청)를 app.route()로 통합해 중복을 제거합니다.
-- [] express.Router()를 활용하여 중고마켓/자유게시판 관련 라우트를 별도의 모듈로 구분합니다.
+- [x] 중복되는 라우트 경로(예: /users에 대한 get 및 post 요청)를 app.route()로 통합해 중복을 제거합니다.
+- [x] express.Router()를 활용하여 중고마켓/자유게시판 관련 라우트를 별도의 모듈로 구분합니다.
 
 # 배포
 
