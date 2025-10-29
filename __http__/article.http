@@ -13,7 +13,7 @@ Content-Type: application/json
 }
 
 ###
-PATCH  http://localhost:3000/articles/d433e197-c56d-42e9-8aab-f438f61e77a7
+PATCH  http://localhost:3000/articles/1e0a52ff-8fce-424a-95ca-a4b7df348e7a
 Content-Type: application/json
 
 {
@@ -22,4 +22,4 @@ Content-Type: application/json
 }   
 
 ###
-DELETE http://localhost:3000/articles/3457a7ae-250a-4083-b1f9-8478fc0187b5
+DELETE http://localhost:3000/articles/1e0a52ff-8fce-424a-95ca-a4b7df348e7a

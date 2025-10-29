@@ -1,4 +1,4 @@
-GET http://localhost:3000/products?search=향기로운&order=oldest
+GET http://localhost:3000/products?&order=newest
 
 ###
 GET http://localhost:3000/products/57381224-5556-4d83-bcda-ea4f43e9537e
@@ -11,7 +11,9 @@ Content-Type: application/json
   "name": "New Product",
   "description": "This is a newly added product.",
   "price": 2000,
-  "tags": "tag1"
+  "category": "BEAUTY",
+  "tags": "tag1",
+  "stock": 50
 }
 
 ###
