@@ -1,7 +1,7 @@
 import express from 'express';
 import {
   postNewProduct,
-  getAllProduct,
+  getAllProducts,
   getProductById,
   patchProductById,
   deleteProductById,
@@ -13,7 +13,7 @@ router
   .route('/')
   //POST, GET
   .post(postNewProduct)
-  .get(getAllProduct);
+  .get(getAllProducts);
 
 router
   .route('/:id')

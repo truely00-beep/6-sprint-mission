@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client/extension';
 //import asyncHandler from 'express-async-handler';
 
-//create<제목>
+//postNew<제목>
 //getAll<제목>
 
 //get<제목>ById

@@ -10,51 +10,63 @@ import { Prisma } from '@prisma/client';
 //POST
 const postNewProduct = async (req, res) => {
   const inputData = req.body;
-  const newProduct = await Prisma.products.create({
+  const productData = await Prisma.products.create({
     data: inputData,
   });
-  res.status(201).send({ message: '상품이 안전하게 등록되었습니다.', data: newProduct });
+  res.status(201).send({ message: '상품이 안전하게 등록되었습니다.', data: productData });
 };
 
 //GET
-const getAllProduct = async (req, res) => {
+const getAllProducts = async (req, res) => {
   const { offset = 0, limit = 0 } = req.query;
-  const getProductData = await Prisma.products.findMany({
+  const productData = await Prisma.products.findMany({
     skip: parseInt(offset),
     take: parseInt(limit),
   });
-  res.status(200).send({ message: '판매 제품 목록 불러오기, 성공!', data: getProductData });
+  res.status(200).send({ message: '판매 제품 목록 불러오기, 성공!', data: productData });
 };
 
 //GET id
 const getProductById = async (req, res) => {
   const id = req.params.id;
-  const getProductData = await Prisma.products.findUnique({
+  const productData = await Prisma.products.findUnique({
     where: { id },
   });
-  if (!getProductData) {
-    res.status(404).send('에러!: 제품을 찾을 수 없습니다.');
-  } else res.status(200).send({ message: '판매 제품 불러오기, 성공!', data: getProductData });
+  if (!productData) {
+    return res.status(404).send('에러!: 제품을 찾을 수 없습니다. :( ');
+  } else res.status(200).send({ message: '판매 제품 불러오기, 성공!', data: productData });
 };
 
 //PATCH id
-const patchProductById = async (req, res) => {
+const patchProductById = async (req, res, next) => {
   const id = req.params.id;
   const inputData = req.body;
-  const patchProductData = await Prisma.products.update({
-    where: { id },
-    data: inputData,
-  });
-  res.status(200).send({ message: '판매 제품 수정, 성공!', data: patchProductData });
+  try {
+    await Prisma.products.update({
+      where: { id },
+      data: inputData,
+    });
+    // if (!productData) {
+    // return res.status(404).send('에러!: 제품을 찾을 수 없습니다. :( ');} else
+    res.status(200).send({ message: '판매 제품 수정, 성공!' });
+  } catch (error) {
+    return next(error);
+  }
 };
 
 //DELETE id
-const deleteProductById = async (req, res) => {
+const deleteProductById = async (req, res, next) => {
   const id = req.params.id;
-  const deletedProductData = await Prisma.products.delete({
-    where: { id },
-  });
-  res.status(204).end();
+  try {
+    await Prisma.products.delete({
+      where: { id },
+    });
+    // if (!productData) {
+    //   return res.status(404).send('에러!: 제품을 찾을 수 없습니다. :( ');} else
+    res.status(204).end();
+  } catch (error) {
+    return next(error);
+  }
 };
 
-export { postNewProduct, getAllProduct, getProductById, patchProductById, deleteProductById };
+export { postNewProduct, getAllProducts, getProductById, patchProductById, deleteProductById };
