@@ -1,0 +1,25 @@
+GET http://localhost:3000/articles?order=newest
+
+###
+GET http://localhost:3000/articles/b5d98b7b-9258-4d75-a510-decfacea93d6
+
+###
+POST http://localhost:3000/articles
+Content-Type: application/json
+
+{
+  "title": "New Article",
+  "content": "This is the content of the new article."
+}
+
+###
+PATCH  http://localhost:3000/articles/d433e197-c56d-42e9-8aab-f438f61e77a7
+Content-Type: application/json
+
+{
+  "title": "Updated Article Title",
+  "content": "Updated content of the article."
+}   
+
+###
+DELETE http://localhost:3000/articles/3457a7ae-250a-4083-b1f9-8478fc0187b5

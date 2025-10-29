@@ -3,7 +3,7 @@ import { Prisma, PrismaClient } from '@prisma/client';
 import { assert } from 'superstruct';
 import { PORT } from '../constants.js';
 import cors from 'cors';
-import { CreateArticle, PatchArticle } from './articleStructs.js';
+import { CreateProduct, PatchProduct } from './productStructs.js';
 
 const prisma = new PrismaClient();
 
@@ -31,7 +31,6 @@ function asyncHandler(handler) {
   };
 }
 
-//product
 app.get(
   '/products',
   asyncHandler(async (req, res) => {
@@ -111,92 +110,6 @@ app.delete(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     const products = await prisma.product.delete({
-      where: { id },
-    });
-    res.sendStatus(204);
-  }),
-);
-
-//article
-app.get(
-  '/articles',
-  asyncHandler(async (req, res) => {
-    const { offset = 0, limit = 10, order = 'newest', search = '' } = req.query;
-    let orderBy;
-    switch (order) {
-      case 'oldest':
-        orderBy = { createdAt: 'asc' };
-        break;
-      case ' newest':
-      default:
-        orderBy = { createdAt: 'desc' };
-    }
-
-    const where = search
-      ? {
-          OR: [
-            { title: { contains: search, mode: 'insensitive' } },
-            { content: { contains: search, mode: 'insensitive' } },
-          ],
-        }
-      : {};
-
-    const articles = await prisma.article.findMany({
-      where,
-      orderBy,
-      skip: parseInt(offset),
-      take: parseInt(limit),
-    });
-    res.send(articles);
-  }),
-);
-
-app.get(
-  '/articles/:id',
-  asyncHandler(async (req, res) => {
-    const { id } = req.params;
-    const articles = await prisma.article.findUnique({
-      where: { id },
-    });
-    if (articles) {
-      res.send(articles);
-    } else {
-      res.status(404).send({ message: 'Cannot find given id' });
-    }
-  }),
-);
-
-app.post(
-  '/articles',
-  asyncHandler(async (req, res) => {
-    assert(req.body, CreateArticle);
-
-    const articles = await prisma.article.create({
-      data: req.body,
-    });
-    res.send(201).send(articles);
-  }),
-);
-
-app.patch(
-  '/articles/:id',
-  asyncHandler(async (req, res) => {
-    assert(req.body, PatchArticle);
-
-    const { id } = req.params;
-    const articles = await prisma.article.update({
-      where: { id },
-      data: req.body,
-    });
-    res.send(articles);
-  }),
-);
-
-app.delete(
-  '/articles/:id',
-  asyncHandler(async (req, res) => {
-    const { id } = req.params;
-    const articles = await prisma.article.delete({
       where: { id },
     });
     res.sendStatus(204);
