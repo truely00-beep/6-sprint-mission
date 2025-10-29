@@ -1,4 +1,5 @@
-import { Prisma } from '@prisma/client';
+import { PrismaClientExtends } from '@prisma/client/extension';
+import prisma from '../lib/prismaClient.js';
 /**
 200 OK: 일반적인 성공 (GET, UPDATE 후)
 201 Created: 새로운 리소스 생성 성공 (POST)
@@ -10,26 +11,51 @@ import { Prisma } from '@prisma/client';
 //POST
 const createProduct = async (req, res) => {
   const inputData = req.body;
-  const productData = await Prisma.product.create({
+  const productData = await prisma.product.create({
     data: inputData,
   });
   res.status(201).send({ message: '상품이 안전하게 등록되었습니다.', data: productData });
 };
 
 //GET
-const getListProducts = async (req, res) => {
-  const { offset = 0, limit = 0 } = req.query;
-  const productData = await Prisma.product.findMany({
-    skip: parseInt(offset),
-    take: parseInt(limit),
-  });
-  res.status(200).send({ message: '판매 제품 목록 불러오기, 성공!', data: productData });
+const getListProducts = async (req, res, next) => {
+  const { offset = 0, limit = 0, order = 'recent' } = req.query;
+  let orderBy;
+  switch (order) {
+    case 'recent': {
+      orderBy = { createdAt: 'desc' };
+      break;
+    }
+    case 'oldest': {
+      orderBy = { createdAt: 'asc' };
+      break;
+    }
+    default:
+      orderBy = { createdAt: 'desc' };
+  }
+
+  try {
+    const productData = await prisma.product.findMany({
+      orderBy,
+      skip: parseInt(offset),
+      take: parseInt(limit),
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        createdAt: true,
+      },
+    });
+    res.status(200).send({ message: '판매 제품 목록 불러오기, 성공!', data: productData });
+  } catch (error) {
+    return next(error);
+  }
 };
 
 //GET id
-const getProductById = async (req, res) => {
+const getProductById = async (req, res, next) => {
   const id = req.params.id;
-  const productData = await Prisma.product.findUnique({
+  const productData = await prisma.product.findUnique({
     where: { id },
   });
   if (!productData) {
@@ -42,7 +68,7 @@ const patchProductById = async (req, res, next) => {
   const id = req.params.id;
   const inputData = req.body;
   try {
-    await Prisma.product.update({
+    await prisma.product.update({
       where: { id },
       data: inputData,
     });
@@ -58,7 +84,7 @@ const patchProductById = async (req, res, next) => {
 const deleteProductById = async (req, res, next) => {
   const id = req.params.id;
   try {
-    await Prisma.product.delete({
+    await prisma.product.delete({
       where: { id },
     });
     // if (!productData) {

@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import prisma from '../lib/prismaClient.js';
 //import asyncHandler from 'express-async-handler';
 
 /**
@@ -12,7 +12,7 @@ import { Prisma } from '@prisma/client';
 //POST
 const createArticle = async (req, res) => {
   const inputData = req.body;
-  const articleData = await Prisma.article.create({
+  const articleData = await prisma.article.create({
     data: inputData,
   });
   res.status(201).send({ message: '게시글이 안전하게 등록되었습니다.', data: articleData });
@@ -20,18 +20,43 @@ const createArticle = async (req, res) => {
 
 //GET
 const getListArticles = async (req, res) => {
-  const { offset = 0, limit = 0 } = req.query;
-  const articleData = await Prisma.article.findMany({
-    skip: parseInt(offset),
-    take: parseInt(limit),
-  });
-  res.status(200).send({ message: '게시글 목록 불러오기, 성공!', data: articleData });
+  const { offset = 0, limit = 0, order = 'recent' } = req.query;
+  let orderBy;
+  switch (order) {
+    case 'recent': {
+      orderBy = { createdAt: 'desc' };
+      break;
+    }
+    case 'oldest': {
+      orderBy = { createdAt: 'asc' };
+      break;
+    }
+    default:
+      orderBy = { createdAt: 'desc' };
+  }
+
+  try {
+    const articleData = await prisma.article.findMany({
+      orderBy,
+      skip: parseInt(offset),
+      take: parseInt(limit),
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        createdAt: true,
+      },
+    });
+    res.status(200).send({ message: '게시글 목록 불러오기, 성공!', data: articleData });
+  } catch (error) {
+    return next(error);
+  }
 };
 
 //GET id
 const getArticleById = async (req, res) => {
   const id = req.params.id;
-  const articleData = await Prisma.article.findUnique({
+  const articleData = await prisma.article.findUnique({
     where: { id },
   });
   if (!articleData) {
@@ -44,7 +69,7 @@ const patchArticleById = async (req, res, next) => {
   const id = req.params.id;
   const inputData = req.body;
   try {
-    await Prisma.article.update({
+    await prisma.article.update({
       where: { id },
       data: inputData,
     });
@@ -60,7 +85,7 @@ const patchArticleById = async (req, res, next) => {
 const deleteArticleById = async (req, res, next) => {
   const id = req.params.id;
   try {
-    await Prisma.article.delete({
+    await prisma.article.delete({
       where: { id },
     });
     //   if (!articleData) {
