@@ -1,4 +1,3 @@
-import { PrismaClient } from '@prisma/client';
 import prisma from '../lib/prismaClient.js';
 /**
  200 OK: 일반적인 성공 (GET, UPDATE 후)

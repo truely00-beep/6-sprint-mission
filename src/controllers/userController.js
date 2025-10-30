@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import prisma from '../src/lib/prismaClient.js';
 //import asyncHandler from 'express-async-handler';
 
 //create<제목>

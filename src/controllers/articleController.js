@@ -1,5 +1,5 @@
-import { PrismaClient } from '@prisma/client';
 import prisma from '../lib/prismaClient.js';
+
 /**
 200 OK: 일반적인 성공 (GET, UPDATE 후)
 201 Created: 새로운 리소스 생성 성공 (POST)
