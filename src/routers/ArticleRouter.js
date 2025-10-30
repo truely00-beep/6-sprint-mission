@@ -81,6 +81,12 @@ router
     const { id } = req.params;
     const article = await prisma.article.findUniqueOrThrow({
       where: { id },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        createdAt: true,
+      },
     });
     res.status(200).send(article);
   })
