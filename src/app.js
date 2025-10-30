@@ -2,7 +2,7 @@ import express from 'express';
 import 'express-async-errors';
 import { PORT } from './utils/constants.js';
 import productRouter from './routers/productsRouter.js';
-import articleRouter from './routers/articleRouter.js';
+import articleRouter from './routers/articlesRouter.js';
 import { errorHandlerMiddleware } from './middlewares/errorHandler.js';
 
 const app = express();
