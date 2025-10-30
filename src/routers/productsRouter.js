@@ -53,10 +53,22 @@ router
       }),
     ]);
 
-    // 페이지네이션 정보 계산
+    // 검색을 했을 때 일치하는 값이 없다면?
+    if (search && totalProducts === 0) {
+      return res.status(200).json({
+        message: `'${search}'와 일치하는 상품을 찾을 수 없습니다.`,
+        data: [],
+        pagination: {
+          totalItems: 0,
+          totalPages: 0,
+          currentPage: 1,
+          itemsPerPage: _limit,
+        },
+      });
+    }
+
     const totalPages = Math.ceil(totalProducts / _limit);
 
-    // 7. 클라이언트에 응답 전송
     res.status(200).json({
       message: '상품 목록을 조회했습니다.',
       data: products,

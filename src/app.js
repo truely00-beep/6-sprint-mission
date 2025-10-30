@@ -1,6 +1,5 @@
 import express from 'express';
 import 'express-async-errors';
-import { prisma } from './utils/prisma.js';
 import { PORT } from './utils/constants.js';
 import productRouter from './routers/productsRouter.js';
 import { errorHandlerMiddleware } from './middlewares/errorHandler.js';
