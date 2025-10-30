@@ -14,12 +14,6 @@ const createProduct = async (req, res, next) => {
     // const { name, description, price, tags } = req.body;
     const productData = await prisma.product.create({
       data: inputData,
-      // data: {
-      //   name,
-      //   description,
-      //   price,
-      //   tags,
-      // },
     });
     res.status(201).send({ message: '상품이 안전하게 등록되었습니다.', data: productData });
   } catch (error) {
@@ -63,6 +57,7 @@ const getListProducts = async (req, res, next) => {
         id: true,
         name: true,
         price: true,
+        status: true,
         createdAt: true,
         sellerId: true,
         seller: { select: { firstName: true } },
@@ -86,6 +81,7 @@ const getProductById = async (req, res, next) => {
         description: true,
         price: true,
         tags: true,
+        status: true,
         createdAt: true,
       },
     });

@@ -11,12 +11,10 @@ import prisma from '../lib/prismaClient.js';
 //POST==========
 const createArticle = async (req, res, next) => {
   try {
-    const { title, content } = req.body;
+    const inputData = req.body;
+    // const { title, content } = req.body;
     const articleData = await prisma.article.create({
-      data: {
-        title,
-        content,
-      },
+      data: inputData,
     });
     res.status(201).send({ message: '게시글이 안전하게 등록되었습니다.', data: articleData });
   } catch (error) {
@@ -70,7 +68,7 @@ const getListArticles = async (req, res, next) => {
 //GET id==========
 const getArticleById = async (req, res, next) => {
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     const articleData = await prisma.article.findUnique({
       where: { id },
       select: {
@@ -89,14 +87,14 @@ const getArticleById = async (req, res, next) => {
 //PATCH id==========
 const patchArticleById = async (req, res, next) => {
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     const inputData = req.body;
 
-    await prisma.article.update({
+    const newPatchData = await prisma.article.update({
       where: { id },
       data: inputData,
     });
-    res.status(200).send({ message: '게시글 수정, 성공!' });
+    res.status(200).send({ message: '게시글 수정, 성공!', data: newPatchData });
   } catch (error) {
     return next(error);
   }
@@ -105,7 +103,7 @@ const patchArticleById = async (req, res, next) => {
 //DELETE id==========
 const deleteArticleById = async (req, res, next) => {
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     await prisma.article.delete({
       where: { id },
     });

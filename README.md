@@ -122,19 +122,42 @@
 
 # 이미지
 
+//제품 포스트
+![alt text](./image/POST_p.png)
+![alt text](./image/POST_p_결과.png)
 //포함단어 검색
 ![alt text](./image/GET_LIST_p.png)
-![alt text](./image/검색포함.png)
+![alt text](./image/GET_LIST_p_결과.png)
 //특정 아이디 검색
 ![alt text](./image/GET_ID_p.png)
-![alt text](./image/ID검색_p.png)
+![alt text](./image/GET_ID_p_결과.png)
 //제품 패치
-![alt text](./image/PATCH_검색.png)
 ![alt text](./image/PATCH_p.png)
+![alt text](./image/PATCH_p_결과.png)
 //제품 삭제
-![alt text](./image/삭제하기.png)
-![alt text](./image/삭제완료.png)
-![alt text](./image/404찾을%20수%20없음.png)
-//제품 포스트
-![alt text](./image/등록_검색.png)
-![alt text](./image/제품등록_완료.png)
+![alt text](./image/DELETE_p.png)
+![alt text](./image/DELETE_p_결과.png)
+![alt text](./image/DELETE_p_결과2.png)
+
+==========================================
+
+//게시글 포스트
+![alt text](./image/POST_a.png)
+![alt text](./image/POST_a_결과.png)
+
+//포함 단어 검색
+![alt text](./image/GET_LIST_a.png)
+![alt text](./image/GET_LIST_a_결과.png)
+
+//특정 게시글 검색
+![alt text](./image/GET_ID_a.png)
+![alt text](./image/GET_ID_a_결과.png)
+
+//게시글 수정
+![alt text](./image/PATCH_a.png)
+![alt text](./image/PATCH_a_결과.png)
+
+//게시글 삭제
+![alt text](./image/DELETE_a.png)
+![alt text](./image/DELETE_a_결과.png)
+![alt text](./image/DELETE_a_결과2.png)
