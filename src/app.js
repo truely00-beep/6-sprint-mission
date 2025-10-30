@@ -13,11 +13,11 @@ app.get('/', (req, res) => {
 });
 
 //중고마켓
-app.use('/products', productRouter);
+app.use('/product', productRouter);
 // app.use('/product/:id', productRouter);
 
 //자유게시판
-app.use('/articles', articleRouter);
+app.use('/article', articleRouter);
 // app.use('/article/:id', articleRouter);
 
 //마지막에 실행.

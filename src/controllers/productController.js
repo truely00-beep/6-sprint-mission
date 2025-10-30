@@ -7,19 +7,19 @@ import prisma from '../lib/prismaClient.js';
  404 Not Found: 요청한 리소스가 없음
  */
 
-//포함 검색
-
 //POST==========
 const createProduct = async (req, res, next) => {
   try {
-    const { name, description, price, tags } = req.body;
+    const inputData = req.body;
+    // const { name, description, price, tags } = req.body;
     const productData = await prisma.product.create({
-      data: {
-        name,
-        description,
-        price,
-        tags,
-      },
+      data: inputData,
+      // data: {
+      //   name,
+      //   description,
+      //   price,
+      //   tags,
+      // },
     });
     res.status(201).send({ message: '상품이 안전하게 등록되었습니다.', data: productData });
   } catch (error) {
@@ -32,6 +32,7 @@ const getListProducts = async (req, res, next) => {
   try {
     const { offset = 0, limit = 0, order = 'recent', search } = req.query;
 
+    //포함 검색
     const where = search
       ? {
           OR: [{ name: { contains: search } }, { description: { contains: search } }],
@@ -39,7 +40,6 @@ const getListProducts = async (req, res, next) => {
       : undefined;
 
     //최신순 정렬
-
     let orderBy;
     switch (order) {
       case 'recent': {
@@ -64,9 +64,11 @@ const getListProducts = async (req, res, next) => {
         name: true,
         price: true,
         createdAt: true,
+        sellerId: true,
+        seller: { select: { firstName: true } },
       },
     });
-    res.status(200).send({ message: '판매 제품 목록 불러오기, 성공!', data: productData });
+    res.status(200).send({ message: '=== 판매 제품 목록 불러오기, 성공! ===', data: productData });
   } catch (error) {
     return next(error);
   }
@@ -75,7 +77,7 @@ const getListProducts = async (req, res, next) => {
 //GET id==========
 const getProductById = async (req, res, next) => {
   try {
-    const id = req.params.id;
+    const id = req.params;
     const productData = await prisma.product.findUniqueOrThrow({
       where: id,
       select: {
@@ -87,7 +89,7 @@ const getProductById = async (req, res, next) => {
         createdAt: true,
       },
     });
-    res.status(200).send({ message: '판매 제품 불러오기, 성공!', data: productData });
+    res.status(200).send({ message: '=== 판매 제품 불러오기, 성공! ===', data: productData });
   } catch (error) {
     return next(error);
   }
@@ -95,14 +97,14 @@ const getProductById = async (req, res, next) => {
 //PATCH id==========
 const patchProductById = async (req, res, next) => {
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     const inputData = req.body;
 
-    await prisma.product.update({
+    const newPatchData = await prisma.product.update({
       where: { id },
       data: inputData,
     });
-    res.status(200).send({ message: '판매 제품 수정, 성공!' });
+    res.status(200).send({ message: '=== 판매 제품 수정, 성공! ===', data: newPatchData });
   } catch (error) {
     return next(error);
   }
@@ -111,7 +113,7 @@ const patchProductById = async (req, res, next) => {
 //DELETE id==========
 const deleteProductById = async (req, res, next) => {
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     await prisma.product.delete({
       where: { id },
     });

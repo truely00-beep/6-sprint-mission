@@ -119,3 +119,22 @@
 - [x] .env 파일에 환경 변수를 설정해 주세요.
 - [] CORS를 설정해 주세요.
 - [] render.com으로 배포해 주세요.
+
+# 이미지
+
+//포함단어 검색
+![alt text](./image/GET_LIST_p.png)
+![alt text](./image/검색포함.png)
+//특정 아이디 검색
+![alt text](./image/GET_ID_p.png)
+![alt text](./image/ID검색_p.png)
+//제품 패치
+![alt text](./image/PATCH_검색.png)
+![alt text](./image/PATCH_p.png)
+//제품 삭제
+![alt text](./image/삭제하기.png)
+![alt text](./image/삭제완료.png)
+![alt text](./image/404찾을%20수%20없음.png)
+//제품 포스트
+![alt text](./image/등록_검색.png)
+![alt text](./image/제품등록_완료.png)

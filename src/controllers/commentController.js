@@ -1,5 +1,5 @@
+import { skip } from '@prisma/client/runtime/library';
 import prisma from '../src/lib/prismaClient.js';
-//import asyncHandler from 'express-async-handler';
 
 //create<제목>Comment //create<제목>Comment
 //getlist<제목>Comment //getlist<제목>Comment
@@ -24,13 +24,71 @@ import prisma from '../src/lib/prismaClient.js';
 //     }
 // }
 
-// const createCommentForArticle =
+// const createCommentForArticle = async (req, res, next) => {
+//     try{
+
+//     }catch(error){
+//         return next(error)
+//     }
+// }
+
 //GET
 // const getlist
+// const getCommentArticle= async (req, res, next) => {
+//     try{
+
+//     }catch(error){
+//         return next(error)
+//     }
+// }
+
+const getCommentProduct = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { limit = 0 } = req.query;
+
+    const comments = await prisma.comment.findMany({
+      where: id,
+      //   where: { productId: id },
+      //   cursor: { id: cursor },
+      take: parseInt(limit),
+      select: {
+        id: true,
+        content: true,
+        createdAt: true,
+      },
+    });
+    res.status(200).send(comments);
+  } catch (error) {
+    return next(error);
+  }
+};
+
 //GET id
+// = async (req, res, next) => {
+//     try{
+
+//     }catch(error){
+//         return next(error)
+//     }
+// }
 
 //PATCH id
+// = async (req, res, next) => {
+//     try{
 
-//DELETE id
+//     }catch(error){
+//         return next(error)
+//     }
+// }
+
+// //DELETE id
+// = async (req, res, next) => {
+//     try{
+
+//     }catch(error){
+//         return next(error)
+//     }
+// }
 
 // export {};
