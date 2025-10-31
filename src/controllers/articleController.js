@@ -73,6 +73,9 @@ const getArticleById = async (req, res, next) => {
       where: { id },
       select: {
         id: true,
+        author: {
+          select: { firstName: true, email: true },
+        },
         title: true,
         content: true,
         createdAt: true,
