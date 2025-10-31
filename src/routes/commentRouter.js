@@ -1,10 +1,14 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
+import {
+  validateComment,
+  validateUpdateComment,
+} from '../middlewares/validateComment.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();
 
-router.post('/product/:productId', async (req, res) => {
+router.post('/product/:productId', validateComment, async (req, res) => {
   const { productId } = req.params;
   const { content } = req.body;
   const data = await prisma.comment.create({
@@ -13,7 +17,7 @@ router.post('/product/:productId', async (req, res) => {
   res.status(201).json(data);
 });
 
-router.post('/article/:articleId', async (req, res) => {
+router.post('/article/:articleId', validateComment, async (req, res) => {
   const { articleId } = req.params;
   const { content } = req.body;
   const data = await prisma.comment.create({
@@ -22,7 +26,7 @@ router.post('/article/:articleId', async (req, res) => {
   res.status(201).json(data);
 });
 
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', validateUpdateComment, async (req, res) => {
   const { id } = req.params;
   const data = await prisma.comment.update({
     where: { id },
