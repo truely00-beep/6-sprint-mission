@@ -1,10 +1,14 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
+import {
+  validateProduct,
+  validateUpdateProduct,
+} from '../middlewares/validateProduct.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();
 
-router.post('/', async (req, res) => {
+router.post('/', validateProduct, async (req, res) => {
   const data = await prisma.product.create({
     data: req.body,
   });
@@ -27,7 +31,7 @@ router.get('/:id', async (req, res) => {
   res.status(200).json(data);
 });
 
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', validateUpdateProduct, async (req, res) => {
   const { id } = req.params;
   const data = await prisma.product.update({
     where: { id },
