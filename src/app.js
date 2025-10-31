@@ -5,6 +5,8 @@ import articleRouter from './router/articleRouter.js';
 import { errorHandler } from './errorHandler.js';
 import productCommentRouter from './router/productCommentRouter.js';
 import articleCommentRouter from './router/articleCommentRouter.js';
+import multer from 'multer';
+import uploadRouter from './router/uploadRouter.js';
 
 const app = express();
 // app.use(cors());
@@ -16,9 +18,14 @@ app.use('/products', productRouter);
 //article
 app.use('/articles', articleRouter);
 
+//comment
 app.use('/comments/products', productCommentRouter);
 
 app.use('/comments/articles', articleCommentRouter);
+
+//image
+app.use('/files', express.static('uploads'));
+app.use('/files', uploadRouter);
 
 app.use(errorHandler);
 
