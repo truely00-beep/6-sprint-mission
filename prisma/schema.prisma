@@ -23,15 +23,16 @@ model Product {
   tags        String
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt
-  content     CommentToProduct[]
+  comments    CommentToProduct[]
 }
 
 model Article {
   id        String             @id @default(uuid())
   title     String
+  content   String
   createdAt DateTime           @default(now())
   updatedAt DateTime           @updatedAt
-  content   CommentToArticle[]
+  comments  CommentToArticle[]
 }
 
 model CommentToProduct {
