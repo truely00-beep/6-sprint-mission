@@ -1,10 +1,14 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
+import {
+  validateArticle,
+  validateUpdateArticle,
+} from '../middlewares/validateArticle.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();
 
-router.post('/', async (req, res) => {
+router.post('/', validateArticle, async (req, res) => {
   const data = await prisma.article.create({
     data: req.body,
   });
@@ -20,7 +24,7 @@ router.get('/:id', async (req, res) => {
   res.status(200).json(data);
 });
 
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', validateUpdateArticle, async (req, res) => {
   const { id } = req.params;
   const data = await prisma.article.update({
     where: { id },
