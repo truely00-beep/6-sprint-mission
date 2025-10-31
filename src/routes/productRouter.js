@@ -15,6 +15,14 @@ router.get('/:id', async (req, res) => {
   const { id } = req.params;
   const data = await prisma.product.findUnique({
     where: { id },
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      price: true,
+      tags: true,
+      createdAt: true,
+    },
   });
   res.status(200).json(data);
 });
