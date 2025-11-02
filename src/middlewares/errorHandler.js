@@ -14,7 +14,7 @@ export const errorHandler = (err, req, res, next) => {
     }
   }
 
-  if (err.code === 'StructError') {
+  if (err.name === 'StructError') {
     return res.status(400).json({ message: err.message });
   }
 
