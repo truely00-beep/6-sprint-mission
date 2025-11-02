@@ -19,6 +19,9 @@
     "start": "node ./src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "prisma": {
+    "seed": "node ./src/seed/seed.js"
+  },
   "dependencies": {
     "@prisma/client": "^5.10.0",
     "cors": "^2.8.5",
