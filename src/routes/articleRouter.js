@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import {
   validateArticle,
   validateUpdateArticle,
-} from '../middlewares/validateArticle.js';
+} from '../middlewares/validate/validateArticle.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();
