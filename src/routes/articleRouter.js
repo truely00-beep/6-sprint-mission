@@ -28,6 +28,13 @@ router.get(
       where: { id },
       select: { id: true, title: true, content: true, createdAt: true },
     });
+
+    if (!data) {
+      return res
+        .status(404)
+        .json({ message: '해당 게시글을 찾을 수 없습니다.' });
+    }
+
     res.status(200).json(data);
   })
 );

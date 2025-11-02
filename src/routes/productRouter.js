@@ -35,6 +35,11 @@ router.get(
         createdAt: true,
       },
     });
+
+    if (!data) {
+      return res.status(404).json({ message: '해당 상품을 찾을 수 없습니다.' });
+    }
+
     res.status(200).json(data);
   })
 );

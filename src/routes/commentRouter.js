@@ -74,6 +74,13 @@ router.get(
       orderBy: { createdAt: 'desc' },
       select: { id: true, content: true, createdAt: true },
     });
+
+    if (data.length === 0) {
+      return res
+        .status(404)
+        .json({ message: '아직 댓글이 존재하지 않습니다.' });
+    }
+
     res.status(200).json(data);
   })
 );
@@ -93,6 +100,13 @@ router.get(
       orderBy: { createdAt: 'desc' },
       select: { id: true, content: true, createdAt: true },
     });
+
+    if (data.length === 0) {
+      return res
+        .status(404)
+        .json({ message: '아직 댓글이 존재하지 않습니다.' });
+    }
+
     res.status(200).json(data);
   })
 );
