@@ -4,7 +4,7 @@ import {
   validateArticle,
   validateUpdateArticle,
 } from '../middlewares/validate/validateArticle.js';
-import { asyncHandler } from '../middlewares/asyncHandler.js';
+import { asyncHandler } from '../middlewares/errorHandler/asyncHandler.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();

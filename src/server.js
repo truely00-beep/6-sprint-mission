@@ -5,7 +5,7 @@ import productRouters from './routes/productRouter.js';
 import articleRouters from './routes/articleRouter.js';
 import commentRouters from './routes/commentRouter.js';
 import multer from 'multer';
-import { errorHandler } from './middlewares/errorHandler.js';
+import { errorHandler } from './middlewares/errorHandler/errorHandler.js';
 dotenv.config();
 
 const PORT = process.env.PORT || 4000;
