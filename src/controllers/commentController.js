@@ -1,11 +1,7 @@
 import { skip } from '@prisma/client/runtime/library';
 import prisma from '../lib/prismaClient.js';
 
-//create<제목>Comment //create<제목>Comment
-//getlist<제목>Comment //getlist<제목>Comment
-//patchCommentById
-//deleteCommentById
-/**
+/*
 200 OK: 일반적인 성공 (GET, UPDATE 후)
 201 Created: 새로운 리소스 생성 성공 (POST)
 204 No Content: 성공했지만 돌려줄 데이터가 없음 (DELETE)
@@ -23,9 +19,9 @@ const createCommentForProduct = async (req, res, next) => {
 
     const newComment = await prisma.comment.create({
       data: {
-        productId,
         content,
-        authorId,
+        product: { connect: { id: productId } },
+        author: { connect: { id: authorId } },
       },
       select: {
         id: true,
@@ -44,13 +40,17 @@ const createCommentForProduct = async (req, res, next) => {
 const createCommentForArticle = async (req, res, next) => {
   try {
     const { articleId } = req.params;
-    const { title, content, authorId } = req.body;
+    const { content, authorId } = req.body;
 
     const newComment = await prisma.comment.create({
-      data: { title, content, authorId },
+      data: {
+        content,
+        article: { connect: { id: articleId } },
+        author: { connect: { id: authorId } },
+      },
       select: {
         id: true,
-        author: { select: { id: true, fistName: true } },
+        author: { select: { id: true, firstName: true } },
         content: true,
         createdAt: true,
       },
@@ -68,7 +68,7 @@ const getCommentListProduct = async (req, res, next) => {
     const { limit = 0 } = req.query;
 
     const comments = await prisma.comment.findMany({
-      where: productId,
+      where: { productId },
       //   where: { productId: id },
       //   cursor: { id: cursor },
       take: parseInt(limit),
@@ -78,7 +78,9 @@ const getCommentListProduct = async (req, res, next) => {
         createdAt: true,
       },
     });
-    res.status(200).send({ message: '=== 중고마켓 댓글 목록을 불러왔습니다. ===', data: comments });
+    res
+      .status(200)
+      .send({ message: `=== ${productId}제품의 댓글 목록을 불러왔습니다. ===`, data: comments });
   } catch (error) {
     return next(error);
   }
@@ -100,8 +102,8 @@ const getCommentListArticle = async (req, res, next) => {
       },
     });
     res
-      .status(204)
-      .send({ message: '=== 자유게시판 댓글 목록을 불러왔습니다. ===', data: comments });
+      .status(200)
+      .send({ message: `=== ${articleId}게시글의 댓글 목록을 불러왔습니다. ===`, data: comments });
   } catch (error) {
     return next(error);
   }

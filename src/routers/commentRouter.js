@@ -8,6 +8,7 @@ import {
 
 const router = express.Router();
 
+//Article/Product comment는 각 라우터에 있음
 router
   .route('/:id')
   //GET id //PATCH id //DELETE id

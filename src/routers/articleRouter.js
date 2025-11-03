@@ -10,6 +10,7 @@ import {
   createCommentForArticle,
   getCommentListArticle,
 } from '../controllers/commentController.js';
+import { validateArticle, validateComment } from '../middlewares/validator.js';
 
 const router = express.Router();
 
@@ -17,7 +18,7 @@ router
   .route('/')
   //POST  //GET
   .get(getListArticles)
-  .post(createArticle);
+  .post(validateArticle, createArticle);
 
 router
   .route('/:id')
@@ -29,7 +30,7 @@ router
 router
   .route('/:articleId/comments')
   //POST  //GET
-  .post(createCommentForArticle) //자유게시판 댓글
+  .post(validateComment, createCommentForArticle) //자유게시판 댓글
   .get(getCommentListArticle); //자유게시판
 
 export default router;

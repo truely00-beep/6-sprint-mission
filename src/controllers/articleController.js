@@ -11,9 +11,15 @@ import prisma from '../lib/prismaClient.js';
 //POST==========
 const createArticle = async (req, res, next) => {
   try {
-    const { title, content, id } = req.body;
+    const { title, content, authorId } = req.body;
     const articleData = await prisma.article.create({
       data: { title, content, authorId },
+      select: {
+        title: true,
+        content: true,
+        createdAt: true,
+        authorId: true,
+      },
       // select: { id: true, title: true, content: true, createdAt: true, updatedAt: true },
     });
     res.status(201).send({ message: '게시글이 안전하게 등록되었습니다.', data: articleData });
@@ -57,6 +63,7 @@ const getListArticles = async (req, res, next) => {
         title: true,
         content: true,
         createdAt: true,
+        author: { select: { firstName: true } },
       },
     });
     res.status(200).send({ message: '게시글 목록 불러오기, 성공!', data: articleData });

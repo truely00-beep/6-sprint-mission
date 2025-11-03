@@ -21,7 +21,7 @@ app.use('/products', productRouter);
 app.use('/articles', articleRouter);
 
 //댓글
-app.use('/comment', commentRouter);
+app.use('/comments', commentRouter);
 
 //마지막에 실행.
 app.use(errorHandler);
