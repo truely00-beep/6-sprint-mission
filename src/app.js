@@ -12,6 +12,10 @@ const app = express();
 // app.use(cors());
 app.use(express.json());
 
+app.get('/', (req, res) => {
+  res.send('Hello, this is the API server.');
+});
+
 //product
 app.use('/products', productRouter);
 
