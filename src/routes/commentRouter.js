@@ -5,6 +5,11 @@ import {
   validateUpdateComment,
 } from '../middlewares/validate/validateComment.js';
 import { asyncHandler } from '../middlewares/errorHandler/asyncHandler.js';
+import {
+  validateProductIdParam,
+  validateArticleIdParam,
+  validateIdParam,
+} from '../middlewares/validate/validateId.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -12,6 +17,7 @@ const prisma = new PrismaClient();
 router
   .route('/product/:productId')
   .post(
+    validateProductIdParam,
     validateComment,
     asyncHandler(async (req, res) => {
       const { productId } = req.params;
@@ -23,6 +29,7 @@ router
     })
   )
   .get(
+    validateProductIdParam,
     asyncHandler(async (req, res) => {
       const { productId } = req.params;
       const cursor = req.query.cursor;
@@ -50,6 +57,7 @@ router
 router
   .route('/article/:articleId')
   .post(
+    validateArticleIdParam,
     validateComment,
     asyncHandler(async (req, res) => {
       const { articleId } = req.params;
@@ -61,6 +69,7 @@ router
     })
   )
   .get(
+    validateArticleIdParam,
     asyncHandler(async (req, res) => {
       const { articleId } = req.params;
       const cursor = req.query.cursor;
@@ -88,6 +97,7 @@ router
 router
   .route('/:id')
   .patch(
+    validateIdParam,
     validateUpdateComment,
     asyncHandler(async (req, res) => {
       const { id } = req.params;
@@ -99,6 +109,7 @@ router
     })
   )
   .delete(
+    validateIdParam,
     asyncHandler(async (req, res) => {
       const { id } = req.params;
       const data = await prisma.comment.delete({
