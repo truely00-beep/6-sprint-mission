@@ -1,5 +1,5 @@
 import { skip } from '@prisma/client/runtime/library';
-import prisma from '../src/lib/prismaClient.js';
+import prisma from '../lib/prismaClient.js';
 
 //create<제목>Comment //create<제목>Comment
 //getlist<제목>Comment //getlist<제목>Comment
@@ -14,41 +14,61 @@ import prisma from '../src/lib/prismaClient.js';
  */
 
 //POST
-// const createCommentForProduct = async (req,res) => {
-//     const inputData = req.body
-//     try {
-//         await Prisma.comment.create({
-//             data: {}
-//                 inputData
-//         })
-//     }
-// }
 
-// const createCommentForArticle = async (req, res, next) => {
-//     try{
-
-//     }catch(error){
-//         return next(error)
-//     }
-// }
-
-//GET
-// const getlist
-// const getCommentArticle= async (req, res, next) => {
-//     try{
-
-//     }catch(error){
-//         return next(error)
-//     }
-// }
-
-const getCommentProduct = async (req, res, next) => {
+// 중고마켓 댓글 POST
+const createCommentForProduct = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { productId } = req.params;
+    const { content, authorId } = req.body;
+
+    const newComment = await prisma.comment.create({
+      data: {
+        productId,
+        content,
+        authorId,
+      },
+      select: {
+        id: true,
+        author: { select: { id: true, firstName: true } },
+        content: true,
+        createdAt: true,
+      },
+    });
+    res.status(201).send({ message: '=== 댓글이 등록되었습니다 ===', data: newComment });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+//자유게시판 댓글 POST
+const createCommentForArticle = async (req, res, next) => {
+  try {
+    const { articleId } = req.params;
+    const { title, content, authorId } = req.body;
+
+    const newComment = await prisma.comment.create({
+      data: { title, content, authorId },
+      select: {
+        id: true,
+        author: { select: { id: true, fistName: true } },
+        content: true,
+        createdAt: true,
+      },
+    });
+    res.status(201).send({ message: '=== 댓글이 등록되었습니다 ===', data: newComment });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+//중고마켓
+const getCommentListProduct = async (req, res, next) => {
+  try {
+    const { productId } = req.params;
     const { limit = 0 } = req.query;
 
     const comments = await prisma.comment.findMany({
-      where: id,
+      where: productId,
       //   where: { productId: id },
       //   cursor: { id: cursor },
       take: parseInt(limit),
@@ -58,37 +78,93 @@ const getCommentProduct = async (req, res, next) => {
         createdAt: true,
       },
     });
-    res.status(200).send(comments);
+    res.status(200).send({ message: '=== 중고마켓 댓글 목록을 불러왔습니다. ===', data: comments });
   } catch (error) {
     return next(error);
   }
 };
 
-//GET id
-// = async (req, res, next) => {
-//     try{
+//자유게시판
+const getCommentListArticle = async (req, res, next) => {
+  try {
+    const { articleId } = req.params;
+    const { limit = 0 } = req.query;
 
-//     }catch(error){
-//         return next(error)
-//     }
-// }
+    const comments = await prisma.comment.findMany({
+      where: { articleId },
+      take: parseInt(limit),
+      select: {
+        id: true,
+        content: true,
+        createdAt: true,
+      },
+    });
+    res
+      .status(204)
+      .send({ message: '=== 자유게시판 댓글 목록을 불러왔습니다. ===', data: comments });
+  } catch (error) {
+    return next(error);
+  }
+};
 
-//PATCH id
-// = async (req, res, next) => {
-//     try{
+//GET id 공통
+const getCommentById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
 
-//     }catch(error){
-//         return next(error)
-//     }
-// }
+    const commentData = await prisma.comment.findUniqueOrThrow({
+      where: { id },
+      select: {
+        id: true,
+        author: {
+          select: { fistName: true },
+        },
+        content: true,
+        createdAt: true,
+      },
+    });
+    res.status(201).send({ message: '=== 댓글을 불러왔습니다 ===', data: commentData });
+  } catch (error) {
+    return next(error);
+  }
+};
 
-// //DELETE id
-// = async (req, res, next) => {
-//     try{
+//PATCH id 공통
+const patchCommentById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const inputData = req.body;
 
-//     }catch(error){
-//         return next(error)
-//     }
-// }
+    const newPatchData = await prisma.comment.update({
+      where: { id },
+      data: inputData,
+    });
+    res.status(201).send({ message: ' === 댓글 수정 성공 === ', data: newPatchData });
+  } catch (error) {
+    return next(error);
+  }
+};
 
-// export {};
+//DELETE id 공통
+const deleteCommentById = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    await prisma.comment.delete({
+      where: { id },
+    });
+    res.status(204).end();
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export {
+  createCommentForArticle,
+  createCommentForProduct,
+  getCommentListProduct,
+  getCommentListArticle,
+  getCommentById,
+  patchCommentById,
+  deleteCommentById,
+};

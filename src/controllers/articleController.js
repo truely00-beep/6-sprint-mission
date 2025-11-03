@@ -11,10 +11,10 @@ import prisma from '../lib/prismaClient.js';
 //POST==========
 const createArticle = async (req, res, next) => {
   try {
-    const inputData = req.body;
-    // const { title, content } = req.body;
+    const { title, content, id } = req.body;
     const articleData = await prisma.article.create({
-      data: inputData,
+      data: { title, content, authorId },
+      // select: { id: true, title: true, content: true, createdAt: true, updatedAt: true },
     });
     res.status(201).send({ message: '게시글이 안전하게 등록되었습니다.', data: articleData });
   } catch (error) {
@@ -69,7 +69,7 @@ const getListArticles = async (req, res, next) => {
 const getArticleById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const articleData = await prisma.article.findUnique({
+    const articleData = await prisma.article.findUniqueOrThrow({
       where: { id },
       select: {
         id: true,
