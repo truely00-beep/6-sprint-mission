@@ -11,6 +11,7 @@ import {
   getCommentListArticle,
 } from '../controllers/commentController.js';
 import { validateArticle, validateComment } from '../middlewares/validator.js';
+import upload from '../middlewares/uploadImages.js';
 
 const router = express.Router();
 

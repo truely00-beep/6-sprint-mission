@@ -1,13 +1,16 @@
 import express from 'express';
+import cors from 'cors';
 import dotenv from 'dotenv';
 import errorHandler from './middlewares/errorHandler.js';
 import productRouter from './routers/productRouter.js';
 import articleRouter from './routers/articleRouter.js';
 import commentRouter from './routers/commentRouter.js';
+import uploadRouter from './routers/uploadRouter.js';
 
 dotenv.config();
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {
@@ -22,6 +25,9 @@ app.use('/articles', articleRouter);
 
 //댓글
 app.use('/comments', commentRouter);
+
+//이미지
+app.use('/uploads', uploadRouter);
 
 //마지막에 실행.
 app.use(errorHandler);

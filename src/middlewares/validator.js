@@ -1,5 +1,3 @@
-// 400 에러
-
 //중고 마켓
 const validateProduct = (req, res, next) => {
   const { name, description, price } = req.body;

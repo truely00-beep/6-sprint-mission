@@ -5,6 +5,7 @@ import {
   patchCommentById,
   deleteCommentById,
 } from '../controllers/commentController.js';
+import upload from '../middlewares/uploadImages.js';
 
 const router = express.Router();
 

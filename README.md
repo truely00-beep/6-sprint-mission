@@ -3,10 +3,10 @@
 ## 공통
 
 - [x] PostgreSQL를 이용해 주세요.
-- [] 데이터 모델 간의 관계를 고려하여 onDelete를 설정해 주세요.
+- [x] 데이터 모델 간의 관계를 고려하여 onDelete를 설정해 주세요.
 - [x] 데이터베이스 시딩 코드를 작성해 주세요.
-- [] 각 API에 적절한 에러 처리를 해 주세요.
-- [] 각 API 응답에 적절한 상태 코드를 리턴하도록 해 주세요.
+- [x] 각 API에 적절한 에러 처리를 해 주세요.
+- [x] 각 API 응답에 적절한 상태 코드를 리턴하도록 해 주세요.
 
 ## 스키마
 
@@ -94,12 +94,9 @@
 
 - [x] 게시물 등록 시 필요한 필드(제목, 내용 등)의 유효성 검증하는 미들웨어를 구현합니다.
 
-- [] multer 미들웨어를 사용하여 이미지 업로드 API를 구현해주세요.
-  - [] 업로드된 이미지는 서버에 저장하고, 해당 이미지의 경로를 response 객체에 포함해 반환합니다.
-
 ### 이미지 업로드
 
-- [] multer 미들웨어를 사용하여 이미지 업로드 API를 구현해주세요.
+- [x] multer 미들웨어를 사용하여 이미지 업로드 API를 구현해주세요.
   - [] 업로드된 이미지는 서버에 저장하고, 해당 이미지의 경로를 response 객체에 포함해 반환합니다.
 
 ### 에러 처리
@@ -117,47 +114,5 @@
 # 배포
 
 - [x] .env 파일에 환경 변수를 설정해 주세요.
-- [] CORS를 설정해 주세요.
+- [x] CORS를 설정해 주세요.
 - [] render.com으로 배포해 주세요.
-
-# 이미지
-
-//제품 포스트
-![alt text](./image/POST_p.png)
-![alt text](./image/POST_p_결과.png)
-//포함단어 검색
-![alt text](./image/GET_LIST_p.png)
-![alt text](./image/GET_LIST_p_결과.png)
-//특정 아이디 검색
-![alt text](./image/GET_ID_p.png)
-![alt text](./image/GET_ID_p_결과.png)
-//제품 패치
-![alt text](./image/PATCH_p.png)
-![alt text](./image/PATCH_p_결과.png)
-//제품 삭제
-![alt text](./image/DELETE_p.png)
-![alt text](./image/DELETE_p_결과.png)
-![alt text](./image/DELETE_p_결과2.png)
-
-==========================================
-
-//게시글 포스트
-![alt text](./image/POST_a.png)
-![alt text](./image/POST_a_결과.png)
-
-//포함 단어 검색
-![alt text](./image/GET_LIST_a.png)
-![alt text](./image/GET_LIST_a_결과.png)
-
-//특정 게시글 검색
-![alt text](./image/GET_ID_a.png)
-![alt text](./image/GET_ID_a_결과.png)
-
-//게시글 수정
-![alt text](./image/PATCH_a.png)
-![alt text](./image/PATCH_a_결과.png)
-
-//게시글 삭제
-![alt text](./image/DELETE_a.png)
-![alt text](./image/DELETE_a_결과.png)
-![alt text](./image/DELETE_a_결과2.png)
