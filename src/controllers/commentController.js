@@ -1,5 +1,6 @@
 import { skip } from '@prisma/client/runtime/library';
 import prisma from '../lib/prismaClient.js';
+import { optional } from 'superstruct';
 
 /*
 200 OK: 일반적인 성공 (GET, UPDATE 후)
@@ -65,19 +66,25 @@ const createCommentForArticle = async (req, res, next) => {
 const getCommentListProduct = async (req, res, next) => {
   try {
     const { productId } = req.params;
-    const { limit = 0 } = req.query;
+    const { limit = 0, cursor } = req.query;
 
-    const comments = await prisma.comment.findMany({
+    const options = {
       where: { productId },
-      //   where: { productId: id },
-      //   cursor: { id: cursor },
       take: parseInt(limit),
       select: {
         id: true,
         content: true,
         createdAt: true,
       },
-    });
+    };
+
+    if (cursor) {
+      options.cursor = { id: cursor };
+      options.skip = 1;
+    }
+
+    const comments = await prisma.comment.findMany(options);
+
     res
       .status(200)
       .send({ message: `=== ${productId}제품의 댓글 목록을 불러왔습니다. ===`, data: comments });
@@ -90,9 +97,9 @@ const getCommentListProduct = async (req, res, next) => {
 const getCommentListArticle = async (req, res, next) => {
   try {
     const { articleId } = req.params;
-    const { limit = 0 } = req.query;
+    const { limit = 0, cursor } = req.query;
 
-    const comments = await prisma.comment.findMany({
+    const options = {
       where: { articleId },
       take: parseInt(limit),
       select: {
@@ -100,7 +107,14 @@ const getCommentListArticle = async (req, res, next) => {
         content: true,
         createdAt: true,
       },
-    });
+    };
+
+    if (cursor) {
+      options.cursor = { id: cursor };
+      options.skip = 1;
+    }
+
+    const comments = await prisma.comment.findMany(options);
     res
       .status(200)
       .send({ message: `=== ${articleId}게시글의 댓글 목록을 불러왔습니다. ===`, data: comments });
@@ -119,13 +133,13 @@ const getCommentById = async (req, res, next) => {
       select: {
         id: true,
         author: {
-          select: { fistName: true },
+          select: { firstName: true },
         },
         content: true,
         createdAt: true,
       },
     });
-    res.status(201).send({ message: '=== 댓글을 불러왔습니다 ===', data: commentData });
+    res.status(200).send({ message: '=== 댓글을 불러왔습니다 ===', data: commentData });
   } catch (error) {
     return next(error);
   }
@@ -140,6 +154,12 @@ const patchCommentById = async (req, res, next) => {
     const newPatchData = await prisma.comment.update({
       where: { id },
       data: inputData,
+      select: {
+        id: true,
+        author: { select: { id: true, firstName: true } },
+        content: true,
+        createdAt: true,
+      },
     });
     res.status(201).send({ message: ' === 댓글 수정 성공 === ', data: newPatchData });
   } catch (error) {
