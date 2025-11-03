@@ -1,5 +1,4 @@
 import express from 'express';
-import { prisma } from '../utils/prisma.js';
 import { validatePagination } from '../middlewares/paginationValidator.js';
 import {
   createArticle,
@@ -8,10 +7,24 @@ import {
   patchArticle,
   deleteArticle,
 } from '../controllers/articlesController.js';
+import commentsRouter from './commentsRouter.js';
+
+import { validate } from '../middlewares/validate.js';
+import { CreateArticleSchema, PatchArticleSchema } from '../validations/articlesSchema.js';
 
 const router = express.Router();
 
-router.route('/').post(createArticle).get(validatePagination, getArticles);
-router.route('/:id').get(getArticle).patch(patchArticle).delete(deleteArticle);
+router
+  .route('/')
+  .post(validate(CreateArticleSchema, 'body'), createArticle)
+  .get(validatePagination, getArticles);
+
+router
+  .route('/:id')
+  .get(getArticle)
+  .patch(validate(PatchArticleSchema, 'body'), patchArticle)
+  .delete(deleteArticle);
+
+router.use('/:articleId/comments', commentsRouter);
 
 export default router;
