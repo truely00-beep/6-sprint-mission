@@ -2,7 +2,7 @@ import express from 'express';
 import { PORT } from '../constants.js';
 import productRouter from './router/productRouter.js';
 import articleRouter from './router/articleRouter.js';
-import { errorHandler } from './errorHandler.js';
+import { errorHandler } from './handler/errorHandler.js';
 import productCommentRouter from './router/productCommentRouter.js';
 import articleCommentRouter from './router/articleCommentRouter.js';
 import multer from 'multer';

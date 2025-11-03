@@ -2,7 +2,7 @@ import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import { assert } from 'superstruct';
 import { CreateArticleComment, PatchArticleComment } from '../structs/commentStructs.js';
-import { asyncHandler } from '../handlerFn.js';
+import { asyncHandler } from '../handler/handlerFn.js';
 import cors from 'cors';
 
 const prisma = new PrismaClient();
