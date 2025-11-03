@@ -5,6 +5,7 @@ import {
   validateUpdateProduct,
 } from '../middlewares/validate/validateProduct.js';
 import { asyncHandler } from '../middlewares/errorHandler/asyncHandler.js';
+import { validateIdParam } from '../middlewares/validate/validateId.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -53,6 +54,7 @@ router
 router
   .route('/:id')
   .get(
+    validateIdParam,
     asyncHandler(async (req, res) => {
       const { id } = req.params;
       const data = await prisma.product.findUnique({
@@ -77,6 +79,7 @@ router
     })
   )
   .patch(
+    validateIdParam,
     validateUpdateProduct,
     asyncHandler(async (req, res) => {
       const { id } = req.params;

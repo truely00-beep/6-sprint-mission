@@ -5,6 +5,7 @@ import {
   validateUpdateArticle,
 } from '../middlewares/validate/validateArticle.js';
 import { asyncHandler } from '../middlewares/errorHandler/asyncHandler.js';
+import { validateIdParam } from '../middlewares/validate/validateId.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -53,6 +54,7 @@ router
 router
   .route('/:id')
   .get(
+    validateIdParam,
     asyncHandler(async (req, res) => {
       const { id } = req.params;
       const data = await prisma.article.findUnique({
@@ -70,6 +72,7 @@ router
     })
   )
   .patch(
+    validateIdParam,
     validateUpdateArticle,
     asyncHandler(async (req, res) => {
       const { id } = req.params;
@@ -81,6 +84,7 @@ router
     })
   )
   .delete(
+    validateIdParam,
     asyncHandler(async (req, res) => {
       const { id } = req.params;
       const data = await prisma.article.delete({
