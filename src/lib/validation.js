@@ -1,4 +1,4 @@
-import { ValidationError } from './errorHandler.js';
+import { ValidationError } from './errors/errorHandler.js';
 
 // 게시글 생성 검증
 export const validateArticleCreate = (req, res, next) => {
