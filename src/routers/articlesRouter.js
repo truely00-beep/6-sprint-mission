@@ -5,7 +5,7 @@ import {
   validateArticleUpdate,
   validateId,
   validatePagination,
-} from '../lib/errors/validation.js';
+} from '../lib/validation.js';
 import { asyncHandler } from '../lib/errors/errorHandler.js';
 
 const router = express.Router();
