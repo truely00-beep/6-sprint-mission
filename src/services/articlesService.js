@@ -11,11 +11,13 @@ async function createArticleInDb(title, content) {
 
 async function findArticles({ sort, search, offset, limit }) {
   const orderBy = {};
+
   if (sort === 'recent') {
     orderBy.createdAt = 'desc';
   }
 
   const where = {};
+
   if (search) {
     where.OR = [{ title: { contains: search } }, { content: { contains: search } }];
   }
