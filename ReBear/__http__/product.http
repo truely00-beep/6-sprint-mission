@@ -1,0 +1,58 @@
+### 상품 등록
+POST https://your-service.onrender.com/products
+Content-Type: application/json
+
+{
+  "name": "노트북",
+  "description": "10인치 중고 노트북",
+  "price": 320000,
+  "tags": ["전자기기", "중고"]
+}
+
+### 상품 목록 (페이지네이션)
+GET https://your-service.onrender.com/products?offset=0&limit=10&sort=recent
+
+### 상품 상세 조회
+GET https://your-service.onrender.com/products/1
+
+### 상품 수정
+PATCH https://your-service.onrender.com/products/1
+Content-Type: application/json
+
+{
+  "price": 250000
+}
+
+### 상품 삭제
+DELETE https://your-service.onrender.com/products/1
+
+### 게시글 등록
+POST https://your-service.onrender.com/articles
+Content-Type: application/json
+
+{
+  "title": "이것은 자유게시판 게시글",
+  "content": "자유롭게 쓰는 내용"
+}
+
+### 게시글 목록 (페이지네이션)
+GET https://your-service.onrender.com/articles?offset=0&limit=10&sort=recent
+
+### 게시글 상세 조회
+GET https://your-service.onrender.com/articles/1
+
+### 댓글 등록 (중고마켓)
+POST https://your-service.onrender.com/products/1/comments
+Content-Type: application/json
+
+{
+  "content": "이 제품은 배송이 빠른가요?"
+}
+
+### 댓글 목록 (cursor 방식)
+GET https://your-service.onrender.com/products/1/comments?cursor=10
+
+### 이미지 업로드
+POST https://your-service.onrender.com/uploads
+Content-Type: multipart/form-data
+
