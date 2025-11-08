@@ -8,8 +8,8 @@
   "type": "module",
   "main": "main.js",
   "scripts": {
-    "dev": "nodemon src/main.js",
-    "start": "node src/main.js"
+    "dev": "nodemon mission3/src/main.js",
+    "start": "node mission3/src/main.js"
   },
   "dependencies": {
     "@faker-js/faker": "^10.1.0",
