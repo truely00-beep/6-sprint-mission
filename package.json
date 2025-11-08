@@ -28,6 +28,6 @@
   },
   "prisma": {
     "schema": "mission3/src/prisma/schema.prisma",
-    "seed": "node src/prisma/seed.js"
+    "seed": "node mission3/src/prisma/seed.js"
   }
 }
