@@ -3,4 +3,4 @@ __http__
 .env
 uploads/
 .DS_Sotre
-minssion2
+mission2
