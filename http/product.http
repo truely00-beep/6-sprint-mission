@@ -1,0 +1,27 @@
+POST http://localhost:3000/products
+Content-Type: application/json
+
+{
+  "name": "MacBook Pro 16",
+  "description": "Apple M3 Max Laptop",
+  "price": 4599.99,
+  "tags": "electronics,apple,laptop"
+}
+
+### 
+GET http://localhost:3000/products?offset=0&limit=5&order=recent
+
+### 
+GET http://localhost:3000/products/
+
+### 
+PATCH http://localhost:3000/products/:id
+Content-Type: application/json
+
+{
+  "description": "Updated description for MacBook Pro",
+  "price": 4299.00
+}
+
+### 
+DELETE http://localhost:3000/products/:id
