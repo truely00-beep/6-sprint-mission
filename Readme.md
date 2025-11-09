@@ -51,15 +51,13 @@
 
 #### 2.3 Comment API
 
-| 기능                  | 함수                                       | 설명                                                                                              |
-| --------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------- |
-| 댓글 등록             | `postProductComment`, `postArticleComment` | content 입력                                                                                      |
-| 댓글 수정             | `patchComment`                             | PATCH 메소드 사용                                                                                 |
-| 댓글 삭제             | `deleteComment`                            | -                                                                                                 |
-| 댓글 조회             | `getComment`                               | 단일 댓글 조회                                                                                    |
-| 전체 댓글 조회        | `getAllCommentList`                        | id, content, createdAt 조회<br>cursor 기반 페이지네이션<br>id 오름차순 조회<br>검색 가능(content) |
-| 전체 상품 댓글 조회   | `getProductCommentList`                    | id, content, createdAt 조회<br>cursor 기반 페이지네이션<br>id 오름차순 조회<br>검색 가능(content) |
-| 전체 게시물 댓글 조회 | `getArticleCommentList`                    | id, content, createdAt 조회<br>cursor 기반 페이지네이션<br>id 오름차순 조회<br>검색 가능(content) |
+| 기능           | 함수                                       | 설명                                                                                                                            |
+| -------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| 댓글 등록      | `postProductComment`, `postArticleComment` | content 입력                                                                                                                    |
+| 댓글 수정      | `patchComment`                             | PATCH 메소드 사용                                                                                                               |
+| 댓글 삭제      | `deleteComment`                            | -                                                                                                                               |
+| 댓글 조회      | `getComment`                               | 단일 댓글 조회                                                                                                                  |
+| 전체 댓글 조회 | `getAllCommentList`                        | id, content, createdAt 조회<br>cursor 기반 페이지네이션<br>id 오름차순 조회<br>검색 가능(content)<br>type = all/product/article |
 
 ---
 

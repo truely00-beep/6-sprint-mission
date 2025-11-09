@@ -3,7 +3,7 @@
 // 
 GET http://localhost:3000/articles
 ###
-GET http://localhost:3000/articles?offset=10
+GET http://localhost:3000/articles?offset=9
 
 // 게시물 목록 조회
 // title 또는 content에 포함된 단어로 검색
@@ -28,7 +28,7 @@ Content-Type: application/json
 }
 
 ###
-PATCH http://localhost:3000/articles/f1912d57-f8f2-4c77-b9c0-b61d00173b67
+PATCH http://localhost:3000/articles/9702528d-ef22-4b87-a23f-28450ee8196a
 Content-Type: application/json
 
 {
@@ -37,5 +37,7 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://localhost:3000/articles/ec1a03e3-e153-4f1b-b5e5-c2fe68042557
+DELETE http://localhost:3000/articles/9702528d-ef22-4b87-a23f-28450ee8196a
+
+
 

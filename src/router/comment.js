@@ -7,9 +7,7 @@ import {
   patchComment, // 댓글 수정
   deleteComment, // 댓글 삭제
   getComment, // 댓글 조회
-  getAllCommentList, // 모든 댓글 목록 조회
-  getProductCommentList, // 모든 상품 댓글 목록 조회
-  getArticleCommentList // 모든 게시물 댓글 목록 조회
+  getAllCommentList // 댓글 목록 조회:  ?type=all/product/article
 } from '../controller/comment.js';
 
 const commentRouter = express.Router();
@@ -20,7 +18,5 @@ commentRouter.patch('/:commentId', modelValidate(PatchComment), patchComment);
 commentRouter.delete('/:commentId', deleteComment);
 commentRouter.get('/:commentId', getComment);
 commentRouter.get('/', getAllCommentList);
-commentRouter.get('/products', getProductCommentList);
-commentRouter.get('/articles', getArticleCommentList);
 
 export default commentRouter;

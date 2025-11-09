@@ -15,7 +15,7 @@ export default function prismaErrHandler(err, req, res, next) {
         status = 400;
         message = '연결된 데이터가 존재하지 않습니다.';
         break;
-      case 'P2011':
+      // case 'P2011':
       case 'P2012':
         status = 400;
         message = '필수 입력값이 누락되었습니다.';

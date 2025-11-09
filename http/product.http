@@ -5,7 +5,7 @@ GET http://localhost:3000/products
 ###
 GET http://localhost:3000/products?order=oldest
 ###
-GET http://localhost:3000/products?order=oldest&offset=10
+GET http://localhost:3000/products?order=oldest&offset=0
 
 // 상품 목록 조회
 // 조건 검색: name and/or description에 포함된 단어
@@ -33,7 +33,7 @@ Content-Type: application/json
 }
 
 ###
-PATCH http://localhost:3000/products/5d614559-2616-4f3b-b10d-3196c93786cd
+PATCH http://localhost:3000/products/3d5ce44b-60a1-4ed6-a242-f2a5116ce0e8
 Content-Type: application/json
 
 {
@@ -43,5 +43,5 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://localhost:3000/products/5d614559-2616-4f3b-b10d-3196c93786cd
+DELETE http://localhost:3000/products/3d5ce44b-60a1-4ed6-a242-f2a5116ce0e8
 

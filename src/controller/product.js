@@ -52,8 +52,8 @@ export async function getProductList(req, res, next) {
         id: true,
         name: true,
         price: true,
-        createdAt: true,
-        comments: true
+        createdAt: true
+        //comments: true
       }
     });
     console.log('Product list retrieved.');

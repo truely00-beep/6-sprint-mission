@@ -58,97 +58,43 @@ export async function postArticleComment(req, res, next) {
   }
 }
 
-// 댓글 목록 조회
+// 모든 댓글 목록 조회
 // 페이지네이션: cursor 기반 (default: limit=10)
 // 조회순: id 오름순으로 고정
 // 조건 검색: content에 포함된 단어
 export async function getAllCommentList(req, res, next) {
-  const { limit, cursor, content } = req.query;
+  const { limit, cursor, type, content } = req.query;
+  console.log(`Fetching ${type} comment list...`);
+  console.log(`cursor, now:   ${cursor}`);
 
-  console.log(`cursor, before: ${cursor}`);
-
-  try {
-    const comments = await prisma.comment.findMany({
-      skip: cursor ? 1 : 0, // 첫 검색 0, 이후 1
-      take: parseInt(limit) || 10, // 페이지 사이즈는 조정 가능 (default 10)
-      cursor: cursor ? { id: cursor } : undefined, // 첫 검색 undefined, 이후 전 검색의 최종 id
-      where: { content: { contains: content } }, // content에 포함된 단어로 조건 검색
-      orderBy: { id: 'asc' } // 조회순: id 오름순으로 고정
-    });
-
-    const nextCursor = comments.length > 0 ? comments[comments.length - 1].id : null;
-    console.log(`cursor, after:  ${nextCursor}`);
-
-    console.log('Comment list retrieved.');
-    console.log('');
-    res.status(200).send({ comments, nextCursor });
-  } catch (err) {
-    next(err);
+  let where;
+  if (type == 'product') {
+    where = { articleId: null, content: { contains: content } };
+  } else if (type == 'article') {
+    where = { productId: null, content: { contains: content } };
+  } else {
+    where = { content: { contains: content } };
   }
-}
-
-// 중고마켓 댓글 목록 조회
-// 페이지네이션: cursor 기반 (default: limit=10)
-// 조회순: id 오름순으로 고정
-// 조건 검색: content에 포함된 단어
-export async function getProductCommentList(req, res, next) {
-  console.log(getProductCommentList);
-  const { limit, cursor, content } = req.query;
-  console.log('do you see me? 1');
-  console.log(`cursor, before: ${cursor}`);
 
   try {
     const comments = await prisma.comment.findMany({
       skip: cursor ? 1 : 0, // 첫 검색 0, 이후 1
       take: parseInt(limit) || 10, // 페이지 사이즈는 조정 가능 (default 10)
       cursor: cursor ? { id: cursor } : undefined, // 첫 검색 undefined, 이후 전 검색의 최종 id
-      where: { articleId: null, content: { contains: content } }, // content에 포함된 단어로 조건 검색
+      where, // content에 포함된 단어로 조건 검색
       orderBy: { id: 'asc' }, // 조회순: id 오름순으로 고정
-      include: { comments: true }
-      // select: {
-      //   id: true,
-      //   content: true,
-      //   productId: true,
-      //   createdAt: true,
-      //   articleId: false,
-      //   updatedAt: false
-      // } // articleId = null 숨김
+      select: {
+        id: true,
+        content: true,
+        productId: type == 'article' ? false : true,
+        articleId: type == 'product' ? false : true,
+        createdAt: true,
+        updatedAt: false
+      }
     });
 
     const nextCursor = comments.length > 0 ? comments[comments.length - 1].id : null;
-    console.log(`cursor, after:  ${nextCursor}`);
-
-    console.log('Product comment list retrieved.');
-    console.log('');
-    res.status(200).send({ comments, nextCursor });
-  } catch (err) {
-    next(err);
-  }
-}
-
-// 자유게시판 댓글 목록 조회
-// 페이지네이션: cursor 기반 (default: limit=10)
-// 조회순: id 오름순으로 고정
-// 조건 검색: content에 포함된 단어
-export async function getArticleCommentList(req, res, next) {
-  const { limit = 0, cursor, content } = req.query;
-
-  console.log(`cursor, before: ${cursor}`);
-
-  try {
-    const comments = await prisma.comment.findMany({
-      skip: cursor ? 1 : 0, // 첫 검색 0, 이후 1
-      take: parseInt(limit) || 10, // 페이지 사이즈는 조정 가능 (default 10)
-      cursor: cursor ? { id: cursor } : undefined, // 첫 검색 undefined, 이후 전 검색의 최종 id
-      where: { productId: null, content: { contains: content } }, // content에 포함된 단어로 조건 검색
-      orderBy: { id: 'asc' }, // 조회순: id 오름순으로 고정
-      include: { productId: false, updatedAt: false } //productId = null 숨김
-    });
-
-    const nextCursor = comments.length > 0 ? comments[comments.length - 1].id : null;
-    console.log(`cursor, after:  ${nextCursor}`);
-
-    console.log('Article comment list retrieved.');
+    console.log(`cursor, next:  ${nextCursor}`);
     console.log('');
     res.status(200).send({ comments, nextCursor });
   } catch (err) {
@@ -158,11 +104,11 @@ export async function getArticleCommentList(req, res, next) {
 
 // 1개 댓글 조회
 export async function getComment(req, res, next) {
-  const { commentId: id } = req.params;
+  const { commentId } = req.params;
 
   try {
     const comment = await prisma.comment.findUniqueOrThrow({
-      where: { id }
+      where: { id: commentId }
     });
     console.log('Comments retrieved.');
     res.status(200).send(comment);
