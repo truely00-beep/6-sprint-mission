@@ -25,7 +25,7 @@ GET http://localhost:3000/comments?type=all
 ###
 GET http://localhost:3000/comments?type=product
 ###
-GET http://localhost:3000/comments?type=article
+GET http://localhost:3000/comments?type=article&cursor=a4d3e2b7-6f9a-4c81-84b2-b91f7c4e8d1a
 ###
 GET http://localhost:3000/comments?limit=10&cursor=2fd019db-81b9-4f64-bb0f-0a7adf41e7e5
 ###
