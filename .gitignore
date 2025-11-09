@@ -1,6 +1,7 @@
 node_modules/
-package.json
-package-lock.json
-test.js
+images/
+.env
 .prettierrc
-PAT.txt
+test.js
+Readme0.md
+src/middleware/errhandler0.js
