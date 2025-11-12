@@ -1,101 +1,118 @@
-## 요구사항
+# 기본 요구 사항
 
-### 기본
+## 공통
 
-#### 파일 만들기 ( 1 )
+- [x] PostgreSQL를 이용해 주세요.
+- [x] 데이터 모델 간의 관계를 고려하여 onDelete를 설정해 주세요.
+- [x] 데이터베이스 시딩 코드를 작성해 주세요.
+- [x] 각 API에 적절한 에러 처리를 해 주세요.
+- [x] 각 API 응답에 적절한 상태 코드를 리턴하도록 해 주세요.
 
-- [x] main.js 만들기
-- [x] Product.js 만들기
-- [x] ElectronicProduct.js 만들기
-- [x] Article.js 만들기 <br><br>
+## 스키마
 
-**Product 클래스를 만들어 주세요.**
+### 중고마켓
 
-- [x] Product 클래스는 name(상품명) description(상품 설명), price(판매 가격), tags(해시태그 배열), images(이미지 배열), favoriteCount(찜하기 수)프로퍼티를 가집니다.
-- [x] Product 클래스는 favorite 메소드를 가집니다. favorite 메소드가 호출될 경우 찜하기 수가 1 증가합니다. <br><br>
+- [x] Product 스키마를 작성해 주세요.
 
-**ElectronicProduct 클래스를 만들어 주세요.**
+  - [x] id, name, description, price, tags, createdAt, updatedAt필드를 가집니다.
+        필요한 필드가 있다면 자유롭게 추가해 주세요.
 
-- [x] ElectronicProduct 클래스는 Product를 상속하며, 추가로 manufacturer(제조사) 프로퍼티를 가집니다. <br><br>
+- [x] 상품 등록 API를 만들어 주세요. == POST ==
 
-**Article 클래스를 만들어 주세요.**
+  - [x] name, description, price, tags를 입력하여 상품을 등록합니다.
 
-- [x] Article 클래스는 title(제목), content(내용), writer(작성자), likeCount(좋아요 수) 프로퍼티를 가집니다.
-- [x] Article 클래스는 like 메소드를 가집니다. like 메소드가 호출될 경우 좋아요 수가 1 증가합니다. <br><br>
+- [x] 상품 목록 조회 API를 만들어 주세요. == GET LIST ==
 
-- [x] 각 클래스 마다 constructor를 작성해 주세요.
-- [x] 추상화/캡슐화/상속/다형성을 고려하여 코드를 작성해 주세요.<br><br>
+  - [x] id, name, price, createdAt를 조회합니다.
+  - [x] offset 방식의 페이지네이션 기능을 포함해 주세요.
+  - [x] 최신순(recent)으로 정렬할 수 있습니다.
+  - [x] name, description에 포함된 단어로 검색할 수 있습니다.
 
----
+- [x] 상품 상세 조회 API를 만들어 주세요. == GET ID ==
 
-#### 파일 만들기 ( 2 )
+  - [x] id, name, description, price, tags, createdAt를 조회합니다.
 
-- [x] ArticleService.js 만들기
-- [x] ProductService.js 만들기 <br><br>
+- [x] 상품 수정 API를 만들어 주세요. == PATCH ID ==
 
-**Article 요청 함수 구현하기** <br>
+  - [x] PATCH 메서드를 사용해 주세요.
 
-- [x] https://panda-market-api-crud.vercel.app/docs 의 Article API를 이용하여 아래 함수들을 구현해 주세요.<br><br>
-  - [x] getArticleList() : GET 메소드를 사용해 주세요.
-    - [x] page, pageSize, keyword 쿼리 파라미터를 이용해 주세요. <br><br>
-  - [x] getArticle() : GET 메소드를 사용해 주세요.
-  - [x] createArticle() : POST 메소드를 사용해 주세요.
-    - [x] request body에 title, content, image 를 포함해 주세요.<br><br>
-  - [x] patchArticle() : PATCH 메소드를 사용해 주세요.
-  - [x] deleteArticle() : DELETE 메소드를 사용해 주세요.<br><br>
-- [x] fetch 혹은 axios를 이용해 주세요.
-  - [x] 응답의 상태 코드가 2XX가 아닐 경우, 에러 메시지를 콘솔에 출력해 주세요.<br><br>
-- [x] .then() 메소드를 이용하여 비동기 처리를 해주세요.
-- [x] .catch() 를 이용하여 오류 처리를 해주세요.
+- [x] 상품 삭제 API를 만들어 주세요. == DELETE ID ==
 
----
+- [] 각 API에 적절한 에러 처리를 해 주세요.
 
-### 심화
+- [] 각 API 응답에 적절한 상태 코드를 리턴하도록 해 주세요.
 
-- [x] Article 클래스에 createdAt(생성일자) 프로퍼티를 만들어 주세요.
-- [x] 새로운 객체가 생성되어 constructor가 호출될 시 createdAt에 현재 시간을 저장합니다.<br><br>
+### 자유게시판
 
----
+- [x] Article 스키마를 작성해 주세요.
 
-**Product 요청 함수 구현하기** <br><br>
+  - [x] id, title, content, createdAt, updatedAt 필드를 가집니다.
 
-- [x] https://panda-market-api-crud.vercel.app/docs 의 Product API를 이용하여 아래 함수들을 구현해 주세요.<br><br>
-  - [x] getProductList() : GET 메소드를 사용해 주세요.
-    - [x] page, pageSize, keyword 쿼리 파라미터를 이용해 주세요. <br><br>
-  - [x] getProduct() : GET 메소드를 사용해 주세요.
-  - [x] createProduct() : POST 메소드를 사용해 주세요.
-    - [x] request body에 name, description, price, tags, images 를 포함해 주세요.<br><br>
-  - [x] patchProduct() : PATCH 메소드를 사용해 주세요.
-  - [x] deleteProduct() : DELETE 메소드를 사용해 주세요.
-- [x] async/await 을 이용하여 비동기 처리를 해주세요.
-- [x] try/catch 를 이용하여 오류 처리를 해주세요.
-- [x] getProductList()를 통해서 받아온 상품 리스트를 각각 인스턴스로 만들어 products 배열에 저장해 주세요.<br><br>
-  - [x] 해시태그에 "전자제품"이 포함되어 있는 상품들은 Product 클래스 대신 ElectronicProduct 클래스를 사용해 인스턴스를 생성해 주세요.
-  - [x] 나머지 상품들은 모두 Product 클래스를 사용해 인스턴스를 생성해 주세요. <br><br>
+- [x] 게시글 등록 API를 만들어 주세요. == POST ==
 
----
+  - [x] title, content를 입력해 게시글을 등록합니다.
 
-- [x] 구현한 함수들을 아래와 같이 파일을 분리해 주세요.
-  - [x] export를 활용해 주세요.
-  - [x] ProductService.js 파일 Product API 관련 함수들을 작성해 주세요.
-  - [x] ArticleService.js 파일에 Article API 관련 함수들을 작성해 주세요. <br><br>
-- [x] 이외의 코드들은 모두 main.js 파일에 작성해 주세요.
-  - [x] import를 활용해 주세요.
-  - [x] 각 함수를 실행하는 코드를 작성하고, 제대로 동작하는지 확인해 주세요. <br><br>
+- [x] 게시글 목록 조회 API를 만들어 주세요. LIST
 
----
+  - [x] id, title, content, createdAt를 조회합니다.
+  - [x] offset 방식의 페이지네이션 기능을 포함해 주세요.
+  - [x] 최신순(recent)으로 정렬할 수 있습니다.
+  - [x] title, content에 포함된 단어로 검색할 수 있습니다.
 
-## 주요 변경사항
+- [x] 게시글 상세 조회 API를 만들어 주세요. == GET ID ==
 
--
--
+  - [x] id, title, content, createdAt를 조회합니다.
 
-## 스크린샷
+- [x] 게시글 수정 API를 만들어 주세요. == PATCH ID ==
 
-(![image]<img width="617" height="867" alt="image" src="https://github.com/user-attachments/assets/150c370c-085b-47d8-a475-65a106cdc084" />
-)
+- [x] 게시글 삭제 API를 만들어 주세요. == DELETE ID ==
 
-## 멘토에게
+### 댓글
 
-- 아직 잘 모르겠습니다....
--
+- [x] 댓글 등록 API를 만들어 주세요. == POST ==
+
+  - [x] content를 입력하여 댓글을 등록합니다.
+  - [x] 중고마켓, 자유게시판 댓글 등록 API를 따로 만들어 주세요.
+
+- [x] 댓글 목록 조회 API를 만들어 주세요. == GET LIST ==
+
+  - [x] id, content, createdAt 를 조회합니다.
+  - [x] cursor 방식의 페이지네이션 기능을 포함해 주세요.
+  - [x] 중고마켓, 자유게시판 댓글 목록 조회 API를 따로 만들어 주세요.
+
+- [x] 댓글 수정 API를 만들어 주세요. == PATCH ==
+
+  - [x] PATCH 메서드를 사용해 주세요.
+
+- [x] 댓글 삭제 API를 만들어 주세요. == DELETE ==
+
+## 미들웨어
+
+### 유효성 검증
+
+- [x] 상품 등록 시 필요한 필드(이름, 설명, 가격 등)의 유효성을 검증하는 미들웨어를 구현합니다.
+
+- [x] 게시물 등록 시 필요한 필드(제목, 내용 등)의 유효성 검증하는 미들웨어를 구현합니다.
+
+### 이미지 업로드
+
+- [x] multer 미들웨어를 사용하여 이미지 업로드 API를 구현해주세요.
+  - [] 업로드된 이미지는 서버에 저장하고, 해당 이미지의 경로를 response 객체에 포함해 반환합니다.
+
+### 에러 처리
+
+- [x] 모든 예외 상황을 처리할 수 있는 에러 핸들러 미들웨어를 구현합니다.
+- [x] 서버 오류(500), 사용자 입력 오류(400 시리즈), 리소스 찾을 수 없음(404) 등 상황에 맞는 상태값을 반환합니다.
+
+## 라우터
+
+### 라우트 중복 제거
+
+- [x] 중복되는 라우트 경로(예: /users에 대한 get 및 post 요청)를 app.route()로 통합해 중복을 제거합니다.
+- [x] express.Router()를 활용하여 중고마켓/자유게시판 관련 라우트를 별도의 모듈로 구분합니다.
+
+# 배포
+
+- [x] .env 파일에 환경 변수를 설정해 주세요.
+- [x] CORS를 설정해 주세요.
+- [] render.com으로 배포해 주세요.
