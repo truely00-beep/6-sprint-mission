@@ -1,0 +1,26 @@
+POST http://localhost:3000/articles
+Content-Type: application/json
+
+{
+  "title": "Express와 Prisma로 API 만들기",
+  "content": "이 글에서는 Express와 Prisma를 이용해 CRUD를 구현하는 방법을 알아봅니다."
+}
+
+### 
+GET http://localhost:3000/articles?offset=0&limit=5&order=recent
+
+### 
+GET http://localhost:3000/articles/4aa8f1c4-e746-46d5-8bdf-dbc035c3d0b6
+
+### 
+PATCH http://localhost:3000/articles/4aa8f1c4-e746-46d5-8bdf-dbc035c3d0b6
+Content-Type: application/json
+
+{
+  "content": "수정된 게시글 내용입니다."
+}
+
+### 
+
+
+DELETE http://localhost:3000/articles/:id

@@ -1,0 +1,21 @@
+### 
+POST http://localhost:3000/comments/product/7a719d7c-1168-4be2-8462-a320a70ead2e
+Content-Type: application/json
+
+{
+  "content": "이 제품 정말 좋아보이네요!"
+}
+
+### 
+POST http://localhost:3000/comments/article/4aa8f1c4-e746-46d5-8bdf-dbc035c3d0b6
+Content-Type: application/json
+
+{
+  "content": "좋은 글 잘 읽었습니다!"
+}
+
+### 
+GET http://localhost:3000/comments/product/7a719d7c-1168-4be2-8462-a320a70ead2e?limit=10
+
+### 
+GET http://localhost:3000/comments/article/4aa8f1c4-e746-46d5-8bdf-dbc035c3d0b6?limit=10
