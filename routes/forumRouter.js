@@ -100,12 +100,10 @@ router
         throw new BadRequestError("게시글 수정에 실패했습니다.");
       }
 
-      res
-        .status(200)
-        .json({
-          success: true,
-          message: "게시글이 성공적으로 수정되었습니다.",
-        });
+      res.status(200).json({
+        success: true,
+        message: "게시글이 성공적으로 수정되었습니다.",
+      });
     } catch (error) {
       next(error);
     }
@@ -122,12 +120,10 @@ router
 
       // onDelete: 'CASCADE' 설정으로 연관된 댓글은 자동 삭제됨
 
-      res
-        .status(204)
-        .json({
-          success: true,
-          message: "게시글이 성공적으로 삭제되었습니다.",
-        }); // 204 No Content
+      res.status(204).json({
+        success: true,
+        message: "게시글이 성공적으로 삭제되었습니다.",
+      }); // 204 No Content
     } catch (error) {
       next(error);
     }
