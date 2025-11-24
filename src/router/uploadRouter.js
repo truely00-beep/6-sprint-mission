@@ -3,9 +3,6 @@ import multer from 'multer';
 
 const uploadRouter = express.Router();
 
-const app = express();
-app.use(express.json());
-
 const upload = multer({ dest: 'uploads/' });
 
 uploadRouter.route('/').post(upload.single('attachment'), (req, res) => {

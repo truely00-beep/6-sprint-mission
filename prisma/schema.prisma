@@ -14,46 +14,57 @@ datasource db {
 }
 
 model Product {
-  id          String             @id @default(uuid()) // Auto default(increment())
+  id          Int       @id @default(autoincrement()) // Auto default(increment())
   name        String
   description String
   category    Category
   price       Float
   stock       Int
   tags        String
-  createdAt   DateTime           @default(now())
-  updatedAt   DateTime           @updatedAt
-  comments    CommentToProduct[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  comments    Comment[]
 }
 
 model Article {
-  id        String             @id @default(uuid())
+  id        Int       @id @default(autoincrement())
   title     String
   content   String
-  createdAt DateTime           @default(now())
-  updatedAt DateTime           @updatedAt
-  comments  CommentToArticle[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  comments  Comment[]
 }
 
-model CommentToProduct {
-  id        String   @id @default(uuid())
+model Comment {
+  id        Int      @id @default(autoincrement())
   content   String
+  product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int?
+  article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  articleId Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId String
 }
 
-model CommentToArticle {
-  id        String   @id @default(uuid())
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// model CommentToProduct {
+//   id        Int      @id @default(autoincrement())
+//   content   String
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
 
-  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
-  articleId String
-}
+//   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+//   productId Int
+// }
+
+// model CommentToArticle {
+//   id        Int      @id @default(autoincrement())
+//   content   String
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+//   articleId Int
+// }
 
 enum Category {
   FASHION

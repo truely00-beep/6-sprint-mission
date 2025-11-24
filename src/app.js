@@ -3,9 +3,7 @@ import { PORT } from '../constants.js';
 import productRouter from './router/productRouter.js';
 import articleRouter from './router/articleRouter.js';
 import { errorHandler } from './handler/errorHandler.js';
-import productCommentRouter from './router/productCommentRouter.js';
-import articleCommentRouter from './router/articleCommentRouter.js';
-import multer from 'multer';
+import commentRouter from './router/commentRouter.js';
 import uploadRouter from './router/uploadRouter.js';
 
 const app = express();
@@ -23,9 +21,7 @@ app.use('/products', productRouter);
 app.use('/articles', articleRouter);
 
 //comment
-app.use('/comments/products', productCommentRouter);
-
-app.use('/comments/articles', articleCommentRouter);
+app.use('/comments', commentRouter);
 
 //image
 app.use('/files', express.static('uploads'));
