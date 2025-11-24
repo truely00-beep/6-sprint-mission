@@ -12,7 +12,7 @@ export const CreateProductComment = s.object({
   }),
 });
 
-export const CreateAricleComment = s.object({
+export const CreateArticleComment = s.object({
   content: s.size(s.string(), 1, 50),
   user: s.object({
     userId: s.define('Uuid', (value) => isUuid.v4(value)),
