@@ -89,7 +89,7 @@ export async function deleteProduct(req, res, next) {
     const { id } = req.params;
     const product = await productsService.deleteProductInDb(id);
 
-    res.status(200).send(product);
+    res.status(204).send(product);
   } catch (error) {
     next(error);
   }

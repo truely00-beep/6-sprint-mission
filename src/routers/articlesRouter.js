@@ -14,16 +14,12 @@ import { CreateArticleSchema, PatchArticleSchema } from '../validations/articles
 
 const router = express.Router();
 
-router
-  .route('/')
-  .post(validate(CreateArticleSchema, 'body'), createArticle)
-  .get(validatePagination, getArticles);
+router.post('/', validate(CreateArticleSchema, 'body'), createArticle);
+router.get('/', validatePagination, getArticles);
 
-router
-  .route('/:id')
-  .get(getArticle)
-  .patch(validate(PatchArticleSchema, 'body'), patchArticle)
-  .delete(deleteArticle);
+router.get('/:id', getArticle);
+router.patch('/:id', validate(PatchArticleSchema, 'body'), patchArticle);
+router.delete('/:id', deleteArticle);
 
 router.use('/:articleId/comments', commentsRouter);
 

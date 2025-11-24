@@ -5,12 +5,6 @@ export async function createComment(req, res, next) {
     const { articleId, productId } = req.params;
     const { content } = req.body;
 
-    if (!content) {
-      const err = new Error('댓글 내용이 비어 있습니다.');
-      err.status = 400;
-      throw err;
-    }
-
     let newComment;
     if (articleId) {
       newComment = await commentsService.createArticleComment(articleId, content);
@@ -22,10 +16,7 @@ export async function createComment(req, res, next) {
       throw err;
     }
 
-    res.status(201).json({
-      message: '댓글이 성공적으로 등록되었습니다.',
-      data: newComment,
-    });
+    res.status(201).send(newComment);
   } catch (error) {
     next(error);
   }

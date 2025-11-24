@@ -12,10 +12,7 @@ async function createProductInDb(productData) {
 }
 
 async function findProducts({ sort, search, offset, limit }) {
-  const orderBy = {};
-  if (sort === 'recent') {
-    orderBy.createdAt = 'desc';
-  }
+  const orderBy = sort === 'resent' ? { createdAt: 'desc' } : { createdAt: 'asc' };
 
   const where = {};
   if (search) {

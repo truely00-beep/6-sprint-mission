@@ -14,16 +14,12 @@ import { CreateProductSchema, PatchProductSchema } from '../validations/products
 
 const router = express.Router();
 
-router
-  .route('/')
-  .post(validate(CreateProductSchema, 'body'), createProduct)
-  .get(validatePagination, getProducts);
+router.post('/', validate(CreateProductSchema, 'body'), createProduct);
+router.get('/', validatePagination, getProducts);
 
-router
-  .route('/:id')
-  .get(getProduct)
-  .patch(validate(PatchProductSchema, 'body'), patchProduct)
-  .delete(deleteProduct);
+router.get('/:id', getProduct);
+router.patch('/:id', validate(PatchProductSchema, 'body'), patchProduct);
+router.delete('/:id', deleteProduct);
 
 router.use('/:productId/comments', commentsRouter);
 
