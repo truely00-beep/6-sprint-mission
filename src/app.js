@@ -1,7 +1,7 @@
 import 'express-async-errors';
 import express from 'express';
 import productRouter from './routers/productRouter.js';
-import { PORT } from '../constants.js';
+import { PORT } from './utils/constants.js';
 import articleRouter from './routers/articleRouter.js';
 import commentRouter from './routers/commentRouter.js';
 import userRouter from './routers/userRouter.js';

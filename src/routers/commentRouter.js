@@ -10,8 +10,6 @@ import { commentController } from '../controller/commentController.js';
 
 const commentRouter = express.Router();
 
-app.use;
-
 //중고마켓 댓글 작성
 commentRouter
   .route('/products')
@@ -26,7 +24,7 @@ commentRouter
 commentRouter
   .route('/:id')
   .patch(validate(PatchComment), tryCatchHandler(commentController.patchComment))
-  .delete(tryCatchHandler());
+  .delete(tryCatchHandler(commentController.deleteComment));
 
 //모든 댓글 조회
 commentRouter.route('/').get(tryCatchHandler(commentController.deleteComment));

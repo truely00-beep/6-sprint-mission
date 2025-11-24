@@ -1,11 +1,9 @@
 import express from 'express';
-import { PrismaClient } from '@prisma/client';
 import { validate } from '../middleware/validate.js';
-import { CreateOrder } from '../structers/orderStruct.js';
+import { CreateOrder } from '../structs/orderStruct.js';
 import { tryCatchHandler } from '../middleware/errorhandler.js';
+import { prisma } from '../utils/prismaClient.js';
 const orderRouter = express.Router();
-
-const prisma = new PrismaClient();
 
 orderRouter.route('/').post(
   validate(CreateOrder),

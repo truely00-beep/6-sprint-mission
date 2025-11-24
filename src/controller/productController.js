@@ -1,4 +1,4 @@
-import { prisma } from '../utils/prismaClient';
+import { prisma } from '../utils/prismaClient.js';
 
 export class ProductController {
   //상품 리스트 조회
@@ -68,6 +68,6 @@ export class ProductController {
     await prisma.product.delete({
       where: { id },
     });
-    res.sendStatus(203);
+    res.sendStatus(204);
   };
 }

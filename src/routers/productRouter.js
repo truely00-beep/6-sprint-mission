@@ -21,7 +21,7 @@ productRouter
 //상품 상세 조회 , 상품 업데이트 , 상품 삭제
 productRouter
   .route('/:id')
-  .get()
+  .get(tryCatchHandler(ProductController.getProductDetail))
   .patch(validate(PatchProduct), tryCatchHandler(ProductController.patchProduct))
   .delete(tryCatchHandler(ProductController.deleteProduct));
 
