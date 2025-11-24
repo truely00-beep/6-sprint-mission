@@ -3,10 +3,16 @@ import { patchComment_Product, deleteComment_Product, patchComment_Article, dele
 
 const commentRouter = express.Router()
 
-commentRouter.patch('/products/:commentId', patchComment_Product)
-commentRouter.delete('/products/:commentId', deleteComment_Product)
+//상품 댓글 수정, 삭제
+commentRouter.route('/products/:commentId')
+      .patch(patchComment_Product)
+      .delete(deleteComment_Product)
 
-commentRouter.patch('/articles/:commentId', patchComment_Article)
-commentRouter.delete('/articles/:commentId', deleteComment_Article)
+
+//기사 댓글 수정, 삭제
+commentRouter.route('/articles/:commentId')
+      .patch(patchComment_Article)
+      .delete(deleteComment_Article)
+
 
 export default commentRouter

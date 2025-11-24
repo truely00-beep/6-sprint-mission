@@ -1,6 +1,6 @@
 import { prisma } from '../lib/prismaClient.js'
 import { assert } from 'superstruct'
-import { CreateArticle, PatchArticle } from '../structs.js'
+import { CreateArticle, PatchArticle } from '../struct.js'
 import { asyncHandler } from '../middlewares/asyncHandler.js'
 
 // 게시글 등록
@@ -52,7 +52,7 @@ export const deleteArticle = asyncHandler(async(req, res) => {
 
 // 상품 목록 조회 
 export const getListArticle = asyncHandler(async(req, res) => {
-  const { offset=0, limit=10, order='newest' } = req.query;
+  const { offset=0, limit=10, order='newest', keyword } = req.query;
   let orderBy;
   switch(order) {
     case 'oldest':
@@ -65,7 +65,17 @@ export const getListArticle = asyncHandler(async(req, res) => {
       orderBy = { createdAt: 'desc' }
   }   
 
+  const where = keyword
+    ? {
+      OR: [
+        { title: { contains: keyword, mode: "insensitive" }},
+        { content: { contains: keyword, mode: "insensitive"}}
+      ]
+    }
+    : undefined
+
   const get_List_data = await prisma.article.findMany({
+    where,
     orderBy,
     skip: parseInt(offset),
     take: parseInt(limit),

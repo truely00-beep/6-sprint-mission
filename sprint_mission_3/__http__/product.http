@@ -1,0 +1,30 @@
+### 상품 등록
+POST http://localhost:3000/products
+Content-Type: application/json
+
+{
+  "name": "마스크 팩",
+  "description": "에띠뜌",
+  "price": 35000,
+  "tags": "BEAUTY"
+}
+
+### 상품 상세 조회
+GET http://localhost:3000/products/{productId}
+
+
+### 상품 수정
+PATCH http://localhost:3000/products/d2670680-d7c0-426c-abf7-c5d664f74028
+Content-Type: application/json
+
+{
+  "description": "화장품",
+  "price" : 6400
+}
+
+### 상품 삭제
+DELETE http://localhost:3000/products/dd9f263a-5a97-4c84-81e4-e2d33cda0f37
+
+
+### 상품 목록 조회
+GET http://localhost:3000/products?keyword=마스크&offset=0&limit=3&order=newest
