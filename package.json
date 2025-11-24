@@ -8,8 +8,13 @@
   "type": "module",
   "main": "main.js",
   "scripts": {
+<<<<<<< HEAD
     "dev": "nodemon mission3/src/main.js",
     "start": "node mission3/src/main.js"
+=======
+    "dev": "nodemon ./mission3/src/main.js",
+    "start": "node ./mission3/src/main.js"
+>>>>>>> 263da10 (미션4 초기세팅)
   },
   "dependencies": {
     "@faker-js/faker": "^10.1.0",
@@ -20,14 +25,20 @@
     "express-list-endpoints": "^7.1.1",
     "is-uuid": "^1.0.2",
     "multer": "^2.0.2",
-    "superstruct": "^1.0.3"
+    "superstruct": "^1.0.3",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.10",
     "prisma": "^6.19.0"
   },
   "prisma": {
+<<<<<<< HEAD
     "schema": "mission3/src/prisma/schema.prisma",
     "seed": "node mission3/src/prisma/seed.js"
+=======
+    "schema": "mission3/prisma/schema.prisma",
+    "seed": "mission3/prisma/seed.js"
+>>>>>>> 263da10 (미션4 초기세팅)
   }
 }
