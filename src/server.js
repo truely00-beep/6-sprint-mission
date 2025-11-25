@@ -10,14 +10,16 @@ import {
   defaultNotFoundHandler,
 } from './middlewares/errorHandler/errorHandler.js';
 import userRouter from './router/userRouter.js';
+import cookieParser from 'cookie-parser';
 dotenv.config();
 
 const PORT = process.env.PORT || 4000;
 const app = express();
 const upload = multer({ dest: 'uploads/' });
 
-app.use(express.json());
 app.use(cors());
+app.use(cookieParser());
+app.use(express.json());
 
 app.use('/products', productRouters);
 app.use('/articles', articleRouters);

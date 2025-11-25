@@ -1,11 +1,6 @@
 import { BadRequestError } from '../lib/error.js';
 import prisma from '../lib/prismaClient.js';
-import {
-  createToken,
-  filterSensitiveUserData,
-  getUser,
-  hashingPassword,
-} from '../services/userService.js';
+import userService from '../services/userService.js';
 
 async function createUser(req, res, next) {
   const { email, password, ...rest } = req.body;
@@ -15,7 +10,7 @@ async function createUser(req, res, next) {
 
   if (existedUser) return next(new BadRequestError());
 
-  const hashedPassword = await hashingPassword(password);
+  const hashedPassword = await userService.hashingPassword(password);
   const createdUser = await prisma.user.create({
     data: {
       ...rest,
@@ -23,27 +18,51 @@ async function createUser(req, res, next) {
       password: hashedPassword,
     },
   });
-  const data = await filterSensitiveUserData(createdUser);
+  const data = await userService.filterSensitiveUserData(createdUser);
   return res.status(200).json(data);
 }
 
 async function loginUser(req, res, next) {
   const { email, password } = req.body;
-  const user = await getUser(email, password);
-  const accessToken = await createToken(user);
-  const refreshToken = await createToken(user, 'refresh');
+  const user = await userService.getUser(email, password);
+  const accessToken = await userService.createToken(user);
+  const refreshToken = await userService.createToken(user, 'refresh');
   await prisma.user.update({ where: { email }, data: { refreshToken } });
   res.cookie('accessToken', accessToken, {
     httpOnly: true,
-    secure: true,
+    secure: false,
     sameSite: 'Lax',
   });
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
-    secure: true,
+    secure: false,
     sameSite: 'Lax',
   });
   return res.status(200).json({ message: '로그인 성공' });
 }
 
-export { createUser, loginUser };
+async function newRefreshToken(req, res, next) {
+  const { refreshToken } = req.cookies;
+  const { userId } = req.auth;
+  const { accessToken, newRefreshToken } = await userService.refreshToken(
+    userId,
+    refreshToken
+  );
+  await prisma.user.update({
+    where: { id: userId },
+    data: { refreshToken: newRefreshToken },
+  });
+  res.cookie('accessToken', accessToken, {
+    httpOnly: true,
+    secure: false,
+    sameSite: 'Lax',
+  });
+  res.cookie('refreshToken', newRefreshToken, {
+    httpOnly: true,
+    secure: false,
+    sameSite: 'Lax',
+  });
+  return res.status(200).json({ message: 'Refresh 성공' });
+}
+
+export { createUser, loginUser, newRefreshToken };

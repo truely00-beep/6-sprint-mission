@@ -38,7 +38,7 @@ async function refreshToken(userId, refreshToken) {
   return { accessToken, newRefreshToken };
 }
 
-export {
+export default {
   hashingPassword,
   filterSensitiveUserData,
   verifyPassword,
