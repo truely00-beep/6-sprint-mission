@@ -1,7 +1,7 @@
 import express from 'express';
 import asyncHandler from '../lib/asynchandler.js';
-import * as p from '../controllers/product_controllers.js';
-import * as pc from '../controllers/productComment_controllers.js';
+import * as p from '../controllers/product-controllers.js';
+import * as pc from '../controllers/productComment-controllers.js';
 
 import {
   productCreateValidation,
@@ -50,4 +50,4 @@ productRoute.delete(
   asyncHandler(pc.productCommentDelete)
 );
 
-export { productRoute };
+export default productRoute;

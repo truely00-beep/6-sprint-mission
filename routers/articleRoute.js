@@ -1,7 +1,7 @@
 import express from 'express';
 import asyncHandler from '../lib/asynchandler.js';
-import * as a from '../controllers/article_controllers.js';
-import * as ac from '../controllers/articleComment_controllers.js';
+import * as a from '../controllers/article-controllers.js';
+import * as ac from '../controllers/articleComment-controllers.js';
 
 import {
   articleCreateValidation,
@@ -50,4 +50,4 @@ articleRoute.delete(
   asyncHandler(ac.articleCommentDelete)
 );
 
-export { articleRoute };
+export default articleRoute;
