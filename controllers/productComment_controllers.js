@@ -1,84 +1,101 @@
 import { prisma } from '../lib/prismaclient.js';
 
-export async function productCommentNew(req, res, next) {
-  // comment를 생성하면서, product id를 연결
-  // 솔직히 GPT 도움 많이 아주 많이 받았습니다 ㅠ
+export async function productCommentNew(req, res) {
+  const productId = req.params.productId;
+  const product = await prisma.product.findUnique({
+    where: { id: productId },
+  });
 
-  try {
-    const productId = req.params.productId;
-    const product = await prisma.product.findUnique({
-      where: { id: productId },
-    });
+  if (!product)
+    return res.status(404).json({ message: 'Cannot found Product' });
 
-    if (!product) return res.status(404).send({ message: 'Product not found' });
-
-    const { content } = req.body;
-    const commentCreate = await prisma.commentProduct.create({
-      data: {
-        content,
-        product: {
-          connect: { id: productId },
-        },
+  const { content } = req.body;
+  const commentCreate = await prisma.commentProduct.create({
+    data: {
+      content,
+      product: {
+        connect: { id: productId },
       },
-      include: {
-        product: true,
-      },
-    });
+    },
+    include: {
+      product: true,
+    },
+  });
 
-    res.status(201).send(commentCreate);
-  } catch (err) {
-    next(err);
-  }
+  res.status(201).json(commentCreate);
 }
 
-export async function oneProductComment(req, res) {
-  try {
-    const productId = req.params.productId;
-    const productComments = await prisma.product.findUnique({
-      where: { id: productId },
-      include: {
-        comments: {
-          select: {
-            id: true,
-            content: true,
-            createdAt: true,
-          },
+export async function productCommentList(req, res) {
+  const productId = req.params.productId;
+  const product = await prisma.product.findUnique({
+    where: { id: productId },
+  });
+
+  if (!product)
+    return res.status(404).json({ message: 'Cannot found Product' });
+
+  const productComments = await prisma.product.findUnique({
+    where: { id: productId },
+    include: {
+      comments: {
+        select: {
+          id: true,
+          content: true,
+          createdAt: true,
         },
       },
-    });
+    },
+  });
 
-    if (!productComments)
-      return res.status(404).send({ message: 'Product not found' });
+  if (!productComments)
+    return res.status(404).json({ message: 'Cannot found Product comment' });
 
-    res.status(200).send(productComments.comments);
-  } catch (err) {
-    next(err);
-  }
+  res.status(200).json(productComments.comments);
 }
 
 export async function productCommentUpdate(req, res) {
-  try {
-    const commentId = req.params.commentId;
-    const commentUpdate = await prisma.commentProduct.update({
-      where: { id: commentId },
-      data: req.body,
-    });
+  const productId = req.params.productId;
+  const product = await prisma.product.findUnique({
+    where: { id: productId },
+  });
 
-    res.status(201).send(commentUpdate);
-  } catch (err) {
-    next(err);
-  }
+  if (!product)
+    return res.status(404).json({ message: 'Cannot found Product' });
+
+  const commentId = req.params.commentId;
+  const comment = await prisma.commentProduct.findUnique({
+    where: { id: articleId },
+  });
+  if (!comment)
+    return res.status(404).json({ message: 'Cannot found comment' });
+
+  const commentUpdate = await prisma.commentProduct.update({
+    where: { id: commentId },
+    data: req.body,
+  });
+
+  res.status(201).json(commentUpdate);
 }
 
 export async function productCommentDelete(req, res) {
-  try {
-    const commentId = req.params.commentId;
-    await prisma.commentProduct.delete({
-      where: { id: commentId },
-    });
+  const productId = req.params.productId;
+  const product = await prisma.product.findUnique({
+    where: { id: productId },
+  });
 
-    res.status(204).send(commentId);
-  } catch (err) {
-    next(err);
-  }
+  if (!product)
+    return res.status(404).json({ message: 'Cannot found Product' });
+
+  const commentId = req.params.commentId;
+  const comment = await prisma.commentProduct.findUnique({
+    where: { id: articleId },
+  });
+  if (!comment)
+    return res.status(404).json({ message: 'Cannot found comment' });
+
+  await prisma.commentProduct.delete({
+    where: { id: commentId },
+  });
+
+  res.status(204).json(commentId);
 }

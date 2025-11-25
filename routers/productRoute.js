@@ -14,37 +14,40 @@ import {
 } from '../lib/comment_validation.js';
 
 const productRoute = express.Router();
-const productCommentRoute = express.Router();
 
-const product = productRoute.route('/');
-const product_id = productRoute.route('/:id');
+productRoute.get('/', asyncHandler(p.productsList));
+productRoute.post('/', productCreateValidation, asyncHandler(p.productNew));
 
-product.get(asyncHandler(p.productsList));
-product.post(productCreateValidation, asyncHandler(p.productNew));
-
-product_id.get(asyncHandler(p.productOnly));
-product_id.patch(productUpdateValidation, asyncHandler(p.productUpdate));
-product_id.delete(asyncHandler(p.productDelete));
+productRoute.get('/:id', asyncHandler(p.productOnly));
+productRoute.patch(
+  '/:id',
+  productUpdateValidation,
+  asyncHandler(p.productUpdate)
+);
+productRoute.delete('/:id', asyncHandler(p.productDelete));
 
 // ======= product에 연결 된 comment =======
 // Product와 comment가 별도의 모델로 구동되므로
 // 별도의 작업으로 제작 하였습니다
 
-const productComment = productRoute.route('/:productId/productcomments');
-const productComment_id = productRoute.route(
-  '/:productId/productcomments/:commentId'
+productRoute.get(
+  '/:productId/productcomments',
+  asyncHandler(pc.productCommentList)
 );
-
-productComment.get(asyncHandler(pc.oneProductComment));
-productComment.post(
+productRoute.post(
+  '/:productId/productcomments',
   commentCreateValidation,
   asyncHandler(pc.productCommentNew)
 );
 
-productComment_id.patch(
+productRoute.patch(
+  '/:productId/productcomments/:commentId',
   commentUpdateValidation,
   asyncHandler(pc.productCommentUpdate)
 );
-productComment_id.delete(asyncHandler(pc.productCommentDelete));
+productRoute.delete(
+  '/:productId/productcomments/:commentId',
+  asyncHandler(pc.productCommentDelete)
+);
 
-export { productRoute, productCommentRoute };
+export { productRoute };
