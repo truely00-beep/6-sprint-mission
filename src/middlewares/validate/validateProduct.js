@@ -9,7 +9,7 @@ const createProductSchema = s.object({
 
 const updateProductSchema = s.partial(createProductSchema);
 
-export const validateProduct = (req, res, next) => {
+export const validateCreateProduct = (req, res, next) => {
   try {
     s.assert(req.body, createProductSchema);
     next();

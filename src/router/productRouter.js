@@ -1,7 +1,6 @@
 import express from 'express';
-import prisma from '../lib/prismaClient.js';
 import {
-  validateProduct,
+  validateCreateProduct,
   validateUpdateProduct,
 } from '../middlewares/validate/validateProduct.js';
 import { asyncHandler } from '../lib/asyncHandler.js';
@@ -18,7 +17,7 @@ const productRouter = express.Router();
 
 productRouter
   .route('/')
-  .post(validateProduct, asyncHandler(createProduct))
+  .post(validateCreateProduct, asyncHandler(createProduct))
   .get(asyncHandler(getProducts));
 productRouter
   .route('/:id')

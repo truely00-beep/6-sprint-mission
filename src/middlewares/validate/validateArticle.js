@@ -7,7 +7,7 @@ const createArticleSchema = s.object({
 
 const updateArticleSchema = s.partial(createArticleSchema);
 
-export const validateArticle = (req, res, next) => {
+export const validateCreateArticle = (req, res, next) => {
   try {
     s.assert(req.body, createArticleSchema);
     next();

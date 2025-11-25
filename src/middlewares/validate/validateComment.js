@@ -6,7 +6,7 @@ const createCommentSchema = s.object({
 
 const updateCommentSchema = s.partial(createCommentSchema);
 
-export const validateComment = (req, res, next) => {
+export const validateCreateComment = (req, res, next) => {
   try {
     s.assert(req.body, createCommentSchema);
     next();
