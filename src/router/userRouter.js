@@ -3,6 +3,8 @@ import {
   createUser,
   getUserProducts,
   getUserProfile,
+  likeArticleButton,
+  likeProductButton,
   loginUser,
   logOutUser,
   newRefreshToken,
@@ -38,6 +40,18 @@ userRouter.get(
   verifyRefreshToken,
   authorizeUser,
   asyncHandler(getUserProducts)
+);
+userRouter.post(
+  '/:productId/like',
+  verifyRefreshToken,
+  authorizeUser,
+  asyncHandler(likeProductButton)
+);
+userRouter.post(
+  '/:articleId/like',
+  verifyRefreshToken,
+  authorizeUser,
+  asyncHandler(likeArticleButton)
 );
 
 export default userRouter;

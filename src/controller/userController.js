@@ -121,6 +121,52 @@ async function getUserProducts(req, res, next) {
   return res.status(200).json(products);
 }
 
+async function likeProductButton(req, res, next) {
+  const { id } = req.user;
+  const { productId } = req.params;
+  const { likeProductId } = await prisma.user.findUniqueOrThrow({
+    where: { id },
+  });
+  if (!likeProductId.includes(productId)) {
+    const productIds = [...likeProductId, productId]; // 스프레드 연산자로 새 배열 만듦
+    await prisma.user.update({
+      where: { id },
+      data: { likeProductId: productIds },
+    });
+    return res.status(200).json({ message: '상품 좋아요 등록' });
+  } else {
+    const productIds = likeProductId.filter((pid) => pid !== productId);
+    await prisma.user.update({
+      where: { id },
+      data: { likeProductId: productIds },
+    });
+    return res.status(200).json({ message: '상품 좋아요 해제' });
+  }
+}
+
+async function likeArticleButton(req, res, next) {
+  const { id } = req.user;
+  const { articleId } = req.params;
+  const { likeArticleId } = await prisma.user.findUniqueOrThrow({
+    where: { id },
+  });
+  if (!likeArticleId.includes(articleId)) {
+    const articleIds = [...likeArticleId, articleId]; // 스프레드 연산자로 새 배열 만듦
+    await prisma.user.update({
+      where: { id },
+      data: { likeArticleId: articleIds },
+    });
+    return res.status(200).json({ message: '게시글 좋아요 등록' });
+  } else {
+    const articleIds = likeArticleId.filter((aid) => aid !== articleId);
+    await prisma.user.update({
+      where: { id },
+      data: { likeArticleId: articleIds },
+    });
+    return res.status(200).json({ message: '게시글 좋아요 해제' });
+  }
+}
+
 export {
   createUser,
   loginUser,
@@ -129,4 +175,6 @@ export {
   getUserProfile,
   updateUserProfile,
   getUserProducts,
+  likeProductButton,
+  likeArticleButton,
 };
