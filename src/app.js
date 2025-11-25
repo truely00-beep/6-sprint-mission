@@ -10,7 +10,7 @@ import articleRouter from './routers/articlesRouter.js';
 import commentRouter from './routers/commentsRouter.js';
 import imageRouter from './routers/imagesRouter.js';
 
-import { errorHandlerMiddleware } from './middlewares/errorHandler.js';
+import { errorHandlerMiddleware, defaultNotFoundHandler } from './middlewares/errorHandler.js';
 
 const app = express();
 
@@ -27,6 +27,7 @@ app.use('/articles', articleRouter);
 app.use('/products', productRouter);
 app.use('/comments', commentRouter);
 
+app.use(defaultNotFoundHandler);
 app.use(errorHandlerMiddleware);
 
 app.listen(PORT, () => console.log('서버 시작'));

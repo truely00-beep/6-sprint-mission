@@ -22,3 +22,7 @@ export const errorHandlerMiddleware = (err, req, res, next) => {
 
   return res.status(500).json({ message: '서버 내부 오류가 발생했습니다.' });
 };
+
+export function defaultNotFoundHandler(req, res, next) {
+  return res.status(404).send({ message: '요청하신 페이지를 찾을 수 없습니다.' });
+}
