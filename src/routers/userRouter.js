@@ -1,7 +1,6 @@
 import express from 'express';
 import { validate } from '../middleware/validate.js';
 import { CreateUser, PatchUser } from '../structs/userStruct.js';
-import { prisma } from '../utils/prismaClient.js';
 import { UserController } from '../controller/userController.js';
 import { tryCatchHandler } from '../middleware/errorhandler.js';
 

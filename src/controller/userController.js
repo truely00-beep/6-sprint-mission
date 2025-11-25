@@ -5,7 +5,7 @@ export class UserController {
     const { offset = 0, limit = 10, order } = req.query;
     const orderbyOption = {
       recent: { createdAt: 'desc' },
-      oldest: { createdAt: 'desc' },
+      oldest: { createdAt: 'asc' },
     };
     const user = await prisma.user.findMany({
       skip: parseInt(offset),
