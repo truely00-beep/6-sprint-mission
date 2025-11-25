@@ -1,15 +1,15 @@
 import * as s from 'superstruct';
 
-const validateArt = s.object({
+const createArticleSchema = s.object({
   title: s.size(s.string(), 1, 30),
   content: s.size(s.string(), 1, 500),
 });
 
-const validateUpdateArt = s.partial(validateArt);
+const updateArticleSchema = s.partial(createArticleSchema);
 
 export const validateArticle = (req, res, next) => {
   try {
-    s.assert(req.body, validateArt);
+    s.assert(req.body, createArticleSchema);
     next();
   } catch (e) {
     next(e);
@@ -18,7 +18,7 @@ export const validateArticle = (req, res, next) => {
 
 export const validateUpdateArticle = (req, res, next) => {
   try {
-    s.assert(req.body, validateUpdateArt);
+    s.assert(req.body, updateArticleSchema);
     next();
   } catch (e) {
     next(e);

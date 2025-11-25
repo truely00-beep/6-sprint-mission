@@ -1,14 +1,14 @@
 import * as s from 'superstruct';
 
-const validateCom = s.object({
+const createCommentSchema = s.object({
   content: s.size(s.string(), 1, 500),
 });
 
-const validateUpdateCom = s.partial(validateCom);
+const updateCommentSchema = s.partial(createCommentSchema);
 
 export const validateComment = (req, res, next) => {
   try {
-    s.assert(req.body, validateCom);
+    s.assert(req.body, createCommentSchema);
     next();
   } catch (e) {
     next(e);
@@ -17,7 +17,7 @@ export const validateComment = (req, res, next) => {
 
 export const validateUpdateComment = (req, res, next) => {
   try {
-    s.assert(req.body, validateUpdateCom);
+    s.assert(req.body, updateCommentSchema);
     next();
   } catch (e) {
     next(e);

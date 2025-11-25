@@ -1,17 +1,17 @@
 import * as s from 'superstruct';
 
-const validatePro = s.object({
+const createProductSchema = s.object({
   name: s.size(s.string(), 1, 30),
   description: s.size(s.string(), 1, 500),
   price: s.number(),
   tags: s.array(s.string()),
 });
 
-const validateUpdatePro = s.partial(validatePro);
+const updateProductSchema = s.partial(createProductSchema);
 
 export const validateProduct = (req, res, next) => {
   try {
-    s.assert(req.body, validatePro);
+    s.assert(req.body, createProductSchema);
     next();
   } catch (e) {
     next(e);
@@ -20,7 +20,7 @@ export const validateProduct = (req, res, next) => {
 
 export const validateUpdateProduct = (req, res, next) => {
   try {
-    s.assert(req.body, validateUpdatePro);
+    s.assert(req.body, updateProductSchema);
     next();
   } catch (e) {
     next(e);
