@@ -17,7 +17,7 @@ import {
   getCommentsByProductId,
   updateComment,
 } from '../controller/commentController.js';
-import { AuthorizationUser, verifyAccessToken } from '../middlewares/auth.js';
+import { authorizeUser, verifyAccessToken } from '../middlewares/auth.js';
 
 const commentRouter = express.Router();
 
@@ -25,7 +25,7 @@ commentRouter
   .route('/product/:productId')
   .post(
     verifyAccessToken,
-    AuthorizationUser,
+    authorizeUser,
     validateProductIdParam,
     validateCreateComment,
     asyncHandler(createProductComment)
@@ -36,7 +36,7 @@ commentRouter
   .route('/article/:articleId')
   .post(
     verifyAccessToken,
-    AuthorizationUser,
+    authorizeUser,
     validateArticleIdParam,
     validateCreateComment,
     asyncHandler(createArticleComment)
@@ -47,14 +47,14 @@ commentRouter
   .route('/:id')
   .patch(
     verifyAccessToken,
-    AuthorizationUser,
+    authorizeUser,
     validateIdParam,
     validateUpdateComment,
     asyncHandler(updateComment)
   )
   .delete(
     verifyAccessToken,
-    AuthorizationUser,
+    authorizeUser,
     validateIdParam,
     asyncHandler(deleteComment)
   );

@@ -17,7 +17,7 @@ const verifyAccessToken = expressjwt({
 });
 
 // 유저 인가 미들웨어
-async function AuthorizationUser(req, res, next) {
+async function authorizeUser(req, res, next) {
   const { userId } = req.auth;
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) next(new BadRequestError());
@@ -25,4 +25,4 @@ async function AuthorizationUser(req, res, next) {
   return next();
 }
 
-export { verifyRefreshToken, verifyAccessToken, AuthorizationUser };
+export { verifyRefreshToken, verifyAccessToken, authorizeUser };

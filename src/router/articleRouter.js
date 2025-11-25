@@ -12,7 +12,7 @@ import {
   getArticles,
   updateArticle,
 } from '../controller/articleController.js';
-import { AuthorizationUser, verifyAccessToken } from '../middlewares/auth.js';
+import { authorizeUser, verifyAccessToken } from '../middlewares/auth.js';
 
 const articleRouter = express.Router();
 
@@ -20,7 +20,7 @@ articleRouter
   .route('/')
   .post(
     verifyAccessToken,
-    AuthorizationUser,
+    authorizeUser,
     validateCreateArticle,
     asyncHandler(createArticle)
   )
@@ -30,14 +30,14 @@ articleRouter
   .get(validateIdParam, asyncHandler(getArticleById))
   .patch(
     verifyAccessToken,
-    AuthorizationUser,
+    authorizeUser,
     validateIdParam,
     validateUpdateArticle,
     asyncHandler(updateArticle)
   )
   .delete(
     verifyAccessToken,
-    AuthorizationUser,
+    authorizeUser,
     validateIdParam,
     asyncHandler(deleteArticle)
   );

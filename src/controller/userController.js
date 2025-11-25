@@ -78,4 +78,55 @@ async function logOutUser(req, res, next) {
   return res.status(200).json({ message: '로그아웃 성공' });
 }
 
-export { createUser, loginUser, newRefreshToken, logOutUser };
+async function getUserProfile(req, res, next) {
+  const { id } = req.user;
+  const data = await prisma.user.findUnique({ where: { id } });
+  const formattedData = await userService.filterSensitiveUserData(data);
+  return res.status(200).json(formattedData);
+}
+
+async function updateUserProfile(req, res, next) {
+  const { id } = req.user;
+  const { nickname, image, password, newPassword } = req.body;
+  const { email } = await prisma.user.findUnique({ where: { id } });
+  const user = await userService.getUser(email, password);
+  const hashingNewPassword = await userService.hashingPassword(newPassword);
+  const updatedUser = await prisma.user.update({
+    where: { id },
+    data: { nickname, image, password: hashingNewPassword },
+  });
+  const newAccessToken = await userService.createToken(updatedUser);
+  const newRefreshToken = await userService.createToken(updatedUser, 'refresh');
+  const newUser = await prisma.user.update({
+    where: { id },
+    data: { refreshToken: newRefreshToken },
+  });
+  res.cookie('accessToken', newAccessToken, {
+    httpOnly: true,
+    secure: false,
+    sameSite: 'Lax',
+  });
+  res.cookie('refreshToken', newRefreshToken, {
+    httpOnly: true,
+    secure: false,
+    sameSite: 'Lax',
+  });
+  const formattedData = await userService.filterSensitiveUserData(newUser);
+  return res.status(200).json(formattedData);
+}
+
+async function getUserProducts(req, res, next) {
+  const { id } = req.user;
+  const products = await prisma.product.findMany({ where: { userId: id } });
+  return res.status(200).json(products);
+}
+
+export {
+  createUser,
+  loginUser,
+  newRefreshToken,
+  logOutUser,
+  getUserProfile,
+  updateUserProfile,
+  getUserProducts,
+};

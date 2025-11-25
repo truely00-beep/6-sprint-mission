@@ -12,7 +12,7 @@ import {
   getProducts,
   updateProduct,
 } from '../controller/productController.js';
-import { AuthorizationUser, verifyAccessToken } from '../middlewares/auth.js';
+import { authorizeUser, verifyAccessToken } from '../middlewares/auth.js';
 
 const productRouter = express.Router();
 
@@ -20,7 +20,7 @@ productRouter
   .route('/')
   .post(
     verifyAccessToken,
-    AuthorizationUser,
+    authorizeUser,
     validateCreateProduct,
     asyncHandler(createProduct)
   )
@@ -30,11 +30,11 @@ productRouter
   .get(validateIdParam, asyncHandler(getProductById))
   .patch(
     verifyAccessToken,
-    AuthorizationUser,
+    authorizeUser,
     validateIdParam,
     validateUpdateProduct,
     asyncHandler(updateProduct)
   )
-  .delete(verifyAccessToken, AuthorizationUser, asyncHandler(deleteProduct));
+  .delete(verifyAccessToken, authorizeUser, asyncHandler(deleteProduct));
 
 export default productRouter;
