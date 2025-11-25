@@ -8,18 +8,18 @@ import {
   patchProduct,
 } from '../controllers/productsController.js';
 import commentsRouter from './commentsRouter.js';
-
+import { authenticate } from '../middlewares/authenticate.js';
 import { validate } from '../middlewares/validate.js';
 import { CreateProductSchema, PatchProductSchema } from '../validations/productsSchema.js';
 
 const router = express.Router();
 
-router.post('/', validate(CreateProductSchema, 'body'), createProduct);
+router.post('/', authenticate, validate(CreateProductSchema, 'body'), createProduct);
 router.get('/', validatePagination, getProducts);
 
 router.get('/:id', getProduct);
-router.patch('/:id', validate(PatchProductSchema, 'body'), patchProduct);
-router.delete('/:id', deleteProduct);
+router.patch('/:id', authenticate, validate(PatchProductSchema, 'body'), patchProduct);
+router.delete('/:id', authenticate, deleteProduct);
 
 router.use('/:productId/comments', commentsRouter);
 
