@@ -8,9 +8,11 @@ import userRouter from './routers/userRouter.js';
 import { errorHandler } from './middleware/errorhandler.js';
 import cors from 'cors';
 import orderRouter from './routers/orderRouter.js';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 
 app.use('/files', express.static('uploads'));
 
@@ -30,6 +32,8 @@ app.use('/users', userRouter);
 
 //주문생성
 app.use('/orders', orderRouter);
+
+app.use('/auth', authRouter);
 
 //전역 에러핸들러
 app.use(errorHandler);

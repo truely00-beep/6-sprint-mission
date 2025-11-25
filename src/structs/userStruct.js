@@ -4,6 +4,8 @@ import isEmail from 'is-email';
 
 export const CreateUser = s.object({
   email: s.define('Email', isEmail), //s.define(<> ,...) <> =검사에서 실패했을 때 에러메시지에 사용
+  password: s.size(s.string(), 8, 20),
+  nickname: s.size(s.string(), 2, 10),
   name: s.size(s.string(), 1, 10),
   userPreference: s.optional(
     s.object({

@@ -3,13 +3,19 @@ import { validate } from '../middleware/validate.js';
 import { CreateUser, PatchUser } from '../structs/userStruct.js';
 import { UserController } from '../controller/userController.js';
 import { tryCatchHandler } from '../middleware/errorhandler.js';
+import { UploadImage } from '../middleware/formdataParser.js';
+import { hashingPassword } from '../middleware/bcrypt.js';
 
 const userRouter = express.Router();
-
+const profileUpload = UploadImage('user-profiles');
 userRouter
   .route('/')
   .get(tryCatchHandler(UserController.getUsers))
-  .post(validate(CreateUser), tryCatchHandler(UserController.createUser));
+  .post(
+    profileUpload.single('profileImage'),
+    validate(CreateUser),
+    tryCatchHandler(UserController.createUser),
+  );
 
 userRouter
   .route('/:id')

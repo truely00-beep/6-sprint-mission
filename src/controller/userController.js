@@ -22,27 +22,31 @@ export class UserController {
     res.status(200).send(user);
   };
   static createUser = async (req, res) => {
-    const { userPreference, ...userFields } = req.body;
+    const { userPreference, password, ...userFields } = req.body;
     const received = userPreference ? userPreference.receivedEmail : false;
+    const profileImage = req.file;
+
+    let image;
+    if (profileImage) {
+      image = { create: { url: `/files/user-profiles/${profileImage.filename}` } };
+    } else {
+      image = undefined;
+    }
 
     const user = await prisma.user.create({
       data: {
         ...userFields,
+        password,
         userPreference: {
           create: {
             receivedEmail: received,
           },
         },
-      },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        createdAt: true,
-        userPreference: { select: { receivedEmail: true } },
+        image,
       },
     });
-    res.status(201).send(user);
+    const { password: _, ...userWithoutPassword } = user;
+    res.status(201).send(userWithoutPassword);
   };
   static getUserDetail = async (req, res) => {
     const { id } = parseInt(req.params.id, 10);
