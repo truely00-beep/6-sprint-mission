@@ -1,6 +1,6 @@
 import express from 'express';
 import { validate } from '../middleware/validate.js';
-import { CreateUser } from '../structs/userStruct.js';
+import { CreateUser, LoginUser } from '../structs/userStruct.js';
 import { tryCatchHandler } from '../middleware/errorhandler.js';
 import { UploadImage } from '../middleware/formdataParser.js';
 import { hashingPassword } from '../middleware/bcrypt.js';
@@ -16,5 +16,7 @@ authRouter.post(
   hashingPassword,
   tryCatchHandler(AuthController.register),
 );
+
+authRouter.post('/login', validate(LoginUser), tryCatchHandler(AuthController));
 
 export default authRouter;
