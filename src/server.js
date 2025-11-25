@@ -9,6 +9,7 @@ import {
   globalErrorHandler,
   defaultNotFoundHandler,
 } from './middlewares/errorHandler/errorHandler.js';
+import userRouter from './router/userRouter.js';
 dotenv.config();
 
 const PORT = process.env.PORT || 4000;
@@ -22,6 +23,8 @@ app.use('/products', productRouters);
 app.use('/articles', articleRouters);
 app.use('/comments', commentRouters);
 app.use('/files', express.static('uploads'));
+app.use('/users', userRouter);
+
 app.use(defaultNotFoundHandler);
 app.use(globalErrorHandler);
 
