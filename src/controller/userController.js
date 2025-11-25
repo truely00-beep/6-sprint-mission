@@ -65,4 +65,17 @@ async function newRefreshToken(req, res, next) {
   return res.status(200).json({ message: 'Refresh 성공' });
 }
 
-export { createUser, loginUser, newRefreshToken };
+async function logOutUser(req, res, next) {
+  const { userId } = req.auth;
+  res.clearCookie('accessToken');
+  res.clearCookie('refreshToken');
+  await prisma.user.update({
+    where: { id: userId },
+    data: {
+      refreshToken: null,
+    },
+  });
+  return res.status(200).json({ message: '로그아웃 성공' });
+}
+
+export { createUser, loginUser, newRefreshToken, logOutUser };

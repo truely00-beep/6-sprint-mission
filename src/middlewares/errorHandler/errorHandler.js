@@ -37,6 +37,9 @@ function globalErrorHandler(err, req, res, next) {
   if (err.name === 'StructError') {
     return res.status(400).json({ message: '잘못된 요청입니다' });
   }
+  if (err.code === 'credentials_required') {
+    return res.status(401).json({ message: '접근할 수 없는 권한 입니다' });
+  }
 
   res.status(500).json({ message: '서버 내부 오류가 발생했습니다.' });
 }
