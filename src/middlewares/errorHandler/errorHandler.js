@@ -1,5 +1,9 @@
 import { Prisma } from '@prisma/client';
-import { BadRequestError, NotFoundError } from '../../lib/error.js';
+import {
+  BadRequestError,
+  ForbiddenError,
+  NotFoundError,
+} from '../../lib/error.js';
 
 function defaultNotFoundHandler(req, res, next) {
   return res.status(404).send({ message: '존재하지 않습니다' });
@@ -26,6 +30,9 @@ function globalErrorHandler(err, req, res, next) {
   }
   if (err instanceof BadRequestError) {
     return res.status(404).send({ message: err.message });
+  }
+  if (err instanceof ForbiddenError) {
+    return res.status(403).send({ message: err.message });
   }
   if (err.name === 'StructError') {
     return res.status(400).json({ message: '잘못된 요청입니다' });
