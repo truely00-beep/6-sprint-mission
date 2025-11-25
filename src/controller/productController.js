@@ -54,7 +54,7 @@ export class ProductController {
   };
   //상품 정보 수정
   static patchProduct = async (req, res) => {
-    const { id } = req.params;
+    const { id } = parseInt(req.params.id, 10);
 
     const product = await prisma.product.update({
       where: { id },
@@ -64,7 +64,7 @@ export class ProductController {
   };
   //상품 삭제
   static deleteProduct = async (req, res) => {
-    const { id } = req.params;
+    const { id } = parseInt(req.params.id, 10);
     await prisma.product.delete({
       where: { id },
     });

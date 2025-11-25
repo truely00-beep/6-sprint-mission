@@ -28,7 +28,7 @@ export class ArticleController {
     res.status(201).send(article);
   };
   static getArticleDetail = async (req, res) => {
-    const { id } = req.params;
+    const { id } = parseInt(req.params.id, 10);
     const article = await prisma.article.findUniqueOrThrow({
       where: { id },
       select: { id: true, title: true, content: true, createdAt: true },
@@ -36,7 +36,7 @@ export class ArticleController {
     res.status(200).send(article);
   };
   static patchArticle = async (req, res) => {
-    const { id } = req.params;
+    const { id } = parseInt(req.params.id, 10);
     const { title, content } = req.body;
     const article = await prisma.article.update({
       where: { id },
@@ -45,7 +45,7 @@ export class ArticleController {
     res.status(200).send(article);
   };
   static deleteArticle = async (req, res) => {
-    const { id } = req.params;
+    const { id } = parseInt(req.params.id, 10);
     await prisma.article.delete({
       where: { id },
     });

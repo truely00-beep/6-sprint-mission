@@ -27,7 +27,7 @@ commentRouter
   .delete(tryCatchHandler(commentController.deleteComment));
 
 //모든 댓글 조회
-commentRouter.route('/').get(tryCatchHandler(commentController.deleteComment));
+commentRouter.route('/').get(tryCatchHandler(commentController.getAllComment));
 
 export default commentRouter;
 // 프리즈마 문서만 참고해서 커서 옵션을 사용했을 때 시도 >> 실패

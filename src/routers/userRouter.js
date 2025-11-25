@@ -14,7 +14,7 @@ userRouter
 userRouter
   .route('/:id')
   .get(tryCatchHandler(UserController.getUserDetail))
-  .patch(validate(PatchUser), tryCatchHandler(UserController))
+  .patch(validate(PatchUser), tryCatchHandler(UserController.patchUser))
   .delete(tryCatchHandler(UserController.deleteUser));
 
 export default userRouter;

@@ -19,50 +19,50 @@ async function main() {
   await prisma.user.deleteMany({});
   console.log('모든 데이터가 삭제되었습니다.');
 
-  for (const user of USERS) {
-    const { userPreference, ...userData } = user;
-    const createData = {
-      ...userData,
-    };
+  // for (const user of USERS) {
+  //   const { userPreference, ...userData } = user;
+  //   const createData = {
+  //     ...userData,
+  //   };
 
-    if (userPreference) {
-      createData.userPreference = {
-        create: {
-          receivedEmail: userPreference.receivedEmail,
-        },
-      };
-    }
-    await prisma.user.create({ data: createData });
-  }
+  //   if (userPreference) {
+  //     createData.userPreference = {
+  //       create: {
+  //         receivedEmail: userPreference.receivedEmail,
+  //       },
+  //     };
+  //   }
+  //   await prisma.user.create({ data: createData });
+  // }
 
-  console.log('상품 데이터를 시딩합니다...');
-  await prisma.product.createMany({
-    data: PRODUCTS,
-    skipDuplicates: true,
-  });
+  // console.log('상품 데이터를 시딩합니다...');
+  // await prisma.product.createMany({
+  //   data: PRODUCTS,
+  //   skipDuplicates: true,
+  // });
 
-  console.log('게시글 데이터를 시딩합니다...');
-  await prisma.article.createMany({
-    data: ARTICLES,
-    skipDuplicates: true,
-  });
+  // console.log('게시글 데이터를 시딩합니다...');
+  // await prisma.article.createMany({
+  //   data: ARTICLES,
+  //   skipDuplicates: true,
+  // });
 
-  console.log('댓글 데이터를 시딩합니다...');
-  await prisma.comment.createMany({
-    data: COMMENTS,
-    skipDuplicates: true,
-  });
+  // console.log('댓글 데이터를 시딩합니다...');
+  // await prisma.comment.createMany({
+  //   data: COMMENTS,
+  //   skipDuplicates: true,
+  // });
 
-  console.log('주문 데이터를 시딩합니다...');
-  for (const order of ORDERS) {
-    const { orderItems, ...orderData } = order;
-    await prisma.order.create({
-      data: {
-        ...orderData,
-        orderItems: { create: orderItems },
-      },
-    });
-  }
+  // console.log('주문 데이터를 시딩합니다...');
+  // for (const order of ORDERS) {
+  //   const { orderItems, ...orderData } = order;
+  //   await prisma.order.create({
+  //     data: {
+  //       ...orderData,
+  //       orderItems: { create: orderItems },
+  //     },
+  //   });
+  // }
 }
 
 main()

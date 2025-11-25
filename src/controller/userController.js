@@ -45,7 +45,7 @@ export class UserController {
     res.status(201).send(user);
   };
   static getUserDetail = async (req, res) => {
-    const { id } = req.params;
+    const { id } = parseInt(req.params.id, 10);
     const user = await prisma.user.findUniqueOrThrow({
       where: { id },
       select: {
@@ -59,7 +59,7 @@ export class UserController {
     res.status(200).send(user);
   };
   static patchUser = async (req, res) => {
-    const { id } = req.params;
+    const { id } = parseInt(req.params.id, 10);
     const { userPreference, ...userFields } = req.body;
     const user = await prisma.user.update({
       where: { id },
@@ -72,7 +72,7 @@ export class UserController {
     res.send(user);
   };
   static deleteUser = async (req, res) => {
-    const { id } = req.params;
+    const { id } = parseInt(req.params.id, 10);
 
     await prisma.user.delete({
       where: { id },
