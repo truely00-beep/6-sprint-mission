@@ -2,6 +2,8 @@ import express from 'express';
 import 'express-async-errors';
 import cors from 'cors';
 import { PORT } from './utils/constants.js';
+import cookieParser from 'cookie-parser';
+import authRouter from './routers/authRouter.js';
 
 import productRouter from './routers/productsRouter.js';
 import articleRouter from './routers/articlesRouter.js';
@@ -18,7 +20,9 @@ app.use('/files', express.static('uploads'));
 app.use('/images', imageRouter);
 
 app.use(express.json());
+app.use(cookieParser());
 
+app.use('/auth', authRouter);
 app.use('/articles', articleRouter);
 app.use('/products', productRouter);
 app.use('/comments', commentRouter);
