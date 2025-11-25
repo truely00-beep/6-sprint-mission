@@ -37,7 +37,7 @@ async function getProducts(req, res, next) {
 
 async function getProductById(req, res, next) {
   const { id } = req.params;
-  const data = await prisma.product.findUnique({
+  const data = await prisma.product.findUniqueOrThrow({
     where: { id },
     select: {
       id: true,
@@ -48,10 +48,6 @@ async function getProductById(req, res, next) {
       createdAt: true,
     },
   });
-
-  if (!data) {
-    return res.status(404).json({ message: '해당 상품을 찾을 수 없습니다.' });
-  }
 
   res.status(200).json(data);
 }

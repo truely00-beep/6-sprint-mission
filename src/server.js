@@ -5,7 +5,10 @@ import productRouters from './router/productRouter.js';
 import articleRouters from './router/articleRouter.js';
 import commentRouters from './router/commentRouter.js';
 import multer from 'multer';
-import { errorHandler } from './middlewares/errorHandler/errorHandler.js';
+import {
+  globalErrorHandler,
+  defaultNotFoundHandler,
+} from './middlewares/errorHandler/errorHandler.js';
 dotenv.config();
 
 const PORT = process.env.PORT || 4000;
@@ -19,7 +22,8 @@ app.use('/products', productRouters);
 app.use('/articles', articleRouters);
 app.use('/comments', commentRouters);
 app.use('/files', express.static('uploads'));
-app.use(errorHandler);
+app.use(defaultNotFoundHandler);
+app.use(globalErrorHandler);
 
 app.post('/uploads', upload.single('attachment'), (req, res) => {
   const { filename } = req.file;

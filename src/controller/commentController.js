@@ -1,3 +1,4 @@
+import { NotFoundError } from '../lib/error.js';
 import prisma from '../lib/prismaClient.js';
 
 async function createProductComment(req, res, next) {
@@ -23,9 +24,9 @@ async function getCommentsByProductId(req, res, next) {
     select: { id: true, content: true, createdAt: true },
   });
 
-  if (data.length === 0) {
-    return res.status(404).json({ message: '아직 댓글이 존재하지 않습니다.' });
-  }
+  // if (data.length === 0) {
+  //   return next(new NotFoundError());
+  // }
 
   res.status(200).json(data);
 }
@@ -53,9 +54,9 @@ async function getCommentsByArticleId(req, res, next) {
     select: { id: true, content: true, createdAt: true },
   });
 
-  if (data.length === 0) {
-    return res.status(404).json({ message: '아직 댓글이 존재하지 않습니다.' });
-  }
+  // if (data.length === 0) {
+  //   return next(new NotFoundError());
+  // }
 
   res.status(200).json(data);
 }

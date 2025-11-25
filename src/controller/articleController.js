@@ -37,14 +37,10 @@ async function getArticles(req, res, next) {
 
 async function getArticleById(req, res, next) {
   const { id } = req.params;
-  const data = await prisma.article.findUnique({
+  const data = await prisma.article.findUniqueOrThrow({
     where: { id },
     select: { id: true, title: true, content: true, createdAt: true },
   });
-
-  if (!data) {
-    return res.status(404).json({ message: '해당 게시글을 찾을 수 없습니다.' });
-  }
 
   res.status(200).json(data);
 }
