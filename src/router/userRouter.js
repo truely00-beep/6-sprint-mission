@@ -4,7 +4,9 @@ import {
   getUserProducts,
   getUserProfile,
   likeArticleButton,
+  likeArticleList,
   likeProductButton,
+  likeProductList,
   loginUser,
   logOutUser,
   newRefreshToken,
@@ -42,16 +44,27 @@ userRouter.get(
   asyncHandler(getUserProducts)
 );
 userRouter.post(
-  '/:productId/like',
+  '/products/:productId/',
   verifyRefreshToken,
   authorizeUser,
   asyncHandler(likeProductButton)
 );
 userRouter.post(
-  '/:articleId/like',
+  '/articles/:articleId/',
   verifyRefreshToken,
   authorizeUser,
   asyncHandler(likeArticleButton)
 );
-
+userRouter.get(
+  '/products/like',
+  verifyRefreshToken,
+  authorizeUser,
+  asyncHandler(likeProductList)
+);
+userRouter.get(
+  '/articles/like',
+  verifyRefreshToken,
+  authorizeUser,
+  asyncHandler(likeArticleList)
+);
 export default userRouter;

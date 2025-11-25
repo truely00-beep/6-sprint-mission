@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "User" ALTER COLUMN "likeProductId" SET DEFAULT ARRAY[]::TEXT[],
+ALTER COLUMN "likeArticleId" SET DEFAULT ARRAY[]::TEXT[];

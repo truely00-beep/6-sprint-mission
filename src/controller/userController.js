@@ -167,6 +167,28 @@ async function likeArticleButton(req, res, next) {
   }
 }
 
+async function likeProductList(req, res, next) {
+  const { id } = req.user;
+  const { likeProductId } = await prisma.user.findUniqueOrThrow({
+    where: { id },
+  });
+  const likeProductList = await prisma.product.findMany({
+    where: { id: { in: likeProductId } }, // likeProductId 안에 있는 id가 db에 있으면 찾아서 가져옴
+  });
+  res.status(200).json({ likeProductList });
+}
+
+async function likeArticleList(req, res, next) {
+  const { id } = req.user;
+  const { likeArticleId } = await prisma.user.findUniqueOrThrow({
+    where: { id },
+  });
+  const likeArticleList = await prisma.article.findMany({
+    where: { id: { in: likeArticleId } }, // likeProductId 안에 있는 id가 db에 있으면 찾아서 가져옴
+  });
+  res.status(200).json({ likeArticleList });
+}
+
 export {
   createUser,
   loginUser,
@@ -177,4 +199,6 @@ export {
   getUserProducts,
   likeProductButton,
   likeArticleButton,
+  likeProductList,
+  likeArticleList,
 };
