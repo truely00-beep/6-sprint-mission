@@ -21,6 +21,7 @@ model User {
   image         String?
   refreshToken  String?
   likeProductId String[]
+  likeArticleId String[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   products      Product[]
