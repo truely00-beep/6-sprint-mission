@@ -1,9 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import productRouters from './routes/productRouter.js';
-import articleRouters from './routes/articleRouter.js';
-import commentRouters from './routes/commentRouter.js';
+import productRouters from './router/productRouter.js';
+import articleRouters from './router/articleRouter.js';
+import commentRouters from './router/commentRouter.js';
 import multer from 'multer';
 import { errorHandler } from './middlewares/errorHandler/errorHandler.js';
 dotenv.config();
