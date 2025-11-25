@@ -9,6 +9,7 @@ import { errorHandler } from './middleware/errorhandler.js';
 import cors from 'cors';
 import orderRouter from './routers/orderRouter.js';
 import cookieParser from 'cookie-parser';
+import authRouter from './routers/authRouter.js';
 
 const app = express();
 app.use(express.json());

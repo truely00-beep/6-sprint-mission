@@ -37,7 +37,7 @@ export function UploadImage(subfolder) {
   // 5) multer middleware export
   return multer({
     storage,
-    limits: { filesize: 10 * 2024 * 2024 }, //10MB
+    limits: { filesize: 10 * 1024 * 1024 }, //10MB
     fileFilter,
   });
 }

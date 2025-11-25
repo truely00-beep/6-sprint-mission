@@ -22,7 +22,7 @@ commentRouter
 
 //댓글 수정 및 삭제
 commentRouter
-  .route('/:id')
+  .route('/:commentId')
   .patch(validate(PatchComment), tryCatchHandler(commentController.patchComment))
   .delete(tryCatchHandler(commentController.deleteComment));
 

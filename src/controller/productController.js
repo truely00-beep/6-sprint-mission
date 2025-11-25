@@ -38,9 +38,9 @@ export class ProductController {
   };
   //상품 상세 조회
   static getProductDetail = async (req, res) => {
-    const { id } = req.params;
+    const productId = parseInt(req.params.id, 10);
     const product = await prisma.product.findUniqueOrThrow({
-      where: { id },
+      where: { id: productId },
       select: {
         id: true,
         name: true,
@@ -54,19 +54,19 @@ export class ProductController {
   };
   //상품 정보 수정
   static patchProduct = async (req, res) => {
-    const { id } = parseInt(req.params.id, 10);
+    const productId = parseInt(req.params.id, 10);
 
     const product = await prisma.product.update({
-      where: { id },
+      where: { id: productId },
       data: req.body,
     });
     res.status(200).send(product);
   };
   //상품 삭제
   static deleteProduct = async (req, res) => {
-    const { id } = parseInt(req.params.id, 10);
+    const productId = parseInt(req.params.id, 10);
     await prisma.product.delete({
-      where: { id },
+      where: { id: productId },
     });
     res.sendStatus(204);
   };

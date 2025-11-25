@@ -37,9 +37,9 @@ export class commentController {
     res.status(201).send(articleComment);
   };
   static patchComment = async (req, res) => {
-    const { id } = parseInt(req.params.id, 10);
+    const commentId = parseInt(req.params.id, 10);
     const patchComment = await prisma.comment.update({
-      where: { id },
+      where: { id: commentId },
       data: req.body,
       select: {
         id: true,
@@ -68,9 +68,9 @@ export class commentController {
     res.status(200).send(getAllComment);
   };
   static deleteComment = async (req, res) => {
-    const { id } = parseInt(req.params.id, 10);
+    const commentId = parseInt(req.params.id, 10);
     await prisma.comment.delete({
-      where: { id },
+      where: { id: commentId },
     });
     res.sendStatus(204);
   };

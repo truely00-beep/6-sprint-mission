@@ -1,24 +1,15 @@
 import express from 'express';
 import { validate } from '../middleware/validate.js';
-import { CreateUser, PatchUser } from '../structs/userStruct.js';
+import { PatchUser } from '../structs/userStruct.js';
 import { UserController } from '../controller/userController.js';
 import { tryCatchHandler } from '../middleware/errorhandler.js';
-import { UploadImage } from '../middleware/formdataParser.js';
-import { hashingPassword } from '../middleware/bcrypt.js';
 
 const userRouter = express.Router();
-const profileUpload = UploadImage('user-profiles');
-userRouter
-  .route('/')
-  .get(tryCatchHandler(UserController.getUsers))
-  .post(
-    profileUpload.single('profileImage'),
-    validate(CreateUser),
-    tryCatchHandler(UserController.createUser),
-  );
+
+userRouter.route('/').get(tryCatchHandler(UserController.getUsers));
 
 userRouter
-  .route('/:id')
+  .route('/:userId')
   .get(tryCatchHandler(UserController.getUserDetail))
   .patch(validate(PatchUser), tryCatchHandler(UserController.patchUser))
   .delete(tryCatchHandler(UserController.deleteUser));
