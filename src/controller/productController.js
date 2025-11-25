@@ -2,7 +2,10 @@ import prisma from '../lib/prismaClient.js';
 
 async function createProduct(req, res, next) {
   const data = await prisma.product.create({
-    data: req.body,
+    data: {
+      ...req.body,
+      userId: req.user.id,
+    },
   });
   res.status(201).json(data);
 }
@@ -56,7 +59,10 @@ async function updateProduct(req, res, next) {
   const { id } = req.params;
   const data = await prisma.product.update({
     where: { id },
-    data: req.body,
+    data: {
+      ...req.body,
+      userId: req.user.id,
+    },
   });
   res.status(200).json(data);
 }

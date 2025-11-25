@@ -2,7 +2,10 @@ import prisma from '../lib/prismaClient.js';
 
 async function createArticle(req, res, next) {
   const data = await prisma.article.create({
-    data: req.body,
+    data: {
+      ...req.body,
+      userId: req.user.id,
+    },
   });
   res.status(201).json(data);
 }
@@ -49,7 +52,10 @@ async function updateArticle(req, res, next) {
   const { id } = req.params;
   const data = await prisma.article.update({
     where: { id },
-    data: req.body,
+    data: {
+      ...req.body,
+      userId: req.user.id,
+    },
   });
   res.status(200).json(data);
 }

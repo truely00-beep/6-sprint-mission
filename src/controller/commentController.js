@@ -5,7 +5,7 @@ async function createProductComment(req, res, next) {
   const { productId } = req.params;
   const { content } = req.body;
   const data = await prisma.comment.create({
-    data: { content, productId },
+    data: { content, productId, userId: req.user.id },
   });
   res.status(201).json(data);
 }
@@ -35,7 +35,7 @@ async function createArticleComment(req, res, next) {
   const { articleId } = req.params;
   const { content } = req.body;
   const data = await prisma.comment.create({
-    data: { articleId, content },
+    data: { articleId, content, userId: req.user.id },
   });
   res.status(201).json(data);
 }
@@ -65,7 +65,10 @@ async function updateComment(req, res, next) {
   const { id } = req.params;
   const data = await prisma.comment.update({
     where: { id },
-    data: req.body,
+    data: {
+      ...req.body,
+      userId: req.user.id,
+    },
   });
   res.status(200).json(data);
 }
