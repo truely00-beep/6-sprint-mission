@@ -1,10 +1,7 @@
-import express from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../lib/prisma.js';
 import { assert } from 'superstruct';
 import { CreateProduct, PatchProduct } from '../structs/productStructs.js';
 import { CreateComment } from '../structs/commentStructs.js';
-
-const prisma = new PrismaClient();
 
 class ProductController {
   async getProduct(req, res) {

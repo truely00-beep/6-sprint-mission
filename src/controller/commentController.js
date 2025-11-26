@@ -1,9 +1,6 @@
-import express from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../lib/prisma.js';
 import { assert } from 'superstruct';
 import { PatchComment } from '../structs/commentStructs.js';
-
-const prisma = new PrismaClient();
 
 class CommentController {
   async updateComment(req, res) {
