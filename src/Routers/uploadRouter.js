@@ -1,4 +1,4 @@
-import { EXPRESS } from './libs/constants.js';
+import { EXPRESS } from './../libs/constants.js';
 import catchAsync from './../libs/catchAsync.js';
 import multer from 'multer';
 import {

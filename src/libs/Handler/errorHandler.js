@@ -51,11 +51,12 @@ export default errorHandler;
  * HTTP 상태 코드와 메시지를 포함하여 Global Error Handler가 쉽게 처리할 수 있도록 합니다.
  */
 export class CustomError extends Error {
-    constructor(message, statusCode = 500) {
+    constructor(statusCode = 500, message = '', data = {}) {
         super(message);
         this.statusCode = statusCode;
         // Error stack 추적을 위해 클래스 이름 설정
         this.name = this.constructor.name;
+        this.data = data;
         // 생성자 함수를 호출 스택에서 제외
         Error.captureStackTrace(this, this.constructor);
     }
