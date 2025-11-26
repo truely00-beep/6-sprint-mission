@@ -1,6 +1,6 @@
 import { expressjwt } from 'express-jwt';
 import prisma from '../lib/prismaClient.js';
-import { BadRequestError } from '../lib/error.js';
+import { AuthorizeError, BadRequestError } from '../lib/error.js';
 import jwt from 'jsonwebtoken';
 
 // 리퀘스트 토큰 검증 미들웨어
@@ -23,7 +23,7 @@ async function authorizeUser(req, res, next) {
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) next(new BadRequestError());
   req.user = user;
-  return next();
+  next();
 }
 
 // 토큰 유무 확인하는 전역 미들웨어
@@ -37,4 +37,45 @@ function optionalAuth(req, res, next) {
   });
 }
 
-export { verifyRefreshToken, verifyAccessToken, authorizeUser, optionalAuth };
+// 유저가 생성한 상품인지 확인하는 미들웨어
+async function authorizeProduct(req, res, next) {
+  const userId = req.user.id;
+  const { id } = req.params;
+  const product = await prisma.product.findUniqueOrThrow({
+    where: { id },
+  });
+  if (userId !== product.userId) next(new AuthorizeError());
+  next();
+}
+
+// 유저가 생성한 게시글인지 확인하는 미들웨어
+async function authorizeArticle(req, res, next) {
+  const userId = req.user.id;
+  const { id } = req.params;
+  const article = await prisma.article.findUniqueOrThrow({
+    where: { id },
+  });
+  if (userId !== article.userId) next(new AuthorizeError());
+  next();
+}
+
+// 유저가 생성한 댓글인지 확인하는 미들웨어
+async function authorizeComment(req, res, next) {
+  const userId = req.user.id;
+  const { id } = req.params;
+  const comment = await prisma.comment.findUniqueOrThrow({
+    where: { id },
+  });
+  if (userId !== comment.userId) next(new AuthorizeError());
+  next();
+}
+
+export {
+  verifyRefreshToken,
+  verifyAccessToken,
+  authorizeUser,
+  optionalAuth,
+  authorizeProduct,
+  authorizeArticle,
+  authorizeComment,
+};

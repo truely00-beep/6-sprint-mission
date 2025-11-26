@@ -13,7 +13,11 @@ import {
   getArticles,
   updateArticle,
 } from '../controller/articleController.js';
-import { authorizeUser, verifyAccessToken } from '../middlewares/auth.js';
+import {
+  authorizeArticle,
+  authorizeUser,
+  verifyAccessToken,
+} from '../middlewares/auth.js';
 
 const articleRouter = express.Router();
 
@@ -34,12 +38,14 @@ articleRouter
     authorizeUser,
     validateIdParam,
     validateUpdateArticle,
+    authorizeArticle,
     asyncHandler(updateArticle)
   )
   .delete(
     verifyAccessToken,
     authorizeUser,
     validateIdParam,
+    authorizeArticle,
     asyncHandler(deleteArticle)
   );
 

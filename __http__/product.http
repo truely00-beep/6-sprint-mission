@@ -8,7 +8,7 @@ POST http://localhost:4000/products
 Content-Type: application/json
 
 {
-    "name": "테스트s",
+    "name": "aaa의 상품",
     "description": "사람 입니다.",
     "price": 500,
     "tags": ["인간"]
@@ -16,11 +16,11 @@ Content-Type: application/json
 
 // 상품 상세 조회
 ###
-GET http://localhost:4000/products/6794f8a1-2a5d-4ab0-8211-ee33660788d8
+GET http://localhost:4000/products/d4b9d004-5a8b-41ed-a723-8c75e9d8496e
 
 // 상품 수정
 ###
-PATCH http://localhost:4000/products/6794f8a1-2a5d-4ab0-8211-ee33660788d8
+PATCH http://localhost:4000/products/d4b9d004-5a8b-41ed-a723-8c75e9d8496e
 Content-Type: application/json
 
 {
@@ -32,5 +32,5 @@ Content-Type: application/json
 
 // 상품 삭제
 ###
-DELETE http://localhost:4000/products/6794f8a1-2a5d-4ab0-8211-ee33660788d8
+DELETE http://localhost:4000/products/d4b9d004-5a8b-41ed-a723-8c75e9d8496e
 

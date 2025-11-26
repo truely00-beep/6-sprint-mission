@@ -18,7 +18,11 @@ import {
   getCommentsByProductId,
   updateComment,
 } from '../controller/commentController.js';
-import { authorizeUser, verifyAccessToken } from '../middlewares/auth.js';
+import {
+  authorizeComment,
+  authorizeUser,
+  verifyAccessToken,
+} from '../middlewares/auth.js';
 
 const commentRouter = express.Router();
 
@@ -59,12 +63,14 @@ commentRouter
     authorizeUser,
     validateIdParam,
     validateUpdateComment,
+    authorizeComment,
     asyncHandler(updateComment)
   )
   .delete(
     verifyAccessToken,
     authorizeUser,
     validateIdParam,
+    authorizeComment,
     asyncHandler(deleteComment)
   );
 

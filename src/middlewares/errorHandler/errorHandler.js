@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client';
 import {
+  AuthorizeError,
   BadRequestError,
   ForbiddenError,
   NotFoundError,
@@ -34,6 +35,9 @@ function globalErrorHandler(err, req, res, next) {
   if (err instanceof ForbiddenError) {
     return res.status(403).send({ message: err.message });
   }
+  if (err instanceof AuthorizeError) {
+    return res.status(403).send({ message: err.message });
+  }
   if (err.name === 'StructError') {
     if (err.path[0] === 'password') {
       return res
@@ -46,7 +50,6 @@ function globalErrorHandler(err, req, res, next) {
   if (err.code === 'credentials_required') {
     return res.status(401).json({ message: '접근할 수 없는 권한 입니다.' });
   }
-
   res.status(500).json({ message: '서버 내부 오류가 발생했습니다.' });
 }
 

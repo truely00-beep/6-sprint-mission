@@ -14,11 +14,11 @@ Content-Type: application/json
 
 // 게시글 상세 조회
 ###
-GET http://localhost:4000/articles/0c4c1a5b-9d92-4d3d-920b-4dd5a0fecc31
+GET http://localhost:4000/articles/4c361f2b-e48b-4c9d-ad39-b8215bb3cdca
 
 // 게시글 수정
 ###
-PATCH http://localhost:4000/articles/86905fe8-bac9-41cf-a5f3-6256eda399c2
+PATCH http://localhost:4000/articles/b16aae15-4990-49c7-95fb-2aeb414ac13d
 Content-Type: application/json
 
 {
@@ -28,5 +28,5 @@ Content-Type: application/json
 
 // 게시글 삭제
 ###
-DELETE http://localhost:4000/articles/45eb3bff-97ee-4c17-a93b-a96787031b9f
+DELETE http://localhost:4000/articles/0c4c1a5b-9d92-4d3d-920b-4dd5a0fecc31
 

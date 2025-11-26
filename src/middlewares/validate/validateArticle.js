@@ -1,4 +1,3 @@
-import e from 'express';
 import * as s from 'superstruct';
 
 const createArticleSchema = s.object({
@@ -8,7 +7,7 @@ const createArticleSchema = s.object({
 
 function validateCreateArticle(req, res, next) {
   try {
-    s.assert(req.body, createArticleSchema);
+    const _ = s.create(req.body, createArticleSchema);
     next();
   } catch (e) {
     next(e);
@@ -19,7 +18,7 @@ const updateArticleSchema = s.partial(createArticleSchema);
 
 function validateUpdateArticle(req, res, next) {
   try {
-    s.assert(req.body, updateArticleSchema);
+    const _ = s.create(req.body, updateArticleSchema);
     next();
   } catch (e) {
     next(e);
