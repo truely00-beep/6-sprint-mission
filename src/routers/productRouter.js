@@ -4,7 +4,7 @@ import { CreateProduct, PatchProduct } from '../structs/productStruct.js';
 import { tryCatchHandler } from '../middleware/errorhandler.js';
 import { ProductController } from '../controller/productController.js';
 import { UploadImage } from '../middleware/formdataParser.js';
-import { authenticate } from '../utils/authenticate.js';
+import { authenticate } from '../middleware/authenticate.js';
 import { productValidate } from '../middleware/productValidate.js';
 
 // const app = express();

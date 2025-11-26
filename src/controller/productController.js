@@ -32,10 +32,14 @@ export class ProductController {
   };
   static createProduct = async (req, res) => {
     const { ...productData } = req.body;
-    const productImage = req.file;
+    const productImage = req.files;
     let image;
-    if (productImage) {
-      image = { create: { url: `/files/user-profiles/${productImage.filename}` } };
+    if (productImage && productImage.length > 0) {
+      image = {
+        create: productImage.map((file) => ({
+          url: `/files/product-image/${file.filename}`,
+        })),
+      };
     }
 
     const user = req.user;
@@ -43,7 +47,7 @@ export class ProductController {
     const product = await prisma.product.create({
       data: {
         ...productData,
-        productImage: image,
+        productImages: image,
         user: { connect: { id: user.id } },
       },
     });

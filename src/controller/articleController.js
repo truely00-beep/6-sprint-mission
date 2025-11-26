@@ -1,6 +1,7 @@
 import { prisma } from '../utils/prismaClient.js';
 
 export class ArticleController {
+  //게시글 목록 조회
   static getArticles = async (req, res) => {
     const { offset = 0, limit = 10, order, search } = req.query;
     const orderByOption = {
@@ -20,35 +21,74 @@ export class ArticleController {
     });
     res.status(200).send(article);
   };
+  //게시글 생성
   static createArticle = async (req, res) => {
     const { title, content } = req.body;
+    const articleImage = req.files;
+    const user = req.user;
+    let image;
+    if (articleImage && articleImage.length > 0) {
+      image = {
+        create: articleImage.map((file) => ({
+          url: `/files/article-image/${file.filename}`,
+        })),
+      };
+    }
     const article = await prisma.article.create({
-      data: { title, content },
+      data: {
+        title,
+        content,
+        user: { connect: { id: user.id } },
+        articleImages: image,
+      },
     });
     res.status(201).send(article);
   };
+  //게시글 상세 조회
   static getArticleDetail = async (req, res) => {
-    const articleId = parseInt(req.params.id, 10);
+    const articleId = parseInt(req.params.articleId, 10);
     const article = await prisma.article.findUniqueOrThrow({
       where: { id: articleId },
       select: { id: true, title: true, content: true, createdAt: true },
     });
     res.status(200).send(article);
   };
+  //게시글 수정
   static patchArticle = async (req, res) => {
-    const articleId = parseInt(req.params.id, 10);
+    const articleId = parseInt(req.params.articleId, 10);
     const { title, content } = req.body;
-    const article = await prisma.article.update({
-      where: { id: articleId },
-      data: { title, content },
+    const user = req.user;
+    const article = await prisma.$transaction(async (tx) => {
+      const foundArticle = await tx.article.findUniqueOrThrow({ where: { id: articleId } });
+      if (foundArticle.userId !== user.id) {
+        return res.status(401).send({ message: '잘못된 접근입니다.' });
+      }
+      const patchedArticle = await tx.article.update({
+        where: { id: articleId },
+        data: {
+          title,
+          content,
+        },
+      });
+      return patchedArticle;
     });
     res.status(200).send(article);
   };
+  //게시글 삭제
   static deleteArticle = async (req, res) => {
-    const articleId = parseInt(req.params.id, 10);
-    await prisma.article.delete({
-      where: { id: articleId },
+    const articleId = parseInt(req.params.articleId, 10);
+    const user = req.user;
+
+    await prisma.$transaction(async (tx) => {
+      const foundArticle = await tx.article.findUniqueOrThrow({
+        where: { id: articleId },
+      });
+      if (foundArticle.userId !== user.id) {
+        return res.status(401).send({ message: '잘못된 접근입니다.' });
+      }
+      await tx.article.delete({ where: { id: articleId } });
     });
+
     res.sendStatus(204);
   };
 }
