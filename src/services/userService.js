@@ -1,5 +1,10 @@
 import { CustomError } from '../libs/Handler/errorHandler.js';
 import userRepository from '../repositories/userRepository.js';
+import bcrypt from 'bcrypt';
+
+async function hashingPassword(password) { // 함수 추가
+    return bcrypt.hash(password, 12);
+}
 
 
 class UserService {
@@ -8,7 +13,8 @@ class UserService {
         if (existedUser) {
             throw new CustomError(422, 'User already exists', { email: user.email });
         }
-        const createdUser = await userRepository.save({ ...user });
+        const hashedPassword = await hashingPassword(user.password);
+        const createdUser = await userRepository.save({ ...user, password: hashedPassword });
         return this.filterSensitivceUserData(createdUser);
     }
 
@@ -21,17 +27,14 @@ class UserService {
         const user = await userRepository.findByEmail(email);
         if (!user) throw new CustomError(401, 'Unauthorized');
 
-        this.verifyPassword(password, user.password);
+        await this.verifyPassword(password, user.password);
         return this.filterSensitivceUserData(user);
     }
 
-    verifyPassword(inputPassword, password) {
-        const isMatch = inputPassword === password;
-        if (!isMatch) {
-            const error = new Error('Unauthorized');
-            error.code = 401;
-            throw error;
-        }
+    async verifyPassword(inputPassword, savedPassword) {
+        const isValid = await bcrypt.compare(inputPassword, savedPassword);
+        if (!isValid) throw new CustomError(401, 'Unauthorized');
+
     }
 }
 
