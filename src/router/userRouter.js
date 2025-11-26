@@ -13,7 +13,11 @@ import {
   updateUserProfile,
 } from '../controller/userController.js';
 import { asyncHandler } from '../lib/asyncHandler.js';
-import { authorizeUser, verifyRefreshToken } from '../middlewares/auth.js';
+import {
+  authorizeUser,
+  verifyAccessToken,
+  verifyRefreshToken,
+} from '../middlewares/auth.js';
 import {
   validateCreateUser,
   validateLoginUser,
@@ -33,49 +37,49 @@ userRouter.post(
   verifyRefreshToken,
   asyncHandler(newRefreshToken)
 );
-userRouter.post('/logout', verifyRefreshToken, asyncHandler(logOutUser));
+userRouter.post('/logout', verifyAccessToken, asyncHandler(logOutUser));
 userRouter.get(
   '/user/profile',
-  verifyRefreshToken,
+  verifyAccessToken,
   authorizeUser,
   asyncHandler(getUserProfile)
 );
 userRouter.patch(
   '/user/update',
-  verifyRefreshToken,
+  verifyAccessToken,
   authorizeUser,
   validateUpdateUser,
   asyncHandler(updateUserProfile)
 );
 userRouter.get(
   '/user/products',
-  verifyRefreshToken,
+  verifyAccessToken,
   authorizeUser,
   asyncHandler(getUserProducts)
 );
 userRouter.post(
   '/products/:productId/',
-  verifyRefreshToken,
+  verifyAccessToken,
   authorizeUser,
   validateProductIdParam,
   asyncHandler(likeProductButton)
 );
 userRouter.post(
   '/articles/:articleId/',
-  verifyRefreshToken,
+  verifyAccessToken,
   authorizeUser,
   validateArticleIdParam,
   asyncHandler(likeArticleButton)
 );
 userRouter.get(
   '/products/like',
-  verifyRefreshToken,
+  verifyAccessToken,
   authorizeUser,
   asyncHandler(likeProductList)
 );
 userRouter.get(
   '/articles/like',
-  verifyRefreshToken,
+  verifyAccessToken,
   authorizeUser,
   asyncHandler(likeArticleList)
 );
