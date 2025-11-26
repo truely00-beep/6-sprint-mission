@@ -1,12 +1,13 @@
-// src/config/prisma.js
+// TODO) Prisma-Singleton: 환경, 설정, 공통 미들웨어 정의
+// ?) PrismaClient DB 연결 중복 예방
+import './env.js';
 import { PrismaClient } from '@prisma/client';
 
-const globalForPrisma = globalThis;
+const prisma = new PrismaClient({
+  log:
+    process.env.DEBUG_MODE === 'true'
+      ? ['query', 'info', 'warn', 'error']
+      : ['error'],
+});
 
-export const prisma = globalForPrisma.prisma ?? new PrismaClient();
-
-if (process.env.NODE_ENV !== 'production') {
-  globalForPrisma.prisma = prisma;
-}
-
-// 이 파일은 이미 리뷰를 받았기에 무시하셔도 됩니다 :)
+export default prisma;

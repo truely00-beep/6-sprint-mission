@@ -1,12 +1,13 @@
-// src/config/env.js
-import 'dotenv/config';
+// TODO) Env-Loader: 환경, 설정, 공통 미들웨어 정의
+// ?) 모든 모듈에서 .env를 확실하게 읽도록 공용 로더 제공
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-export const env = {
-  nodeEnv: process.env.NODE_ENV ?? 'development',
-  port: Number(process.env.PORT ?? 3000),
-  databaseUrl: process.env.DATABASE_URL,
-};
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-if (process.env.NODE_ENV !== 'production') {
-  console.log(`🌐 NODE_ENV: ${process.env.NODE_ENV}`);
-}
+// ?) 상대 경로 -> 절대 경로
+dotenv.config({
+  path: path.resolve(__dirname, '../../.env'),
+});
