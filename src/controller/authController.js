@@ -10,12 +10,10 @@ export class AuthController {
     const { userPreference, password, ...userFields } = req.body;
     const received = userPreference ? userPreference.receivedEmail : false;
     const profileImage = req.file;
-    console.log(password);
+
     let image;
     if (profileImage) {
       image = { create: { url: `/files/user-profiles/${profileImage.filename}` } };
-    } else {
-      image = undefined;
     }
 
     const user = await prisma.user.create({
@@ -27,7 +25,7 @@ export class AuthController {
             receivedEmail: received,
           },
         },
-        image,
+        profileImage: image,
       },
     });
     const { password: _, ...userWithoutPassword } = user;
@@ -59,7 +57,7 @@ export class AuthController {
 
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
-      return res.status(401).send({ message: '잘못된 접근입니다.' });
+      return res.status(401).send({ message: '유효하지 않은 이메일입니다.' });
     }
 
     const { accessToken, refreshToken: newRefreshToken } = generateTokens(user.id);

@@ -13,6 +13,11 @@ export const generateTokens = (userId) => {
   return { accessToken, refreshToken };
 };
 
+export const verifyAccessToken = (token) => {
+  const decoded = jwt.verify(token, JWT_ACCESS_TOKEN_SECRET);
+  return { userId: decoded.id };
+};
+
 export const verifyRefreshToken = (token) => {
   const decoded = jwt.verify(token, JWT_REFRESH_TOKEN_SECRET);
   return { userId: decoded.id };

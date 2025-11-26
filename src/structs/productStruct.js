@@ -3,9 +3,8 @@ import isEmail from 'is-email';
 import isUuid from 'is-uuid';
 
 const TAGS = ['FASHION', 'ELECTRONICS', 'KITCHENWARE'];
-
 export const CreateProduct = s.object({
-  name: s.size(s.string(), 1, 30),
+  productName: s.size(s.string(), 1, 30),
   description: s.string(),
   price: s.min(s.integer(), 0),
   tag: s.enums(TAGS),
