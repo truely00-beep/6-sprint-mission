@@ -1,0 +1,26 @@
+###
+GET http://localhost:4000/articles?sort=&search=
+
+###
+POST http://localhost:4000/articles
+Content-Type: application/json
+
+{
+    "title": "d",
+    "content": "d"
+}
+
+###
+GET http://localhost:4000/articles/0c4c1a5b-9d92-4d3d-920b-4dd5a0fecc31
+###
+PATCH http://localhost:4000/articles/86905fe8-bac9-41cf-a5f3-6256eda399c2
+Content-Type: application/json
+
+{
+    "title": "게시글 수정",
+    "content": "사람 입니다."
+}
+
+###
+DELETE http://localhost:4000/articles/45eb3bff-97ee-4c17-a93b-a96787031b9f
+

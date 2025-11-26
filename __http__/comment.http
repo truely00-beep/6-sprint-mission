@@ -1,0 +1,32 @@
+###
+GET http://localhost:4000/comments/product/51a21bf7-90e5-45da-9c1c-2f2234c38612
+
+###
+POST http://localhost:4000/comments/product/51a21bf7-90e5-45da-9c1c-2f2234c38612
+Content-Type: application/json
+
+{
+    "content": "댓글을 달아버렷"
+}
+
+###
+GET http://localhost:4000/comments/article/1d71847c-933a-40ee-aa18-20e4e088686a
+
+###
+POST http://localhost:4000/comments/article/2e8bee57-2983-4b26-8593-e5371fc2a55e
+Content-Type: application/json
+
+{
+    "content": "댓글을 달아"
+}
+
+###
+PATCH http://localhost:4000/comments/d404429e-5277-45b9-8c14-05427f49e86d
+Content-Type: application/json
+
+{
+    "content": "수정해"
+}
+
+###
+DELETE http://localhost:4000/comments/0f1e6427-9fe0-48ef-93fb-b304aa3c59b5

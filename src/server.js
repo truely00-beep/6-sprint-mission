@@ -32,7 +32,7 @@ app.use('/users', userRouter);
 app.use(defaultNotFoundHandler);
 app.use(globalErrorHandler);
 
-app.post('/uploads', upload.single('attachment'), (req, res) => {
+app.post('/uploads', upload.single('image'), (req, res) => {
   const { filename } = req.file;
   const path = `/files/${filename}`;
   res.status(200).json({ path });

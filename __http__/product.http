@@ -1,0 +1,31 @@
+###
+GET http://localhost:4000/products
+
+###
+POST http://localhost:4000/products
+Content-Type: application/json
+
+{
+    "name": "테스트",
+    "description": "사람 입니다.",
+    "price": 500,
+    "tags": ["인간"]
+}
+
+###
+GET http://localhost:4000/products/93af8570-68cc-49ae-8b10-460bee39e647
+
+###
+PATCH http://localhost:4000/products/36ff8785-2d24-4f8d-a1bc-c083718c3286
+Content-Type: application/json
+
+{
+    "name": "삼성 수퍼 울트라 갤럭시 S23",
+    "description": "새것 같은 중고다 이말이야",
+    "price": 500000,
+    "tags": ["전자기기","폰","중고"]
+}
+
+###
+DELETE http://localhost:4000/products/36ff8785-2d24-4f8d-a1bc-c083718c3286
+
