@@ -1,6 +1,7 @@
 import { create } from 'superstruct';
 import { prismaClient } from '../lib/prismaClient.js';
 import NotFoundError from '../lib/errors/NotFoundError.js';
+import UnauthorizedError from '../lib/errors/UnauthorizedError.js';
 import { IdParamsStruct } from '../structs/commonStructs.js';
 import {
   CreateProductBodyStruct,
@@ -10,10 +11,11 @@ import {
 import { CreateCommentBodyStruct, GetCommentListParamsStruct } from '../structs/commentsStruct.js';
 
 export async function createProduct(req, res) {
+  const userId = req.userId;
   const { name, description, price, tags, images } = create(req.body, CreateProductBodyStruct);
 
   const product = await prismaClient.product.create({
-    data: { name, description, price, tags, images },
+    data: { name, description, price, tags, images, userId },
   });
 
   res.status(201).send(product);
@@ -21,22 +23,36 @@ export async function createProduct(req, res) {
 
 export async function getProduct(req, res) {
   const { id } = create(req.params, IdParamsStruct);
+  const userId = req.userId;
 
   const product = await prismaClient.product.findUnique({ where: { id } });
   if (!product) {
     throw new NotFoundError('product', id);
   }
 
-  return res.send(product);
+  let isLiked = false;
+  if (userId) {
+    const like = await prismaClient.productLike.findUnique({
+      where: { userId_productId: { userId, productId: id } },
+    });
+    isLiked = !!like;
+  }
+
+  return res.send({ ...product, isLiked });
 }
 
 export async function updateProduct(req, res) {
+  const userId = req.userId;
   const { id } = create(req.params, IdParamsStruct);
   const { name, description, price, tags, images } = create(req.body, UpdateProductBodyStruct);
 
   const existingProduct = await prismaClient.product.findUnique({ where: { id } });
   if (!existingProduct) {
     throw new NotFoundError('product', id);
+  }
+
+  if (existingProduct.userId !== userId) {
+    throw new UnauthorizedError('상품을 수정할 권한이 없습니다.');
   }
 
   const updatedProduct = await prismaClient.product.update({
@@ -48,11 +64,16 @@ export async function updateProduct(req, res) {
 }
 
 export async function deleteProduct(req, res) {
+  const userId = req.userId;
   const { id } = create(req.params, IdParamsStruct);
   const existingProduct = await prismaClient.product.findUnique({ where: { id } });
 
   if (!existingProduct) {
     throw new NotFoundError('product', id);
+  }
+
+  if (existingProduct.userId !== userId) {
+    throw new UnauthorizedError('상품을 삭제할 권한이 없습니다.');
   }
 
   await prismaClient.product.delete({ where: { id } });
@@ -62,6 +83,7 @@ export async function deleteProduct(req, res) {
 
 export async function getProductList(req, res) {
   const { page, pageSize, orderBy, keyword } = create(req.query, GetProductListParamsStruct);
+  const userId = req.userId;
 
   const where = keyword
     ? {
@@ -76,13 +98,32 @@ export async function getProductList(req, res) {
     where,
   });
 
+  let productIds = [];
+  let likedProducts = new Set();
+  if (userId && products.length > 0) {
+    productIds = products.map((p) => p.id);
+    const likes = await prismaClient.productLike.findMany({
+      where: {
+        userId,
+        productId: { in: productIds },
+      },
+    });
+    likedProducts = new Set(likes.map((like) => like.productId));
+  }
+
+  const productsWithLiked = products.map((product) => ({
+    ...product,
+    isLiked: userId ? likedProducts.has(product.id) : false,
+  }));
+
   return res.send({
-    list: products,
+    list: productsWithLiked,
     totalCount,
   });
 }
 
 export async function createComment(req, res) {
+  const userId = req.userId;
   const { id: productId } = create(req.params, IdParamsStruct);
   const { content } = create(req.body, CreateCommentBodyStruct);
 
@@ -91,7 +132,7 @@ export async function createComment(req, res) {
     throw new NotFoundError('product', productId);
   }
 
-  const comment = await prismaClient.comment.create({ data: { productId, content } });
+  const comment = await prismaClient.comment.create({ data: { productId, content, userId } });
 
   return res.status(201).send(comment);
 }

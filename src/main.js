@@ -6,6 +6,8 @@ import articlesRouter from './routers/articlesRouter.js';
 import productsRouter from './routers/productsRouter.js';
 import commentsRouter from './routers/commentsRouter.js';
 import imagesRouter from './routers/imagesRouter.js';
+import usersRouter from './routers/usersRouter.js';
+import likesRouter from './routers/likesRouter.js';
 import { defaultNotFoundHandler, globalErrorHandler } from './controllers/errorController.js';
 
 const app = express();
@@ -14,10 +16,12 @@ app.use(cors());
 app.use(express.json());
 app.use(STATIC_PATH, express.static(path.resolve(process.cwd(), PUBLIC_PATH)));
 
+app.use('/users', usersRouter);
 app.use('/articles', articlesRouter);
 app.use('/products', productsRouter);
 app.use('/comments', commentsRouter);
 app.use('/images', imagesRouter);
+app.use('/likes', likesRouter);
 
 app.use(defaultNotFoundHandler);
 app.use(globalErrorHandler);

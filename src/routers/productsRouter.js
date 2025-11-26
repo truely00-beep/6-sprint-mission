@@ -1,5 +1,7 @@
 import express from 'express';
 import { withAsync } from '../lib/withAsync.js';
+import { authMiddleware } from '../lib/authMiddleware.js';
+import { optionalAuthMiddleware } from '../lib/optionalAuthMiddleware.js';
 import {
   createProduct,
   getProduct,
@@ -12,12 +14,12 @@ import {
 
 const productsRouter = express.Router();
 
-productsRouter.post('/', withAsync(createProduct));
-productsRouter.get('/:id', withAsync(getProduct));
-productsRouter.patch('/:id', withAsync(updateProduct));
-productsRouter.delete('/:id', withAsync(deleteProduct));
-productsRouter.get('/', withAsync(getProductList));
-productsRouter.post('/:id/comments', withAsync(createComment));
+productsRouter.post('/', authMiddleware, withAsync(createProduct));
+productsRouter.get('/:id', optionalAuthMiddleware, withAsync(getProduct));
+productsRouter.patch('/:id', authMiddleware, withAsync(updateProduct));
+productsRouter.delete('/:id', authMiddleware, withAsync(deleteProduct));
+productsRouter.get('/', optionalAuthMiddleware, withAsync(getProductList));
+productsRouter.post('/:id/comments', authMiddleware, withAsync(createComment));
 productsRouter.get('/:id/comments', withAsync(getCommentList));
 
 export default productsRouter;

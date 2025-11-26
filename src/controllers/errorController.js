@@ -1,6 +1,7 @@
 import { StructError } from 'superstruct';
 import BadRequestError from '../lib/errors/BadRequestError.js';
 import NotFoundError from '../lib/errors/NotFoundError.js';
+import UnauthorizedError from '../lib/errors/UnauthorizedError.js';
 
 export function defaultNotFoundHandler(req, res, next) {
   return res.status(404).send({ message: 'Not found' });
@@ -15,6 +16,11 @@ export function globalErrorHandler(err, req, res, next) {
   /** From express.json middleware */
   if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
     return res.status(400).send({ message: 'Invalid JSON' });
+  }
+
+  /** Unauthorized error */
+  if (err instanceof UnauthorizedError) {
+    return res.status(401).send({ message: err.message });
   }
 
   /** Prisma error codes */
