@@ -15,7 +15,6 @@
 
 ```
 [디렉토리 구조]
-```
 
 6-sprint-mission
 
@@ -71,6 +70,7 @@
 ├─ package-lock.json
 ├─ package.json
 └─ README.md
+```
 
 ```
 
