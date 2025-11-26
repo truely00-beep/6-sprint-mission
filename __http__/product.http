@@ -1,22 +1,26 @@
+// 상품 목록 조회
 ###
-GET http://localhost:4000/products
+GET http://localhost:4000/products?page=&sort=&search=
 
+// 상품 생성
 ###
 POST http://localhost:4000/products
 Content-Type: application/json
 
 {
-    "name": "테스트",
+    "name": "테스트s",
     "description": "사람 입니다.",
     "price": 500,
     "tags": ["인간"]
 }
 
+// 상품 상세 조회
 ###
-GET http://localhost:4000/products/93af8570-68cc-49ae-8b10-460bee39e647
+GET http://localhost:4000/products/6794f8a1-2a5d-4ab0-8211-ee33660788d8
 
+// 상품 수정
 ###
-PATCH http://localhost:4000/products/36ff8785-2d24-4f8d-a1bc-c083718c3286
+PATCH http://localhost:4000/products/6794f8a1-2a5d-4ab0-8211-ee33660788d8
 Content-Type: application/json
 
 {
@@ -26,6 +30,7 @@ Content-Type: application/json
     "tags": ["전자기기","폰","중고"]
 }
 
+// 상품 삭제
 ###
-DELETE http://localhost:4000/products/36ff8785-2d24-4f8d-a1bc-c083718c3286
+DELETE http://localhost:4000/products/6794f8a1-2a5d-4ab0-8211-ee33660788d8
 

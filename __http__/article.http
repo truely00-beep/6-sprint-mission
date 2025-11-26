@@ -1,6 +1,8 @@
+// 게시글 목록 조회
 ###
 GET http://localhost:4000/articles?sort=&search=
 
+// 게시글 생성
 ###
 POST http://localhost:4000/articles
 Content-Type: application/json
@@ -10,8 +12,11 @@ Content-Type: application/json
     "content": "d"
 }
 
+// 게시글 상세 조회
 ###
 GET http://localhost:4000/articles/0c4c1a5b-9d92-4d3d-920b-4dd5a0fecc31
+
+// 게시글 수정
 ###
 PATCH http://localhost:4000/articles/86905fe8-bac9-41cf-a5f3-6256eda399c2
 Content-Type: application/json
@@ -21,6 +26,7 @@ Content-Type: application/json
     "content": "사람 입니다."
 }
 
+// 게시글 삭제
 ###
 DELETE http://localhost:4000/articles/45eb3bff-97ee-4c17-a93b-a96787031b9f
 

@@ -18,7 +18,7 @@
 ```
 
 6-sprint-mission
-.
+
 ├─ **http**/
 │ ├─ article.http
 │ ├─ comment.http
@@ -33,10 +33,12 @@
 │ ├─ controller/
 │ │ ├─ articleController.js
 │ │ ├─ commentController.js
+│ │ ├─ imageController.js
 │ │ ├─ productController.js
 │ │ └─ userController.js
 │ ├─ lib/
 │ │ ├─ asyncHandler.js
+│ │ ├─ constants.js
 │ │ ├─ error.js
 │ │ └─ prismaClient.js
 │ ├─ middlewares/
@@ -52,6 +54,7 @@
 │ ├─ router/
 │ │ ├─ articleRouter.js
 │ │ ├─ commentRouter.js
+│ │ ├─ imageRouter.js
 │ │ ├─ productRouter.js
 │ │ └─ userRouter.js
 │ ├─ seed/
@@ -60,6 +63,7 @@
 │ ├─ service/
 │ │ └─ userService.js
 │ └─ server.js
+│ └─ uploads.js
 ├─ uploads/
 ├─ .env.sample
 ├─ .gitignore
