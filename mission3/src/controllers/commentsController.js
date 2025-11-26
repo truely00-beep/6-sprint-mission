@@ -1,35 +1,33 @@
 import { create } from 'superstruct';
-import { prismaClient } from '../lib/prismaClient.js';
+import { prisma } from '../lib/prismaClient.js';
 import { UpdateCommentBodyStruct } from '../structs/commentsStruct.js';
-import NotFoundError from '../lib/errors/NotFoundError.js';
+import { UnauthorizedError } from '../lib/errors/customErrors.js';
 import { IdParamsStruct } from '../structs/commonStructs.js';
 
+//댓글 수정
 export async function updateComment(req, res) {
   const { id } = create(req.params, IdParamsStruct);
   const { content } = create(req.body, UpdateCommentBodyStruct);
-
-  const existingComment = await prismaClient.comment.findUnique({ where: { id } });
-  if (!existingComment) {
-    throw new NotFoundError('comment', id);
+  const user = req.user;
+  const comment = await prisma.comment.findUniqueOrThrow({ where: { id } });
+  if (comment.userId !== user.id) {
+    throw new UnauthorizedError();
   }
-
-  const updatedComment = await prismaClient.comment.update({
+  const updatedComment = await prisma.comment.update({
     where: { id },
     data: { content },
   });
-
   return res.send(updatedComment);
 }
 
+//댓글 삭제
 export async function deleteComment(req, res) {
   const { id } = create(req.params, IdParamsStruct);
-
-  const existingComment = await prismaClient.comment.findUnique({ where: { id } });
-  if (!existingComment) {
-    throw new NotFoundError('comment', id);
+  const user = req.user;
+  const comment = await prisma.comment.findUniqueOrThrow({ where: { id } });
+  if (comment.userId !== user.id) {
+    throw new UnauthorizedError();
   }
-
-  await prismaClient.comment.delete({ where: { id } });
-
+  await prisma.comment.delete({ where: { id } });
   return res.status(204).send();
 }

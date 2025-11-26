@@ -1,33 +1,44 @@
 import { StructError } from 'superstruct';
-import BadRequestError from '../lib/errors/BadRequestError.js';
-import NotFoundError from '../lib/errors/NotFoundError.js';
+import {
+  NotFoundError,
+  BadRequestError,
+  ForbiddenError,
+  UnauthorizedError,
+} from '../lib/errors/customErrors.js';
+import { Prisma } from '@prisma/client';
 
+//존재하지 않는 api 요청에 대한 404, 라우터 중 매칭되는 경로가 하나도 없을 때 프론트에게 이 url이 없음을 명확히 알려주기 위해 필요함
 export function defaultNotFoundHandler(req, res, next) {
-  return res.status(404).send({ message: 'Not found' });
+  return res.status(404).send({ message: '존재하지 않습니다' });
 }
 
 export function globalErrorHandler(err, req, res, next) {
-  /** From superstruct or application error */
   if (err instanceof StructError || err instanceof BadRequestError) {
-    return res.status(400).send({ message: err.message });
+    return res.status(400).send({ message: '잘못된 요청입니다' });
   }
-
-  /** From express.json middleware */
   if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
-    return res.status(400).send({ message: 'Invalid JSON' });
+    return res.status(400).send({ message: '잘못된 요청입니다' });
   }
-
-  /** Prisma error codes */
-  if (err.code) {
-    console.error(err);
-    return res.status(500).send({ message: 'Failed to process data' });
+  if (err instanceof UnauthorizedError) {
+    return res.status(401).json({ message: err.message });
   }
-
-  /** Application error */
+  if (err instanceof ForbiddenError) {
+    return res.status(403).json({ message: err.message });
+  }
   if (err instanceof NotFoundError) {
     return res.status(404).send({ message: err.message });
   }
+  //프리즈마 코드 에러, 그 외 known 에러 500처리
+  if (err instanceof Prisma.PrismaClientKnownRequestError) {
+    if (err.code === 'P2025') {
+      return res.status(404).json({ message: '존재하지 않습니다' });
+    }
+    if (err.code === 'P2002') {
+      return res.status(400).json({ message: '잘못된 요청입니다' });
+    }
+    return res.status(500).json({ message: '데이터 처리 중 오류가 발생했습니다' });
+  }
 
   console.error(err);
-  return res.status(500).send({ message: 'Internal server error' });
+  return res.status(500).send({ message: '데이터 처리 중 오류가 발생했습니다' });
 }
