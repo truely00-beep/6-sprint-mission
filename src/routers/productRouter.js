@@ -29,7 +29,12 @@ productRouter
 productRouter
   .route('/:productId')
   .get(tryCatchHandler(ProductController.getProductDetail))
-  .patch(validate(PatchProduct), tryCatchHandler(ProductController.patchProduct))
-  .delete(tryCatchHandler(ProductController.deleteProduct));
+  .patch(
+    authenticate,
+    productImageUpload.none(),
+    productValidate(PatchProduct),
+    tryCatchHandler(ProductController.patchProduct),
+  )
+  .delete(authenticate, tryCatchHandler(ProductController.deleteProduct));
 
 export default productRouter;
