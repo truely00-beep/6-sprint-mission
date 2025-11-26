@@ -30,13 +30,13 @@ const getArticleQuerySchema = s.object({
   page: s.optional(
     s.coerce(s.number(), s.string(), (v) => {
       const n = Number(v);
-      return Number.inNaN(n) || n < 1 ? 1 : n; // NaN이거나 1보다 작으면 1 반환
+      return Number.isNaN(n) || n < 1 ? 1 : n; // NaN이거나 1보다 작으면 1 반환
     })
   ),
   limit: s.optional(
     s.coerce(s.number(), s.string(), (v) => {
       const n = Number(v);
-      return Number.inNaN(n) || n < 1 ? 1 : n;
+      return Number.isNaN(n) || n < 1 ? 1 : n;
     })
   ),
   search: s.optional(s.size(s.string(), 0, 50)),
@@ -51,7 +51,7 @@ const getArticleQuerySchema = s.object({
 
 function validateGetListArticle(req, res, next) {
   try {
-    s.assert(req.query, getArticleQuerySchema);
+    const _ = s.create(req.query, getArticleQuerySchema);
     next();
   } catch (e) {
     next(e);

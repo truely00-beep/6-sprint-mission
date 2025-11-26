@@ -1,6 +1,7 @@
 import express from 'express';
 import {
   validateCreateProduct,
+  validateGetListProduct,
   validateUpdateProduct,
 } from '../middlewares/validate/validateProduct.js';
 import { asyncHandler } from '../lib/asyncHandler.js';
@@ -24,7 +25,7 @@ productRouter
     validateCreateProduct,
     asyncHandler(createProduct)
   )
-  .get(asyncHandler(getProducts));
+  .get(validateGetListProduct, asyncHandler(getProducts));
 productRouter
   .route('/:id')
   .get(validateIdParam, asyncHandler(getProductById))
