@@ -1,6 +1,7 @@
 import express from 'express';
 import {
   validateCreateArticle,
+  validateGetListArticle,
   validateUpdateArticle,
 } from '../middlewares/validate/validateArticle.js';
 import { asyncHandler } from '../lib/asyncHandler.js';
@@ -24,7 +25,7 @@ articleRouter
     validateCreateArticle,
     asyncHandler(createArticle)
   )
-  .get(asyncHandler(getArticles));
+  .get(validateGetListArticle, asyncHandler(getArticles));
 articleRouter
   .route('/:id')
   .get(validateIdParam, asyncHandler(getArticleById))
