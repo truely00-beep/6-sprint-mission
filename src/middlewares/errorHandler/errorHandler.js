@@ -35,10 +35,16 @@ function globalErrorHandler(err, req, res, next) {
     return res.status(403).send({ message: err.message });
   }
   if (err.name === 'StructError') {
-    return res.status(400).json({ message: '잘못된 요청입니다' });
+    if (err.path[0] === 'password') {
+      return res
+        .status(400)
+        .json({ message: '비밀번호는 8자 이상 20자 이하로 입력해야 합니다.' });
+    } else {
+      return res.status(400).json({ message: '잘못된 요청입니다.' });
+    }
   }
   if (err.code === 'credentials_required') {
-    return res.status(401).json({ message: '접근할 수 없는 권한 입니다' });
+    return res.status(401).json({ message: '접근할 수 없는 권한 입니다.' });
   }
 
   res.status(500).json({ message: '서버 내부 오류가 발생했습니다.' });
