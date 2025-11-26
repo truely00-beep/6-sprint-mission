@@ -4,7 +4,7 @@ POST http://localhost:4000/users/registration
 Content-Type: application/json
 
 {
-    "email": "aaa@a.com",
+    "email": "ccc@a.com",
     "nickname": "nickname",
     "password": "password"
 }
@@ -15,7 +15,7 @@ POST http://localhost:4000/users/login
 Content-Type: application/json
 
 {
-    "email": "aaa@a.com",
+    "email": "ccc@a.com",
     "password": "password"
 }
 
@@ -48,11 +48,11 @@ GET http://localhost:4000/users/user/products
 
 // 상품 좋아요, 해제 버튼
 ###
-POST http://localhost:4000/users/products/6794f8a1-2a5d-4ab0-8211-ee33660788d8/
+POST http://localhost:4000/users/products/ba475c2b-2618-40c7-bd79-9669d5e0b3cc
 
 // 게시글 좋아요, 해제 버튼
 ###
-POST http://localhost:4000/users/articles/0c4c1a5b-9d92-4d3d-920b-4dd5a0fecc31
+POST http://localhost:4000/users/articles/4c361f2b-e48b-4c9d-ad39-b8215bb3cdca
 
 // 상품 좋아요 리스트
 ###

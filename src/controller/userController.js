@@ -124,6 +124,7 @@ async function getUserProducts(req, res, next) {
 async function likeProductButton(req, res, next) {
   const { id } = req.user;
   const { productId } = req.params;
+  await prisma.product.findUniqueOrThrow({ where: { id: productId } });
   const { likeProductId } = await prisma.user.findUniqueOrThrow({
     where: { id },
   });
@@ -147,6 +148,7 @@ async function likeProductButton(req, res, next) {
 async function likeArticleButton(req, res, next) {
   const { id } = req.user;
   const { articleId } = req.params;
+  await prisma.article.findUniqueOrThrow({ where: { id: articleId } });
   const { likeArticleId } = await prisma.user.findUniqueOrThrow({
     where: { id },
   });
