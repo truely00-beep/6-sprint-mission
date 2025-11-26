@@ -1,8 +1,18 @@
 import prisma from '../lib/prismaclient.js';
 
-export async function productNew(req, res) {
+export async function createProduct(req, res) {
+  const userId = req.user.id;
+
+  const { name, description, price, tags } = req.body;
+
   const productCreate = await prisma.product.create({
-    data: req.body,
+    data: {
+      name,
+      description,
+      price,
+      tags,
+      userId,
+    },
     include: {
       comments: true,
     },
@@ -11,7 +21,7 @@ export async function productNew(req, res) {
   res.status(201).json(productCreate);
 }
 
-export async function productsList(req, res) {
+export async function getProductsList(req, res) {
   const {
     offset = 0,
     limit = 10,
@@ -54,7 +64,7 @@ export async function productsList(req, res) {
   res.status(200).json(product_list);
 }
 
-export async function productOnly(req, res) {
+export async function getProductInfo(req, res) {
   const id = req.params.id;
   const product = await prisma.product.findUniqueOrThrow({
     where: { id },
@@ -73,33 +83,46 @@ export async function productOnly(req, res) {
   res.status(200).json(product);
 }
 
-export async function productUpdate(req, res) {
-  const id = req.params.id;
+export async function updateProduct(req, res) {
+  const productId = req.params.id;
+  const userId = req.user.id;
 
-  const product = await prisma.product.findUnique({ where: { id } });
+  const product = await prisma.product.findUnique({ where: { id: productId } });
 
+  // 제품이 있는지 확인
   if (!product)
     return res.status(401).json({ message: 'Cannot found product' });
 
+  // 동일한 user 인지 확인
+  if (product.userId !== userId)
+    return res.status(401).json({ message: 'Unauthorized' });
+
+  // 업데이트 작업 진행
   const productUpdate = await prisma.product.update({
-    where: { id },
+    where: { id: productId },
     data: req.body,
   });
 
   res.status(200).json(productUpdate);
 }
 
-export async function productDelete(req, res) {
-  const id = req.params.id;
+export async function deleteProduct(req, res) {
+  const productId = req.params.id;
+  const userId = req.user.id;
 
-  const product = await prisma.product.findUnique({ where: { id } });
+  const product = await prisma.product.findUnique({ where: { id: productId } });
 
+  // 제품이 있는지 확인
   if (!product)
     return res.status(401).json({ message: 'Cannot found product' });
 
+  // 동일한 user 인지 확인
+  if (product.userId !== userId)
+    return res.status(401).json({ message: 'Unauthorized' });
+
   await prisma.product.delete({
-    where: { id },
+    where: { id: productId },
   });
 
-  res.status(204).json({ message: `Product Delete ${id}` });
+  res.status(204);
 }

@@ -5,7 +5,7 @@ import {
   REFRESH_TOKEN_COOKIE_NAME,
 } from '../lib/constants.js';
 
-export async function checkUser(email) {
+export async function checkUserEmail(email) {
   const findEmail = await prisma.user.findUnique({ where: { email } });
   if (findEmail) throw new Error({ message: 'Email already exists is DB' });
 
@@ -13,9 +13,6 @@ export async function checkUser(email) {
 }
 
 export async function createTokenCookies(res, accessToken, refreshToken) {
-  console.log(accessToken);
-  console.log(refreshToken);
-
   // access token cookie 생성
   res.cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, {
     httpOnly: true,
@@ -32,6 +29,6 @@ export async function createTokenCookies(res, accessToken, refreshToken) {
   });
 }
 
-export function clearTokenCookies(res){
+export function clearTokenCookies(res) {
   res.clearCookie(ACCESS_TOKEN_COOKIE_NAME);
 }

@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import prisma from '../lib/prismaclient.js';
 import {
-  checkUser,
+  checkUserEmail,
   clearTokenCookies,
   createTokenCookies,
 } from '../server/authService.js';
@@ -11,7 +11,7 @@ export async function register(req, res) {
   const { nickname, password, email } = req.body;
 
   // email 중복 체크
-  const checkEmail = await checkUser(email);
+  const checkEmail = await checkUserEmail(email);
 
   // 비밀번호 해싱 작업
   const salt = await bcrypt.genSalt(10);

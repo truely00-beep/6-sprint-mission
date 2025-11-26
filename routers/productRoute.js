@@ -13,20 +13,28 @@ import {
   commentUpdateValidation,
 } from '../validators/comment-validation.js';
 
+import authenticate from '../middleware/authenticate.js';
+
 const productRoute = express.Router();
 
-productRoute.post('/', productCreateValidation, asyncHandler(p.productNew));
-productRoute.get('/', asyncHandler(p.productsList));
+productRoute.post(
+  '/',
+  authenticate,
+  productCreateValidation,
+  asyncHandler(p.createProduct)
+);
+productRoute.get('/', asyncHandler(p.getProductsList));
 
-productRoute.get('/:id', asyncHandler(p.productOnly));
+productRoute.get('/:id', asyncHandler(p.getProductInfo));
 
 productRoute.patch(
   '/:id',
+  authenticate,
   productUpdateValidation,
-  asyncHandler(p.productUpdate)
+  asyncHandler(p.updateProduct)
 );
 
-productRoute.delete('/:id', asyncHandler(p.productDelete));
+productRoute.delete('/:id', authenticate, asyncHandler(p.deleteProduct));
 
 // ======= product에 연결 된 comment =======
 // Product와 comment가 별도의 모델로 구동되므로
