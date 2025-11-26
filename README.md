@@ -72,8 +72,6 @@
 └─ README.md
 ```
 
-```
-
 ### 실행방법
 
 ```
@@ -97,6 +95,7 @@ RESTClient 설치
 
 #### 작성자 정보
 
+```
 이름 : 오윤
 
 이메일 : passfile2@naver.com
