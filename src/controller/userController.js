@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import prisma from '../lib/prisma.js';
 import NotFoundError from '../lib/errors/NotFoundError.js';
-import { generateTokens } from '../lib/token.js';
+import { generateTokens, verifyRefreshToken } from '../lib/token.js';
 import { clearTokenCookies, setTokenCookies } from '../lib/cookie.js';
 import { REFRESH_TOKEN_COOKIE_NAME } from '../lib/constants.js';
 import ValidationError from '../lib/errors/ValidationError.js';
@@ -56,15 +56,15 @@ class UserController {
       const { nickname, password } = req.body;
 
       //닉네임 확인
-      const user = await prisma.user.findUnique({ where: { nickname } });
+      const user = await prisma.user.findFirst({ where: { nickname } });
       if (!user) {
-        return new NotFoundError('닉네임을 찾을 수 없습니다.');
+        throw new NotFoundError('닉네임을 찾을 수 없습니다.');
       }
 
       //비밀번호 확인
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
-        return new ValidationError('비밀번호가 일치하지 않습니다.');
+        throw new ValidationError('비밀번호가 일치하지 않습니다.');
       }
 
       //토큰 생성
@@ -81,15 +81,16 @@ class UserController {
   async refreshTokens(req, res, next) {
     try {
       const refreshToken = req.cookies[REFRESH_TOKEN_COOKIE_NAME];
+      // 토큰 확인
       if (!refreshToken) {
-        return new NotFoundError('토큰이 존재하지 않습니다.');
+        throw new NotFoundError('토큰이 존재하지 않습니다.');
       }
-
+      //토큰 유효성 검사, 유저 아이디 추출
       const { userId } = verifyRefreshToken(refreshToken);
-
+      //유저 확인
       const user = await prisma.user.findUnique({ where: { id: userId } });
       if (!user) {
-        return new NotFoundError('유저가 존재하지 않습니다.');
+        throw new NotFoundError('유저가 존재하지 않습니다.');
       }
 
       const { accessToken, refreshToken: newRefreshToken } = generateTokens(user.id);
