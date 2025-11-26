@@ -1,6 +1,7 @@
 import express from 'express';
 import {
   validateCreateComment,
+  validateGetListComment,
   validateUpdateComment,
 } from '../middlewares/validate/validateComment.js';
 import { asyncHandler } from '../lib/asyncHandler.js';
@@ -30,7 +31,11 @@ commentRouter
     validateCreateComment,
     asyncHandler(createProductComment)
   )
-  .get(validateProductIdParam, asyncHandler(getCommentsByProductId));
+  .get(
+    validateProductIdParam,
+    validateGetListComment,
+    asyncHandler(getCommentsByProductId)
+  );
 
 commentRouter
   .route('/article/:articleId')
@@ -41,7 +46,11 @@ commentRouter
     validateCreateComment,
     asyncHandler(createArticleComment)
   )
-  .get(validateArticleIdParam, asyncHandler(getCommentsByArticleId));
+  .get(
+    validateArticleIdParam,
+    validateGetListComment,
+    asyncHandler(getCommentsByArticleId)
+  );
 
 commentRouter
   .route('/:id')
