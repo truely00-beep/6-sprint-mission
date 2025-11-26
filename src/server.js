@@ -11,6 +11,7 @@ import {
 } from './middlewares/errorHandler/errorHandler.js';
 import userRouter from './router/userRouter.js';
 import cookieParser from 'cookie-parser';
+import { optionalAuth } from './middlewares/auth.js';
 dotenv.config();
 
 const PORT = process.env.PORT || 4000;
@@ -21,6 +22,7 @@ app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
 
+app.use(optionalAuth);
 app.use('/products', productRouters);
 app.use('/articles', articleRouters);
 app.use('/comments', commentRouters);

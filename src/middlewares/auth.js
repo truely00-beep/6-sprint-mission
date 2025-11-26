@@ -1,6 +1,7 @@
 import { expressjwt } from 'express-jwt';
 import prisma from '../lib/prismaClient.js';
 import { BadRequestError } from '../lib/error.js';
+import jwt from 'jsonwebtoken';
 
 // 리퀘스트 토큰 검증 미들웨어
 const verifyRefreshToken = expressjwt({
@@ -25,4 +26,15 @@ async function authorizeUser(req, res, next) {
   return next();
 }
 
-export { verifyRefreshToken, verifyAccessToken, authorizeUser };
+// 토큰 유무 확인하는 전역 미들웨어
+function optionalAuth(req, res, next) {
+  const token = req.cookies.accessToken;
+  if (!token) return next();
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    // 검증 실패시 에러, 성공시 payload 반환
+    if (!err) req.auth = decoded;
+    next();
+  });
+}
+
+export { verifyRefreshToken, verifyAccessToken, authorizeUser, optionalAuth };
