@@ -1,1 +1,1 @@
-import { prisma } from '../lib/prismaclient.js';
+import prisma from '../lib/prismaclient.js';

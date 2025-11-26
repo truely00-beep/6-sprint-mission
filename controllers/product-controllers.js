@@ -1,4 +1,4 @@
-import { prisma } from '../lib/prismaclient.js';
+import prisma from '../lib/prismaclient.js';
 
 export async function productNew(req, res) {
   const productCreate = await prisma.product.create({

@@ -2,7 +2,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 
 import cors from 'cors';
-import errorHandler from './lib/errorhandler.js';
+import errorHandler from './middleware/errorhandler.js';
 import { PORT } from './lib/constants.js';
 
 import imgRouter from './routers/imgRoute.js';
@@ -16,7 +16,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 토큰 작업
+// 쿠키 작업
 app.use(cookieParser());
 
 // 이미지 Multer 먼저 실행

@@ -1,29 +1,31 @@
 import express from 'express';
-import asyncHandler from '../lib/asynchandler.js';
+import asyncHandler from '../lib/asyncHandler.js';
 import * as p from '../controllers/product-controllers.js';
 import * as pc from '../controllers/productComment-controllers.js';
 
 import {
   productCreateValidation,
   productUpdateValidation,
-} from '../lib/product_validation.js';
+} from '../validators/product-validation.js';
 
 import {
   commentCreateValidation,
   commentUpdateValidation,
-} from '../lib/comment_validation.js';
+} from '../validators/comment-validation.js';
 
 const productRoute = express.Router();
 
-productRoute.get('/', asyncHandler(p.productsList));
 productRoute.post('/', productCreateValidation, asyncHandler(p.productNew));
+productRoute.get('/', asyncHandler(p.productsList));
 
 productRoute.get('/:id', asyncHandler(p.productOnly));
+
 productRoute.patch(
   '/:id',
   productUpdateValidation,
   asyncHandler(p.productUpdate)
 );
+
 productRoute.delete('/:id', asyncHandler(p.productDelete));
 
 // ======= product에 연결 된 comment =======

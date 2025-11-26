@@ -1,17 +1,17 @@
 import express from 'express';
-import asyncHandler from '../lib/asynchandler.js';
+import asyncHandler from '../lib/asyncHandler.js';
 import * as a from '../controllers/article-controllers.js';
 import * as ac from '../controllers/articleComment-controllers.js';
 
 import {
   articleCreateValidation,
   articleUpdateValidation,
-} from '../lib/article_validation.js';
+} from '../validators/article-validation.js';
 
 import {
   commentCreateValidation,
   commentUpdateValidation,
-} from '../lib/comment_validation.js';
+} from '../validators/comment-validation.js';
 
 const articleRoute = express.Router();
 

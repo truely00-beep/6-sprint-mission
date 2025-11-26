@@ -1,4 +1,4 @@
-import { prisma } from '../lib/prismaclient.js';
+import prisma from '../lib/prismaclient.js';
 
 export async function articleCommentNew(req, res) {
   const articleId = req.params.articleId;
