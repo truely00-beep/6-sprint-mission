@@ -4,6 +4,7 @@ import NotFoundError from '../lib/errors/NotFoundError.js';
 import ConflictError from '../lib/errors/ConflictError.js';
 import ValidationError from '../lib/errors/ValidationError.js';
 import UnauthorizedError from '../lib/errors/UnauthorizedError.js';
+import ForbiddenError from '../lib/errors/ForbiddenError.js';
 
 export function defaultNotFoundHandler(req, res, next) {
   return res.status(404).send({ message: 'Not found' });
@@ -44,6 +45,11 @@ export function errorHandler(err, req, res, next) {
   //인증/인가 실패 (비밀번호 불일치)
   if (err instanceof UnauthorizedError) {
     return res.status(401).send({ message: err.message });
+  }
+
+  //권한 없음
+  if (err instanceof ForbiddenError) {
+    return res.status(403).send({ message: err.message });
   }
 
   console.error(err);
