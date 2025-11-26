@@ -40,24 +40,29 @@ productRoute.delete('/:id', authenticate, asyncHandler(p.deleteProduct));
 // Product와 comment가 별도의 모델로 구동되므로
 // 별도의 작업으로 제작 하였습니다
 
-productRoute.get(
-  '/:productId/productcomments',
-  asyncHandler(pc.productCommentList)
-);
 productRoute.post(
-  '/:productId/productcomments',
+  '/:productId/comments',
+  authenticate,
   commentCreateValidation,
-  asyncHandler(pc.productCommentNew)
+  asyncHandler(pc.createProductComment)
+);
+
+productRoute.get(
+  '/:productId/comments',
+  asyncHandler(pc.getProductCommentList)
 );
 
 productRoute.patch(
-  '/:productId/productcomments/:commentId',
+  '/:productId/comments/:commentId',
+  authenticate,
   commentUpdateValidation,
-  asyncHandler(pc.productCommentUpdate)
+  asyncHandler(pc.updateProductComment)
 );
+
 productRoute.delete(
-  '/:productId/productcomments/:commentId',
-  asyncHandler(pc.productCommentDelete)
+  '/:productId/comments/:commentId',
+  authenticate,
+  asyncHandler(pc.deleteProductComment)
 );
 
 export default productRoute;

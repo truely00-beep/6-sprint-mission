@@ -1,19 +1,25 @@
 import prisma from '../lib/prismaclient.js';
 
-export async function articleCommentNew(req, res) {
+export async function createArticleComment(req, res) {
+  // article이 DB에 있는지 확인
   const articleId = req.params.articleId;
   const article = await prisma.article.findUnique({ where: { id: articleId } });
 
   if (!article)
     return res.status(404).json({ message: 'Cannot found article' });
 
+  // user가 DB에 존재 하는지 확인
+  const userId = req.user.id;
+  const findUser = await prisma.user.findUnique({ where: { id: userId } });
+
+  if (!findUser) return res.status(401).json({ message: 'Unauthorized' });
+
   const { content } = req.body;
   const commentCreate = await prisma.commentArticle.create({
     data: {
       content,
-      article: {
-        connect: { id: articleId },
-      },
+      userId,
+      articleId,
     },
     include: {
       article: true,
@@ -23,7 +29,7 @@ export async function articleCommentNew(req, res) {
   res.status(201).json(commentCreate);
 }
 
-export async function articleCommentsList(req, res) {
+export async function getArticleCommentsList(req, res) {
   const articleId = req.params.articleId;
   const article = await prisma.article.findUnique({ where: { id: articleId } });
 
@@ -49,20 +55,32 @@ export async function articleCommentsList(req, res) {
   res.status(200).json(articleComments.comments);
 }
 
-export async function articleCommentUpdate(req, res) {
+export async function updateArticleComment(req, res) {
+  // article이 DB에 있는지 확인
   const articleId = req.params.articleId;
   const article = await prisma.article.findUnique({ where: { id: articleId } });
 
   if (!article)
     return res.status(404).json({ message: 'Cannot found article' });
 
+  // user가 DB에 존재 하는지 확인
+  const userId = req.user.id;
+  const findUser = await prisma.user.findUnique({ where: { id: userId } });
+
+  if (!findUser) return res.status(401).json({ message: 'Unauthorized' });
+
+  // comment가 DB에 존재 하는지 확인
   const commentId = req.params.commentId;
   const comment = await prisma.commentArticle.findUnique({
-    where: { id: articleId },
+    where: { id: commentId },
   });
 
   if (!comment)
     return res.status(404).json({ message: 'Cannot found comment' });
+
+  // DB에 있는 comment userID 정보와 로그인 한 User 정보가 같은지 확인
+  if (comment.userId !== userId)
+    return res.status(401).json({ message: 'Unauthorized' });
 
   const commentUpdate = await prisma.commentArticle.update({
     where: { id: commentId },
@@ -72,20 +90,32 @@ export async function articleCommentUpdate(req, res) {
   res.status(201).json(commentUpdate);
 }
 
-export async function articleCommentDelete(req, res) {
+export async function deleteArticleComment(req, res) {
+  // article이 DB에 있는지 확인
   const articleId = req.params.articleId;
   const article = await prisma.article.findUnique({ where: { id: articleId } });
 
   if (!article)
     return res.status(404).json({ message: 'Cannot found article' });
 
+  // user가 DB에 존재 하는지 확인
+  const userId = req.user.id;
+  const findUser = await prisma.user.findUnique({ where: { id: userId } });
+
+  if (!findUser) return res.status(401).json({ message: 'Unauthorized' });
+
+  // comment가 DB에 존재 하는지 확인
   const commentId = req.params.commentId;
   const comment = await prisma.commentArticle.findUnique({
-    where: { id: articleId },
+    where: { id: commentId },
   });
 
   if (!comment)
     return res.status(404).json({ message: 'Cannot found comment' });
+
+  // DB에 있는 comment userID 정보와 로그인 한 User 정보가 같은지 확인
+  if (comment.userId !== userId)
+    return res.status(401).json({ message: 'Unauthorized' });
 
   await prisma.commentArticle.delete({
     where: { id: commentId },

@@ -1,21 +1,26 @@
 import prisma from '../lib/prismaclient.js';
 
-export async function productCommentNew(req, res) {
+export async function createProductComment(req, res) {
   const productId = req.params.productId;
-  const product = await prisma.product.findUnique({
-    where: { id: productId },
-  });
+  const userId = req.user.id;
+
+  // product가 DB에 있는지 확인
+  const product = await prisma.product.findUnique({ where: { id: productId } });
 
   if (!product)
-    return res.status(404).json({ message: 'Cannot found Product' });
+    return res.status(401).json({ message: 'Cannot found product' });
+
+  // user가 DB에 존재 하는지 확인
+  const findUser = await prisma.user.findUnique({ where: { id: userId } });
+
+  if (!findUser) return res.status(401).json({ message: 'Unauthorized' });
 
   const { content } = req.body;
   const commentCreate = await prisma.commentProduct.create({
     data: {
       content,
-      product: {
-        connect: { id: productId },
-      },
+      userId,
+      productId,
     },
     include: {
       product: true,
@@ -25,7 +30,7 @@ export async function productCommentNew(req, res) {
   res.status(201).json(commentCreate);
 }
 
-export async function productCommentList(req, res) {
+export async function getProductCommentList(req, res) {
   const productId = req.params.productId;
   const product = await prisma.product.findUnique({
     where: { id: productId },
@@ -53,21 +58,32 @@ export async function productCommentList(req, res) {
   res.status(200).json(productComments.comments);
 }
 
-export async function productCommentUpdate(req, res) {
+export async function updateProductComment(req, res) {
   const productId = req.params.productId;
-  const product = await prisma.product.findUnique({
-    where: { id: productId },
-  });
+  const userId = req.user.id;
+
+  // product가 DB에 있는지 확인
+  const product = await prisma.product.findUnique({ where: { id: productId } });
 
   if (!product)
-    return res.status(404).json({ message: 'Cannot found Product' });
+    return res.status(401).json({ message: 'Cannot found product' });
 
+  // user가 DB에 존재 하는지 확인
+  const findUser = await prisma.user.findUnique({ where: { id: userId } });
+
+  if (!findUser) return res.status(401).json({ message: 'Unauthorized' });
+
+  // comment가 DB에 존재 하는지 확인
   const commentId = req.params.commentId;
   const comment = await prisma.commentProduct.findUnique({
-    where: { id: articleId },
+    where: { id: commentId },
   });
   if (!comment)
     return res.status(404).json({ message: 'Cannot found comment' });
+
+  // DB에 있는 comment userID 정보와 로그인 한 User 정보가 같은지 확인
+  if (comment.userId !== userId)
+    return res.status(401).json({ message: 'Unauthorized' });
 
   const commentUpdate = await prisma.commentProduct.update({
     where: { id: commentId },
@@ -77,21 +93,32 @@ export async function productCommentUpdate(req, res) {
   res.status(201).json(commentUpdate);
 }
 
-export async function productCommentDelete(req, res) {
+export async function deleteProductComment(req, res) {
   const productId = req.params.productId;
-  const product = await prisma.product.findUnique({
-    where: { id: productId },
-  });
+  const userId = req.user.id;
+
+  // product가 DB에 있는지 확인
+  const product = await prisma.product.findUnique({ where: { id: productId } });
 
   if (!product)
-    return res.status(404).json({ message: 'Cannot found Product' });
+    return res.status(401).json({ message: 'Cannot found product' });
 
+  // user가 DB에 존재 하는지 확인
+  const findUser = await prisma.user.findUnique({ where: { id: userId } });
+
+  if (!findUser) return res.status(401).json({ message: 'Unauthorized' });
+
+  // comment가 DB에 존재 하는지 확인
   const commentId = req.params.commentId;
   const comment = await prisma.commentProduct.findUnique({
-    where: { id: articleId },
+    where: { id: commentId },
   });
   if (!comment)
     return res.status(404).json({ message: 'Cannot found comment' });
+
+  // DB에 있는 comment userID 정보와 로그인 한 User 정보가 같은지 확인
+  if (comment.userId !== userId)
+    return res.status(401).json({ message: 'Unauthorized' });
 
   await prisma.commentProduct.delete({
     where: { id: commentId },

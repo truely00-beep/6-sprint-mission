@@ -13,41 +13,52 @@ import {
   commentUpdateValidation,
 } from '../validators/comment-validation.js';
 
+import authenticate from '../middleware/authenticate.js';
+
 const articleRoute = express.Router();
 
-articleRoute.get('/', asyncHandler(a.articlesList));
-articleRoute.post('/', articleCreateValidation, asyncHandler(a.articleNew));
+articleRoute.post(
+  '/',
+  authenticate,
+  articleCreateValidation,
+  asyncHandler(a.createArticle)
+);
+articleRoute.get('/', asyncHandler(a.getArticlesList));
 
-articleRoute.get('/:id', asyncHandler(a.articleOnly));
+articleRoute.get('/:id', asyncHandler(a.getArticleInfo));
 articleRoute.patch(
   '/:id',
+  authenticate,
   articleUpdateValidation,
-  asyncHandler(a.articleUpdate)
+  asyncHandler(a.updateArticle)
 );
-articleRoute.delete('/:id', asyncHandler(a.articleDelete));
+articleRoute.delete('/:id', authenticate, asyncHandler(a.deleteArticle));
 
 // ======= article에 연결 된 comment =======
 // article와 comment가 별도의 모델로 구동되므로
 // 별도의 작업으로 제작 하였습니다
 
-articleRoute.get(
-  '/:articleId/articlecomments',
-  asyncHandler(ac.articleCommentsList)
-);
 articleRoute.post(
-  '/:articleId/articlecomments',
+  '/:articleId/comments',
+  authenticate,
   commentCreateValidation,
-  asyncHandler(ac.articleCommentNew)
+  asyncHandler(ac.createArticleComment)
+);
+articleRoute.get(
+  '/:articleId/comments',
+  asyncHandler(ac.getArticleCommentsList)
 );
 
 articleRoute.patch(
-  '/:articleId/articlecomments/:commentId',
+  '/:articleId/comments/:commentId',
+  authenticate,
   commentUpdateValidation,
-  asyncHandler(ac.articleCommentUpdate)
+  asyncHandler(ac.updateArticleComment)
 );
 articleRoute.delete(
-  '/:articleId/articlecomments/:commentId',
-  asyncHandler(ac.articleCommentDelete)
+  '/:articleId/comments/:commentId',
+  authenticate,
+  asyncHandler(ac.deleteArticleComment)
 );
 
 export default articleRoute;

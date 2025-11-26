@@ -1,8 +1,13 @@
 import prisma from '../lib/prismaclient.js';
 
 export async function createProduct(req, res) {
+  // user가 DB에 존재 하는지 확인
   const userId = req.user.id;
+  const findUser = await prisma.user.findUnique({ where: { id: userId } });
 
+  if (!findUser) return res.status(401).json({ message: 'Unauthorized' });
+
+  // product 저장하기
   const { name, description, price, tags } = req.body;
 
   const productCreate = await prisma.product.create({
@@ -87,13 +92,18 @@ export async function updateProduct(req, res) {
   const productId = req.params.id;
   const userId = req.user.id;
 
+  // product가 DB에 있는지 확인
   const product = await prisma.product.findUnique({ where: { id: productId } });
 
-  // 제품이 있는지 확인
   if (!product)
     return res.status(401).json({ message: 'Cannot found product' });
 
-  // 동일한 user 인지 확인
+  // user가 DB에 존재 하는지 확인
+  const findUser = await prisma.user.findUnique({ where: { id: userId } });
+
+  if (!findUser) return res.status(401).json({ message: 'Unauthorized' });
+
+  // DB에 있는 product의 user정보가 로그인 한 user 인지 확인
   if (product.userId !== userId)
     return res.status(401).json({ message: 'Unauthorized' });
 
@@ -110,11 +120,16 @@ export async function deleteProduct(req, res) {
   const productId = req.params.id;
   const userId = req.user.id;
 
+  // product가 DB에 있는지 확인
   const product = await prisma.product.findUnique({ where: { id: productId } });
 
-  // 제품이 있는지 확인
   if (!product)
     return res.status(401).json({ message: 'Cannot found product' });
+
+  // user가 DB에 존재 하는지 확인
+  const findUser = await prisma.user.findUnique({ where: { id: userId } });
+
+  if (!findUser) return res.status(401).json({ message: 'Unauthorized' });
 
   // 동일한 user 인지 확인
   if (product.userId !== userId)
