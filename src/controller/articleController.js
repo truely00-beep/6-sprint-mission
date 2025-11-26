@@ -35,7 +35,34 @@ async function getArticles(req, res, next) {
     take: limit,
     select: { id: true, title: true, content: true, createdAt: true },
   });
-  res.status(200).json(data);
+
+  const userId = req.auth?.userId; // 옵셔널체이닝이 없으면 오류가 나는 이유가 뭘까?
+  if (userId) {
+    const likeArticleIds = await prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+    });
+    const filterLikeData = data
+      .filter((d) => likeArticleIds.likeArticleId.includes(d.id))
+      .map((d) => ({
+        ...d,
+        isLiked: true,
+      }));
+    const filterData = data
+      .filter((d) => !likeArticleIds.likeArticleId.includes(d.id))
+      .map((d) => ({
+        ...d,
+        isLiked: false,
+      }));
+    const userData = [...filterLikeData, ...filterData];
+    const formattedData = userData.sort((a, b) =>
+      sort === 'recent'
+        ? new Date(b.createdAt) - new Date(a.createdAt)
+        : new Date(a.createdAt) - new Date(b.createdAt)
+    );
+    return res.status(200).json(formattedData);
+  } else {
+    return res.status(200).json(data);
+  }
 }
 
 async function getArticleById(req, res, next) {
@@ -44,6 +71,16 @@ async function getArticleById(req, res, next) {
     where: { id },
     select: { id: true, title: true, content: true, createdAt: true },
   });
+
+  const userId = req.auth?.userId; // 옵셔널체이닝이 없으면 오류가 나는 이유가 뭘까?
+  if (userId) {
+    const likeArticleIds = await prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+    });
+    likeArticleIds.likeArticleId.includes(id)
+      ? (data.isLiked = true)
+      : (data.isLiked = false);
+  }
 
   res.status(200).json(data);
 }
