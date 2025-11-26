@@ -18,5 +18,5 @@ export const PatchUser = s.partial(CreateUser);
 
 export const LoginUser = s.object({
   email: s.define('Email', isEmail),
-  password: s.size(string(), 8, 20),
+  password: s.size(s.string(), 8, 20),
 });

@@ -9,14 +9,19 @@ import { AuthController } from '../controller/authController.js';
 const authRouter = express.Router();
 const profileUpload = UploadImage('user-profiles');
 
-authRouter.post(
-  '/register',
-  profileUpload.single('profileImage'),
-  validate(CreateUser),
-  hashingPassword,
-  tryCatchHandler(AuthController.register),
-);
+authRouter;
 
-authRouter.post('/login', validate(LoginUser), tryCatchHandler(AuthController));
+authRouter
+  .post(
+    '/register',
+    profileUpload.single('profileImage'),
+    validate(CreateUser),
+    hashingPassword,
+    tryCatchHandler(AuthController.register),
+  )
+  .post('/login', profileUpload.none(), validate(LoginUser), tryCatchHandler(AuthController.login))
+  .post('/refresh', profileUpload.none(), tryCatchHandler(AuthController.refreshToken))
+  .post('/logout', tryCatchHandler(AuthController.logout));
+authRouter;
 
 export default authRouter;
