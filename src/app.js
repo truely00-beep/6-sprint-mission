@@ -3,12 +3,13 @@ import 'express-async-errors';
 import cors from 'cors';
 import { PORT } from './utils/constants.js';
 import cookieParser from 'cookie-parser';
-import authRouter from './routers/authRouter.js';
 
+import authRouter from './routers/authRouter.js';
 import productRouter from './routers/productsRouter.js';
 import articleRouter from './routers/articlesRouter.js';
 import commentRouter from './routers/commentsRouter.js';
 import imageRouter from './routers/imagesRouter.js';
+import usersRouter from './routers/usersRouter.js';
 
 import { errorHandlerMiddleware, defaultNotFoundHandler } from './middlewares/errorHandler.js';
 
@@ -26,6 +27,7 @@ app.use('/auth', authRouter);
 app.use('/articles', articleRouter);
 app.use('/products', productRouter);
 app.use('/comments', commentRouter);
+app.use('/users', usersRouter);
 
 app.use(defaultNotFoundHandler);
 app.use(errorHandlerMiddleware);
