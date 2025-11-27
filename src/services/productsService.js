@@ -12,7 +12,7 @@ async function createProductInDb(productData, userId) {
   });
 }
 
-async function findProducts({ sort, search, offset, limit }) {
+async function findProducts({ sort, search, offset, limit }, userId) {
   const orderBy = sort === 'resent' ? { createdAt: 'desc' } : { createdAt: 'asc' };
 
   const where = {};
@@ -20,46 +20,76 @@ async function findProducts({ sort, search, offset, limit }) {
     where.OR = [{ name: { contains: search } }, { description: { contains: search } }];
   }
 
+  const selectOption = {
+    id: true,
+    name: true,
+    price: true,
+    createdAt: true,
+  };
+
+  if (userId) {
+    selectOption.likes = {
+      where: { userId },
+      select: { id: true },
+    };
+  }
+
   const [products, totalProducts] = await Promise.all([
     prisma.product.findMany({
-      select: {
-        id: true,
-        name: true,
-        price: true,
-        createdAt: true,
-      },
       where,
       orderBy,
       skip: offset,
       take: limit,
+      select: selectOption,
     }),
-    prisma.product.count({
-      where,
-    }),
+    prisma.product.count({ where }),
   ]);
 
-  return { products, totalProducts };
+  const productsLike = products.map((p) => {
+    const isLiked = p.likes ? p.likes.length > 0 : false;
+    const { likes, ...rest } = p;
+
+    return {
+      ...rest,
+      isLiked,
+    };
+  });
+  return { products: productsLike, totalProducts };
 }
 
-async function findProductById(id) {
-  return prisma.product.findUniqueOrThrow({
-    where: { id },
-    select: {
-      id: true,
-      name: true,
-      description: true,
-      price: true,
-      tags: true,
-      createdAt: true,
-      user: {
-        select: {
-          id: true,
-          nickname: true,
-          email: true,
-        },
+async function findProductById(id, userId) {
+  const selectOption = {
+    id: true,
+    name: true,
+    description: true,
+    price: true,
+    tags: true,
+    createdAt: true,
+    user: {
+      select: {
+        id: true,
+        nickname: true,
+        email: true,
       },
     },
+  };
+
+  if (userId) {
+    selectOption.likes = {
+      where: { userId },
+      select: { id: true },
+    };
+  }
+
+  const product = await prisma.product.findUniqueOrThrow({
+    where: { id },
+    select: selectOption,
   });
+
+  const isLiked = product.likes ? product.likes.length > 0 : false;
+  const { likes, ...rest } = product;
+
+  return { ...rest, isLiked };
 }
 
 async function updateProductInDb(id, updateData, userId) {

@@ -1,4 +1,17 @@
 import { articlesService } from '../services/articlesService.js';
+import jwt from 'jsonwebtoken';
+import { ACCESS_TOKEN_COOKIE_NAME, JWT_ACCESS_TOKEN_SECRET } from '../utils/constants.js';
+
+function getUserIdFromToken(req) {
+  const token = req.cookies[ACCESS_TOKEN_COOKIE_NAME];
+  if (!token) return null;
+  try {
+    const decoded = jwt.verify(token, JWT_ACCESS_TOKEN_SECRET);
+    return decoded.id;
+  } catch (error) {
+    return null;
+  }
+}
 
 export async function createArticle(req, res) {
   const { title, content } = req.body;
@@ -15,13 +28,17 @@ export async function createArticle(req, res) {
 export async function getArticles(req, res) {
   const { sort, search } = req.query;
   const { offset: _offset, limit: _limit } = req.paginationParams;
+  const userId = getUserIdFromToken(req);
 
-  const { articles, totalArticles } = await articlesService.findArticles({
-    sort,
-    search,
-    offset: _offset,
-    limit: _limit,
-  });
+  const { articles, totalArticles } = await articlesService.findArticles(
+    {
+      sort,
+      search,
+      offset: _offset,
+      limit: _limit,
+    },
+    userId,
+  );
 
   if (search && totalArticles === 0) {
     return res.status(200).json({
@@ -48,7 +65,8 @@ export async function getArticles(req, res) {
 
 export async function getArticle(req, res) {
   const { id } = req.params;
-  const article = await articlesService.findArticleById(id);
+  const userId = getUserIdFromToken(req);
+  const article = await articlesService.findArticleById(id, userId);
 
   res.status(200).send(article);
 }

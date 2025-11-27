@@ -1,4 +1,18 @@
 import { productsService } from '../services/productsService.js';
+import jwt from 'jsonwebtoken';
+import { ACCESS_TOKEN_COOKIE_NAME, JWT_ACCESS_TOKEN_SECRET } from '../utils/constants.js';
+
+function getUserIdFromToken(req) {
+  const token = req.cookies[ACCESS_TOKEN_COOKIE_NAME];
+  if (!token) return null;
+
+  try {
+    const decoded = jwt.verify(token, JWT_ACCESS_TOKEN_SECRET);
+    return decoded.id;
+  } catch (error) {
+    return null;
+  }
+}
 
 export async function createProduct(req, res) {
   const productData = req.body;
@@ -16,12 +30,17 @@ export async function getProducts(req, res) {
   const { sort, search } = req.query;
   const { offset: _offset, limit: _limit } = req.paginationParams;
 
-  const { products, totalProducts } = await productsService.findProducts({
-    sort,
-    search,
-    offset: _offset,
-    limit: _limit,
-  });
+  const userId = getUserIdFromToken(req);
+
+  const { products, totalProducts } = await productsService.findProducts(
+    {
+      sort,
+      search,
+      offset: _offset,
+      limit: _limit,
+    },
+    userId,
+  );
 
   if (search && totalProducts === 0) {
     return res.status(200).json({
@@ -47,7 +66,8 @@ export async function getProducts(req, res) {
 
 export async function getProduct(req, res) {
   const { id } = req.params;
-  const product = await productsService.findProductById(id);
+  const userId = getUserIdFromToken(req);
+  const product = await productsService.findProductById(id, userId);
 
   res.status(200).send(product);
 }
