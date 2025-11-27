@@ -1,5 +1,6 @@
 import { EXPRESS } from './../libs/constants.js';
-import { catchAsync } from './../libs/catchAsync.js';
+import { catchAsync, catchAsyncAll } from './../libs/catchAsync.js';
+import auth from './../middlewares/auth.js';
 import {
     GetComment,
     PostComment,
@@ -12,12 +13,12 @@ const commentRouter = EXPRESS.Router();
 
 commentRouter.route('/')
     .get(catchAsync(GetComment))
-    .post(catchAsync(PostComment));
+    .post(auth.verifyAccessToken, catchAsync(PostComment));
 
 commentRouter.route('/:id')
     .get(catchAsync(GetCommentById))
-    .patch(catchAsync(PatchCommentById))
-    .delete(catchAsync(DeleteCommentById));
+    .patch(auth.verifyAccessToken, catchAsyncAll(auth.verifyProduectAuth, PatchCommentById))
+    .delete(auth.verifyAccessToken, catchAsyncAll(auth.verifyProduectAuth, DeleteCommentById));
 
 
 export default commentRouter;
