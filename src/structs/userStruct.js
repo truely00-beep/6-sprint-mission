@@ -7,16 +7,17 @@ export const CreateUser = s.object({
   password: s.size(s.string(), 8, 20),
   nickname: s.size(s.string(), 2, 10),
   name: s.size(s.string(), 1, 10),
-  userPreference: s.optional(
-    s.object({
-      receivedEmail: s.boolean(),
-    }),
-  ),
+  receivedEmail: s.optional(s.boolean()),
 });
 
-export const PatchUser = s.partial(CreateUser);
+export const PatchUser = s.partial(s.omit(CreateUser, ['password']));
 
 export const LoginUser = s.object({
   email: s.define('Email', isEmail),
   password: s.size(s.string(), 8, 20),
+});
+
+export const PatchPassword = s.object({
+  password: s.size(s.string(), 8, 20),
+  newPassword: s.size(s.string(), 8, 20),
 });

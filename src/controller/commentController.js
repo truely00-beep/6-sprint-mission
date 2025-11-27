@@ -44,29 +44,34 @@ export class commentController {
     const commentId = parseInt(req.params.commentId, 10);
     const { content } = req.body;
     const user = req.user;
-    const comment = await prisma.$transaction(async (tx) => {
-      const foundComment = await tx.comment.findUniqueOrThrow({ where: { id: commentId } });
-      if (foundComment.userId !== user.id) {
-        return res.status(401).send({ message: '잘못된 접근입니다.' });
-      }
-      const patchedComment = await tx.comment.update({
-        where: { id: commentId },
-        data: {
-          content,
-        },
-        select: {
-          id: true,
-          content: true,
-          createdAt: true,
-          productId: true,
-          articleId: true,
-          userId: true,
-        },
+    try {
+      const comment = await prisma.$transaction(async (tx) => {
+        const foundComment = await tx.comment.findUniqueOrThrow({ where: { id: commentId } });
+        if (foundComment.userId !== user.id) {
+          throw { status: 401, message: '잘못된 접근입니다.' };
+        }
+        const patchedComment = await tx.comment.update({
+          where: { id: commentId },
+          data: {
+            content,
+          },
+          select: {
+            id: true,
+            content: true,
+            createdAt: true,
+            productId: true,
+            articleId: true,
+            userId: true,
+          },
+        });
+        return patchedComment;
       });
-      return patchedComment;
-    });
-    res.status(200).send(comment);
+      res.status(200).send(comment);
+    } catch (e) {
+      return res.status(e.status).send({ message: e.message });
+    }
   };
+
   static getAllComment = async (req, res) => {
     const { limit = 10, cursorId, page = '1' } = req.query;
     const orderBy = { createdAt: 'desc' };
@@ -87,13 +92,17 @@ export class commentController {
   static deleteComment = async (req, res) => {
     const commentId = parseInt(req.params.commentId, 10);
     const user = req.user;
-    await prisma.$transaction(async (tx) => {
-      const foundComment = await tx.comment.findUniqueOrThrow({ where: { id: commentId } });
-      if (foundComment.userId !== user.id) {
-        return res.status(401).send({ message: '잘못된 접근입니다.' });
-      }
-      await tx.comment.delete({ where: { id: commentId } });
-    });
-    res.sendStatus(204);
+    try {
+      await prisma.$transaction(async (tx) => {
+        const foundComment = await tx.comment.findUniqueOrThrow({ where: { id: commentId } });
+        if (foundComment.userId !== user.id) {
+          throw { status: 401, message: '잘못된 접근입니다.' };
+        }
+        await tx.comment.delete({ where: { id: commentId } });
+      });
+      res.sendStatus(204);
+    } catch (e) {
+      return res.status(e.status).send({ message: e.message });
+    }
   };
 }

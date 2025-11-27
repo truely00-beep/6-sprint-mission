@@ -27,6 +27,7 @@ model User {
   order          Order[]
   products       Product[]
   articles       Article[]
+  like           Like[]
 }
 
 model UserPreference {
@@ -83,6 +84,7 @@ model Product {
   comment       Comment[]
   orderItem     OrderItem[]
   productImages ProductImage[]
+  likes         Like[]
 }
 
 model ProductImage {
@@ -104,6 +106,7 @@ model Article {
   userId        Int
   comment       Comment[]
   articleImages ArticleImage[]
+  likes         Like[]
 }
 
 model ArticleImage {
@@ -113,6 +116,19 @@ model ArticleImage {
   updatedAt DateTime @updatedAt
   article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
   articleId Int
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int?
+  article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  articleId Int?
+
+  @@unique([userId, productId, articleId])
 }
 
 model Comment {

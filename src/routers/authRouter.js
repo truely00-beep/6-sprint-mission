@@ -1,6 +1,6 @@
 import express from 'express';
 import { validate } from '../middleware/validate.js';
-import { CreateUser, LoginUser } from '../structs/userStruct.js';
+import { CreateUser, LoginUser, PatchPassword, PatchUser } from '../structs/userStruct.js';
 import { tryCatchHandler } from '../middleware/errorhandler.js';
 import { UploadImage } from '../middleware/formdataParser.js';
 import { hashingPassword } from '../middleware/bcrypt.js';
@@ -21,6 +21,27 @@ authRouter
   .post('/login', profileUpload.none(), validate(LoginUser), tryCatchHandler(AuthController.login))
   .post('/refresh', profileUpload.none(), tryCatchHandler(AuthController.refreshToken))
   .post('/logout', tryCatchHandler(AuthController.logout));
-authRouter.get('/:userId', authenticate, tryCatchHandler(AuthController.getInfo));
+authRouter
+  .get('/:userId', authenticate, tryCatchHandler(AuthController.getInfo))
+  .patch(
+    '/:userId',
+    authenticate,
+    profileUpload.none(),
+    validate(PatchUser),
+    tryCatchHandler(AuthController.patchInfo),
+  )
+  .patch(
+    '/:userId/password',
+    authenticate,
+    profileUpload.none(),
+    validate(PatchPassword),
+    tryCatchHandler(AuthController.updatePassword),
+  )
+  .get(
+    '/:userId/products',
+    authenticate,
+    profileUpload.none(),
+    tryCatchHandler(AuthController.getCreatedProduct),
+  );
 
 export default authRouter;

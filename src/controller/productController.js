@@ -74,39 +74,47 @@ export class ProductController {
     const productId = parseInt(req.params.productId, 10);
     const { ...productData } = req.body;
     const user = req.user;
-    const product = await prisma.$transaction(async (tx) => {
-      const findProduct = await tx.product.findUniqueOrThrow({
-        where: { id: productId },
+    try {
+      const product = await prisma.$transaction(async (tx) => {
+        const findProduct = await tx.product.findUniqueOrThrow({
+          where: { id: productId },
+        });
+        if (findProduct.userId !== user.id) {
+          throw { status: 401, message: '잘못된 접근입니다.' };
+        }
+        const patchedProduct = await tx.product.update({
+          where: { id: productId },
+          data: { ...productData },
+        });
+        console.log(productData);
+        return patchedProduct;
       });
-      if (findProduct.userId !== user.id) {
-        return res.status(401).send({ message: '잘못된 접근입니다.' });
-      }
-      const patchedProduct = await tx.product.update({
-        where: { id: productId },
-        data: { ...productData },
-      });
-      console.log(productData);
-      return patchedProduct;
-    });
-    res.status(200).send(product);
+      res.status(200).send(product);
+    } catch (e) {
+      return res.status(e.status).send({ message: e.message });
+    }
   };
   //상품 삭제
 
   static deleteProduct = async (req, res) => {
     const productId = parseInt(req.params.productId, 10);
     const user = req.user;
-    await prisma.$transaction(async (tx) => {
-      const foundProduct = await tx.product.findUniqueOrThrow({
-        where: { id: productId },
+    try {
+      await prisma.$transaction(async (tx) => {
+        const foundProduct = await tx.product.findUniqueOrThrow({
+          where: { id: productId },
+        });
+        if (foundProduct.userId !== user.id) {
+          throw { status: 401, message: '잘못된 접근입니다.' };
+        }
+        await tx.product.delete({
+          where: { id: productId },
+        });
       });
-      if (foundProduct.userId !== user.id) {
-        return res.status(401).send({ message: '잘못된 접근입니다.' });
-      }
-      await tx.product.delete({
-        where: { id: productId },
-      });
-    });
 
-    res.sendStatus(204);
+      res.sendStatus(204);
+    } catch (e) {
+      return res.status(e.status).send({ message: e.message });
+    }
   };
 }

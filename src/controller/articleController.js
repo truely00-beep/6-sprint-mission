@@ -58,37 +58,45 @@ export class ArticleController {
     const articleId = parseInt(req.params.articleId, 10);
     const { title, content } = req.body;
     const user = req.user;
-    const article = await prisma.$transaction(async (tx) => {
-      const foundArticle = await tx.article.findUniqueOrThrow({ where: { id: articleId } });
-      if (foundArticle.userId !== user.id) {
-        return res.status(401).send({ message: '잘못된 접근입니다.' });
-      }
-      const patchedArticle = await tx.article.update({
-        where: { id: articleId },
-        data: {
-          title,
-          content,
-        },
+    try {
+      const article = await prisma.$transaction(async (tx) => {
+        const foundArticle = await tx.article.findUniqueOrThrow({ where: { id: articleId } });
+        if (foundArticle.userId !== user.id) {
+          throw { status: 401, message: '잘못된 접근입니다.' };
+        }
+        const patchedArticle = await tx.article.update({
+          where: { id: articleId },
+          data: {
+            title,
+            content,
+          },
+        });
+        return patchedArticle;
       });
-      return patchedArticle;
-    });
-    res.status(200).send(article);
+
+      res.status(200).send(article);
+    } catch (e) {
+      return res.status(e.status).send({ message: e.message });
+    }
   };
   //게시글 삭제
   static deleteArticle = async (req, res) => {
     const articleId = parseInt(req.params.articleId, 10);
     const user = req.user;
-
-    await prisma.$transaction(async (tx) => {
-      const foundArticle = await tx.article.findUniqueOrThrow({
-        where: { id: articleId },
+    try {
+      await prisma.$transaction(async (tx) => {
+        const foundArticle = await tx.article.findUniqueOrThrow({
+          where: { id: articleId },
+        });
+        if (foundArticle.userId !== user.id) {
+          throw { status: 401, message: '잘못된 접근입니다.' };
+        }
+        await tx.article.delete({ where: { id: articleId } });
       });
-      if (foundArticle.userId !== user.id) {
-        return res.status(401).send({ message: '잘못된 접근입니다.' });
-      }
-      await tx.article.delete({ where: { id: articleId } });
-    });
 
-    res.sendStatus(204);
+      res.sendStatus(204);
+    } catch (e) {
+      return res.status(e.status).send({ message: e.message });
+    }
   };
 }

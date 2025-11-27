@@ -7,8 +7,8 @@ import { JWT_ACCESS_TOKEN_SECRET, REFRESH_TOKEN_COOKIE_NAME } from '../utils/con
 export class AuthController {
   //회원가입
   static register = async (req, res) => {
-    const { userPreference, password, ...userFields } = req.body;
-    const received = userPreference ? userPreference.receivedEmail : false;
+    const { receivedEmail, password, ...userFields } = req.body;
+    // const received = userPreference ? userPreference.receivedEmail : false;
     const profileImage = req.file;
 
     let image;
@@ -22,7 +22,7 @@ export class AuthController {
         password,
         userPreference: {
           create: {
-            receivedEmail: received,
+            receivedEmail,
           },
         },
         profileImage: image,
@@ -97,5 +97,110 @@ export class AuthController {
       return res.status(401).send({ message: '잘못된 접근입니다.' });
     }
     res.status(200).send(userInfo);
+  };
+
+  static patchInfo = async (req, res) => {
+    const userId = parseInt(req.params.userId, 10);
+    const { receivedEmail, ...userFields } = req.body;
+    const user = req.user;
+    console.log(receivedEmail);
+    try {
+      const patchedUser = await prisma.$transaction(async (tx) => {
+        const foundUser = await tx.user.findUnique({ where: { id: userId } });
+        if (!foundUser) {
+          throw { status: 401, message: '회원을 찾을 수 없습니다.' };
+        }
+        if (foundUser.id !== user.id) {
+          throw { status: 401, message: '잘못된 접근입니다.' };
+        }
+        const updatedUser = await tx.user.update({
+          where: { id: userId },
+          data: {
+            ...userFields,
+            userPreference: { update: { receivedEmail } },
+          },
+          select: {
+            id: true,
+            name: true,
+            nickname: true,
+            email: true,
+            createdAt: true,
+            profileImage: {
+              select: {
+                url: true,
+              },
+            },
+          },
+        });
+        return updatedUser;
+      });
+
+      res.status(201).send(patchedUser);
+    } catch (e) {
+      return res.status(e.status).send({ message: e.message });
+    }
+  };
+  static updatePassword = async (req, res) => {
+    const userId = parseInt(req.params.userId, 10);
+    const { password, newPassword } = req.body;
+    const user = req.user;
+    if (!password) {
+      return res.status(400).send({ message: '비밀번호를 입력해주세요' });
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).send({ message: '비밀번호가 일치하지 않습니다.' });
+    }
+    const hashingPassword = async (password) => {
+      const salt = 10;
+      const hashedPassword = await bcrypt.hash(password, salt);
+      return hashedPassword;
+    };
+    try {
+      const patchedPassword = await prisma.$transaction(async (tx) => {
+        const foundUser = await tx.user.findUnique({ where: { id: userId } });
+        if (!foundUser) {
+          throw { status: 401, message: '유저를 찾을 수 없습니다.' };
+        }
+        if (foundUser.id !== user.id) {
+          throw { status: 401, message: '잘못된 접근입니다.' };
+        }
+        await tx.user.update({
+          where: { id: userId },
+          data: {
+            password: await hashingPassword(newPassword),
+          },
+        });
+      });
+
+      res.status(201).send({ message: '비밀번호 변경이 완료 되었습니다.' });
+    } catch (e) {
+      return res.status(e.status).send({ message: e.message });
+    }
+  };
+  static getCreatedProduct = async (req, res) => {
+    const userId = parseInt(req.params.userId, 10);
+    const user = req.user;
+    try {
+      const product = await prisma.$transaction(async (tx) => {
+        const foundUser = await tx.user.findUnique({ where: { id: userId } });
+        if (!foundUser) {
+          throw { status: 401, message: '회원을 찾을 수 없습니다.' };
+        }
+        if (foundUser.id !== user.id) {
+          throw { status: 401, message: '잘못된 접근입니다.' };
+        }
+        const createdProduct = await tx.product.findMany({
+          where: { userId: userId },
+        });
+        if (!createdProduct) {
+          throw { status: 401, message: '등록된 상품을 찾을 수 없습니다.' };
+        }
+        return createdProduct;
+      });
+      res.status(200).send(product);
+    } catch (e) {
+      return res.status(e.status).send({ message: e.message });
+    }
   };
 }
