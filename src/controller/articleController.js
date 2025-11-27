@@ -57,9 +57,13 @@ class ArticleController {
   }
   async createArticle(req, res) {
     assert(req.body, CreateArticle);
+    const userId = req.user.id;
 
     const articles = await prisma.article.create({
-      data: req.body,
+      data: {
+        ...req.body,
+        userId,
+      },
     });
     res.status(201).send(articles);
   }
