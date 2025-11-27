@@ -2,7 +2,9 @@ import { prisma } from '../utils/prismaClient.js';
 
 export class commentController {
   static createProductComment = async (req, res) => {
-    const { content, product, user } = req.body;
+    const productId = parseInt(req.params.productId, 10);
+    const user = req.user;
+    const { content } = req.body;
 
     const productComment = await prisma.comment.create({
       data: {
@@ -11,12 +13,12 @@ export class commentController {
           connect: {
             // connect >> 레코드를 생성할때 원래 있는 부모 레코드의 필드를 참조,
             // create  >> 포스트 요청시 부모 레코드가 새로 만들어져야 할때  그 필드를 참조할때
-            id: user.userId,
+            id: user.id,
           },
         },
         product: {
           connect: {
-            id: product.productId,
+            id: productId,
           },
         },
       },
@@ -25,30 +27,45 @@ export class commentController {
     res.status(201).send(productComment);
   };
   static createArticleComment = async (req, res) => {
-    const { content, article, user } = req.body;
+    const articleId = parseInt(req.params.articleId, 10);
+    const user = req.user;
+    const { content } = req.body;
     const articleComment = await prisma.comment.create({
       data: {
         content,
-        user: { connect: { id: user.userId } },
-        article: { connect: { id: article.articleId } },
+        user: { connect: { id: user.id } },
+        article: { connect: { id: articleId } },
       },
       select: { id: true, content: true, createdAt: true, articleId: true, userId: true },
     });
     res.status(201).send(articleComment);
   };
   static patchComment = async (req, res) => {
-    const commentId = parseInt(req.params.id, 10);
-    const patchComment = await prisma.comment.update({
-      where: { id: commentId },
-      data: req.body,
-      select: {
-        id: true,
-        content: true,
-        updatedAt: true,
-        userId: true,
-      },
+    const commentId = parseInt(req.params.commentId, 10);
+    const { content } = req.body;
+    const user = req.user;
+    const comment = await prisma.$transaction(async (tx) => {
+      const foundComment = await tx.comment.findUniqueOrThrow({ where: { id: commentId } });
+      if (foundComment.userId !== user.id) {
+        return res.status(401).send({ message: '잘못된 접근입니다.' });
+      }
+      const patchedComment = await tx.comment.update({
+        where: { id: commentId },
+        data: {
+          content,
+        },
+        select: {
+          id: true,
+          content: true,
+          createdAt: true,
+          productId: true,
+          articleId: true,
+          userId: true,
+        },
+      });
+      return patchedComment;
     });
-    res.status(200).send(patchComment);
+    res.status(200).send(comment);
   };
   static getAllComment = async (req, res) => {
     const { limit = 10, cursorId, page = '1' } = req.query;
@@ -68,9 +85,14 @@ export class commentController {
     res.status(200).send(getAllComment);
   };
   static deleteComment = async (req, res) => {
-    const commentId = parseInt(req.params.id, 10);
-    await prisma.comment.delete({
-      where: { id: commentId },
+    const commentId = parseInt(req.params.commentId, 10);
+    const user = req.user;
+    await prisma.$transaction(async (tx) => {
+      const foundComment = await tx.comment.findUniqueOrThrow({ where: { id: commentId } });
+      if (foundComment.userId !== user.id) {
+        return res.status(401).send({ message: '잘못된 접근입니다.' });
+      }
+      await tx.comment.delete({ where: { id: commentId } });
     });
     res.sendStatus(204);
   };

@@ -5,11 +5,10 @@ import { tryCatchHandler } from '../middleware/errorhandler.js';
 import { UploadImage } from '../middleware/formdataParser.js';
 import { hashingPassword } from '../middleware/bcrypt.js';
 import { AuthController } from '../controller/authController.js';
+import { authenticate } from '../middleware/authenticate.js';
 
 const authRouter = express.Router();
 const profileUpload = UploadImage('user-profiles');
-
-authRouter;
 
 authRouter
   .post(
@@ -22,6 +21,6 @@ authRouter
   .post('/login', profileUpload.none(), validate(LoginUser), tryCatchHandler(AuthController.login))
   .post('/refresh', profileUpload.none(), tryCatchHandler(AuthController.refreshToken))
   .post('/logout', tryCatchHandler(AuthController.logout));
-authRouter;
+authRouter.get('/:userId', authenticate, tryCatchHandler(AuthController.getInfo));
 
 export default authRouter;

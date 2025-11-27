@@ -1,11 +1,12 @@
 import express from 'express';
 import { validate } from '../middleware/validate.js';
 import { CreateArticle, PatchArticle } from '../structs/articleStruct.js';
+import { CreateArticleComment } from '../structs/commentStruct.js';
 import { tryCatchHandler } from '../middleware/errorhandler.js';
 import { ArticleController } from '../controller/articleController.js';
-import { UploadImage } from '../middleware/formdataParser.js';
+import { UploadImage, textParser } from '../middleware/formdataParser.js';
 import { authenticate } from '../middleware/authenticate.js';
-
+import { commentController } from '../controller/commentController.js';
 const articleRouter = express.Router();
 
 const articleImageUpload = UploadImage('article-image');
@@ -31,5 +32,14 @@ articleRouter
     tryCatchHandler(ArticleController.patchArticle),
   )
   .delete(authenticate, tryCatchHandler(ArticleController.deleteArticle));
+//자유게시판 댓글 생성
+articleRouter
+  .route('/:articleId/comments')
+  .post(
+    authenticate,
+    textParser,
+    validate(CreateArticleComment),
+    tryCatchHandler(commentController.createArticleComment),
+  );
 
 export default articleRouter;

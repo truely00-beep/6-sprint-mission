@@ -1,30 +1,22 @@
 import express from 'express';
-import {
-  CreateArticleComment,
-  CreateProductComment,
-  PatchComment,
-} from '../structs/commentStruct.js';
+import { PatchComment } from '../structs/commentStruct.js';
 import { validate } from '../middleware/validate.js';
 import { tryCatchHandler } from '../middleware/errorhandler.js';
 import { commentController } from '../controller/commentController.js';
-
+import { authenticate } from '../middleware/authenticate.js';
+import { textParser } from '../middleware/formdataParser.js';
 const commentRouter = express.Router();
-
-//중고마켓 댓글 작성
-commentRouter
-  .route('/products')
-  .post(validate(CreateProductComment), tryCatchHandler(commentController.createProductComment));
-
-//자유게시판 댓글 생성
-commentRouter
-  .route('/articles')
-  .post(validate(CreateArticleComment), tryCatchHandler(commentController.createArticleComment));
 
 //댓글 수정 및 삭제
 commentRouter
   .route('/:commentId')
-  .patch(validate(PatchComment), tryCatchHandler(commentController.patchComment))
-  .delete(tryCatchHandler(commentController.deleteComment));
+  .patch(
+    authenticate,
+    textParser,
+    validate(PatchComment),
+    tryCatchHandler(commentController.patchComment),
+  )
+  .delete(authenticate, tryCatchHandler(commentController.deleteComment));
 
 //모든 댓글 조회
 commentRouter.route('/').get(tryCatchHandler(commentController.getAllComment));

@@ -71,4 +71,31 @@ export class AuthController {
     clearTokenCookies(res);
     res.status(200).send({ message: '로그아웃이 완료 됐습니다.' });
   };
+
+  static getInfo = async (req, res) => {
+    const userId = parseInt(req.params.userId);
+    const user = req.user;
+    const userInfo = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        name: true,
+        nickname: true,
+        email: true,
+        createdAt: true,
+        profileImage: {
+          select: {
+            url: true,
+          },
+        },
+      },
+    });
+    if (!userInfo) {
+      return res.status(401).send({ message: '회원을 찾을 수 없습니다,' });
+    }
+    if (userInfo.id !== user.id) {
+      return res.status(401).send({ message: '잘못된 접근입니다.' });
+    }
+    res.status(200).send(userInfo);
+  };
 }
