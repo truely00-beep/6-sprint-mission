@@ -10,7 +10,7 @@ import cors from 'cors';
 import orderRouter from './routers/orderRouter.js';
 import cookieParser from 'cookie-parser';
 import authRouter from './routers/authRouter.js';
-
+import likeRouter from './routers/likeRouter.js';
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
@@ -34,7 +34,11 @@ app.use('/users', userRouter);
 //주문생성
 app.use('/orders', orderRouter);
 
+//인가 인증
 app.use('/auth', authRouter);
+
+//좋아요
+app.use('/like', likeRouter);
 
 //전역 에러핸들러
 app.use(errorHandler);

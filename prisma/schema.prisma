@@ -84,7 +84,7 @@ model Product {
   comment       Comment[]
   orderItem     OrderItem[]
   productImages ProductImage[]
-  likes         Like[]
+  like          Like[]
 }
 
 model ProductImage {
@@ -106,7 +106,7 @@ model Article {
   userId        Int
   comment       Comment[]
   articleImages ArticleImage[]
-  likes         Like[]
+  like          Like[]
 }
 
 model ArticleImage {

@@ -55,19 +55,24 @@ export class ProductController {
   };
   //상품 상세 조회
   static getProductDetail = async (req, res) => {
-    const productId = parseInt(req.params.id, 10);
+    const productId = parseInt(req.params.productId, 10);
     const product = await prisma.product.findUniqueOrThrow({
       where: { id: productId },
       select: {
         id: true,
-        name: true,
+        productName: true,
         description: true,
         price: true,
         tag: true,
         createdAt: true,
+        _count: { select: { like: true } },
       },
     });
-    res.status(200).send(product);
+    const response = {
+      ...product,
+      isLiked: product['_count'].like > 0,
+    };
+    res.status(200).send(response);
   };
   //상품 정보 수정
   static patchProduct = async (req, res) => {

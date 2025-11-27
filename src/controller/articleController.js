@@ -49,9 +49,19 @@ export class ArticleController {
     const articleId = parseInt(req.params.articleId, 10);
     const article = await prisma.article.findUniqueOrThrow({
       where: { id: articleId },
-      select: { id: true, title: true, content: true, createdAt: true },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        createdAt: true,
+        _count: { select: { like: true } },
+      },
     });
-    res.status(200).send(article);
+    const response = {
+      ...article,
+      isLiked: article['_count'].like > 0,
+    };
+    res.status(200).send(response);
   };
   //게시글 수정
   static patchArticle = async (req, res) => {
