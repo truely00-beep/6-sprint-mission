@@ -21,28 +21,50 @@ model User {
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  like      Like[]
 }
 
 model Product {
-  id          Int       @id @default(autoincrement()) // Auto default(increment())
+  id          Int      @id @default(autoincrement()) // Auto default(increment())
   name        String
   description String
   category    Category
   price       Float
   stock       Int
   tags        String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  comments    Comment[]
+  likeCounts  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  comments Comment[]
+  like     Like[]
 }
 
 model Article {
-  id        Int       @id @default(autoincrement())
-  title     String
-  content   String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  comments  Comment[]
+  id         Int      @id @default(autoincrement())
+  title      String
+  content    String
+  likeCounts Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  comments Comment[]
+  like     Like[]
+}
+
+model Like {
+  id     Int      @id @default(autoincrement())
+  userId Int
+  type   LikeType
+
+  user      User     @relation(fields: [userId], references: [id])
+  Product   Product? @relation(fields: [productId], references: [id])
+  productId Int?
+  Article   Article? @relation(fields: [articleId], references: [id])
+  articleId Int?
+
+  @@unique([userId, productId])
+  @@unique([userId, articleId])
 }
 
 model Comment {
@@ -84,4 +106,9 @@ enum Category {
   HOME_INTERIOR
   HOUSEHOLD_SUPPLIES
   KITCHENWARE
+}
+
+enum LikeType {
+  Product
+  Article
 }
