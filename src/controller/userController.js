@@ -130,10 +130,18 @@ async function likeProductButton(req, res, next) {
   });
   if (!existing) {
     await prisma.likedProduct.create({ data: { userId, productId } });
+    await prisma.product.update({
+      where: { id: productId },
+      data: { productLikeCount: { increment: 1 } },
+    });
     return res.status(200).json({ message: '상품 좋아요 등록' });
   } else {
     await prisma.likedProduct.delete({
       where: { userId_productId: { userId, productId } },
+    });
+    await prisma.product.update({
+      where: { id: productId, productLikeCount: { gt: 0 } },
+      data: { productLikeCount: { decrement: 1 } },
     });
     return res.status(200).json({ message: '상품 좋아요 해제' });
   }

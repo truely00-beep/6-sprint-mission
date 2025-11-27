@@ -33,7 +33,13 @@ async function getArticles(req, res, next) {
     orderBy,
     skip,
     take: limit,
-    select: { id: true, title: true, content: true, createdAt: true },
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      createdAt: true,
+      articleLikeCount: true,
+    },
   });
 
   const userId = req.auth?.userId; // 옵셔널체이닝이 없으면 오류가 나는 이유가 뭘까?
@@ -74,7 +80,13 @@ async function getArticleById(req, res, next) {
   const { id } = req.params;
   const data = await prisma.article.findUniqueOrThrow({
     where: { id },
-    select: { id: true, title: true, content: true, createdAt: true },
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      createdAt: true,
+      articleLikeCount: true,
+    },
   });
 
   const userId = req.auth?.userId;

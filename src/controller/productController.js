@@ -33,7 +33,13 @@ async function getProducts(req, res, next) {
     orderBy,
     skip,
     take: limit,
-    select: { id: true, name: true, price: true, createdAt: true },
+    select: {
+      id: true,
+      name: true,
+      price: true,
+      createdAt: true,
+      productLikeCount: true,
+    },
   });
 
   const userId = req.auth?.userId; // 옵셔널체이닝이 없으면 오류가 나는 이유가 뭘까?
@@ -81,6 +87,7 @@ async function getProductById(req, res, next) {
       price: true,
       tags: true,
       createdAt: true,
+      productLikeCount: true,
     },
   });
 
