@@ -1,4 +1,4 @@
-import { BadRequestError } from '../lib/error.js';
+import { BadRequestError, SamePasswordError } from '../lib/error.js';
 import prisma from '../lib/prismaClient.js';
 import userService from '../services/userService.js';
 
@@ -88,8 +88,11 @@ async function getUserProfile(req, res, next) {
 async function updateUserProfile(req, res, next) {
   const { id } = req.user;
   const { nickname, image, password, newPassword } = req.body;
-  const { email } = await prisma.user.findUnique({ where: { id } });
+  const { email, password: savedPassword } = await prisma.user.findUnique({
+    where: { id },
+  });
   const user = await userService.getUser(email, password);
+  await userService.samePassword(newPassword, savedPassword);
   const hashingNewPassword = await userService.hashingPassword(newPassword);
   const updatedUser = await prisma.user.update({
     where: { id },

@@ -1,7 +1,11 @@
 import prisma from '../lib/prismaClient.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { BadRequestError, ForbiddenError } from '../lib/error.js';
+import {
+  BadRequestError,
+  ForbiddenError,
+  SamePasswordError,
+} from '../lib/error.js';
 
 async function hashingPassword(password) {
   return bcrypt.hash(password, 10);
@@ -15,6 +19,11 @@ async function filterSensitiveUserData(user) {
 async function verifyPassword(inputPassword, savedPassword) {
   const isValid = await bcrypt.compare(inputPassword, savedPassword);
   if (!isValid) throw new ForbiddenError();
+}
+
+async function samePassword(inputPassword, savedPassword) {
+  const isSame = await bcrypt.compare(inputPassword, savedPassword);
+  if (isSame) throw new SamePasswordError();
 }
 
 async function getUser(email, password) {
@@ -45,4 +54,5 @@ export default {
   getUser,
   createToken,
   refreshToken,
+  samePassword,
 };

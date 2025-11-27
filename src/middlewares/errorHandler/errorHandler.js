@@ -4,6 +4,7 @@ import {
   BadRequestError,
   ForbiddenError,
   NotFoundError,
+  SamePasswordError,
 } from '../../lib/error.js';
 
 function defaultNotFoundHandler(req, res, next) {
@@ -36,6 +37,9 @@ function globalErrorHandler(err, req, res, next) {
     return res.status(403).send({ message: err.message });
   }
   if (err instanceof AuthorizeError) {
+    return res.status(403).send({ message: err.message });
+  }
+  if (err instanceof SamePasswordError) {
     return res.status(403).send({ message: err.message });
   }
   if (err.name === 'StructError') {

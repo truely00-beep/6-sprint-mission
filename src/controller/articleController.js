@@ -42,7 +42,7 @@ async function getArticles(req, res, next) {
     },
   });
 
-  const userId = req.auth?.userId; // 옵셔널체이닝이 없으면 오류가 나는 이유가 뭘까?
+  const userId = req.auth?.userId;
   if (userId) {
     const likedUser = await prisma.user.findUnique({
       where: { id: userId },
