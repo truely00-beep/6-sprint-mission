@@ -211,8 +211,8 @@ export class AuthController {
       return res.status(401).send({ message: '접근 권한이 없습니다.' });
     }
 
-    const likedProduct = await prisma.like.findMany({
-      where: { userId: userId },
+    const likedProduct = await prisma.product.findMany({
+      where: { like: { some: { userId: userId } } },
     });
     res.status(200).send(likedProduct);
   };
