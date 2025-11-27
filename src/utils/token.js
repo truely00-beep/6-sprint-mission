@@ -21,4 +21,16 @@ function verifyRefreshToken(token) {
   return { userId: decoded.id };
 }
 
+export function getUserIdFromToken(req) {
+  const token = req.cookies[ACCESS_TOKEN_COOKIE_NAME];
+  if (!token) return null;
+
+  try {
+    const decoded = jwt.verify(token, JWT_ACCESS_TOKEN_SECRET);
+    return decoded.id;
+  } catch (error) {
+    return null;
+  }
+}
+
 export { generateTokens, verifyAccessToken, verifyRefreshToken };

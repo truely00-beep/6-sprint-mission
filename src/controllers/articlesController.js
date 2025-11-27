@@ -1,17 +1,5 @@
 import { articlesService } from '../services/articlesService.js';
-import jwt from 'jsonwebtoken';
-import { ACCESS_TOKEN_COOKIE_NAME, JWT_ACCESS_TOKEN_SECRET } from '../utils/constants.js';
-
-function getUserIdFromToken(req) {
-  const token = req.cookies[ACCESS_TOKEN_COOKIE_NAME];
-  if (!token) return null;
-  try {
-    const decoded = jwt.verify(token, JWT_ACCESS_TOKEN_SECRET);
-    return decoded.id;
-  } catch (error) {
-    return null;
-  }
-}
+import { getUserIdFromToken } from '../utils/token.js';
 
 export async function createArticle(req, res) {
   const { title, content } = req.body;

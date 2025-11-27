@@ -1,18 +1,5 @@
 import { productsService } from '../services/productsService.js';
-import jwt from 'jsonwebtoken';
-import { ACCESS_TOKEN_COOKIE_NAME, JWT_ACCESS_TOKEN_SECRET } from '../utils/constants.js';
-
-function getUserIdFromToken(req) {
-  const token = req.cookies[ACCESS_TOKEN_COOKIE_NAME];
-  if (!token) return null;
-
-  try {
-    const decoded = jwt.verify(token, JWT_ACCESS_TOKEN_SECRET);
-    return decoded.id;
-  } catch (error) {
-    return null;
-  }
-}
+import { getUserIdFromToken } from '../utils/token.js';
 
 export async function createProduct(req, res) {
   const productData = req.body;
@@ -72,7 +59,6 @@ export async function getProduct(req, res) {
   res.status(200).send(product);
 }
 
-// 수정
 export async function patchProduct(req, res) {
   const { id } = req.params;
   const updateData = req.body;
