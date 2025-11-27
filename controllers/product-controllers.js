@@ -85,7 +85,24 @@ export async function getProductInfo(req, res) {
 
   if (!product) return res.status(401).json({ message: `Cannot found ${id}` });
 
-  res.status(200).json(product);
+  // 현재 User가 좋아요 했는지 확인하기
+  const userId = req.user.id;
+
+  const checkLiked = await prisma.productLikes.findUnique({
+    where: {
+      userId_productId: {
+        userId,
+        productId: id,
+      },
+    },
+  });
+
+  let isLiked = false;
+  if (checkLiked) {
+    isLiked = true;
+  }
+
+  res.status(200).json({ product, isLiked });
 }
 
 export async function updateProduct(req, res) {

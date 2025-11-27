@@ -30,7 +30,7 @@ articleRoute.post(
 );
 articleRoute.get('/', asyncHandler(a.getArticlesList));
 
-articleRoute.get('/:id', asyncHandler(a.getArticleInfo));
+articleRoute.get('/:id', authenticate, asyncHandler(a.getArticleInfo));
 articleRoute.patch(
   '/:id',
   authenticate,

@@ -30,7 +30,7 @@ productRoute.post(
 );
 productRoute.get('/', asyncHandler(p.getProductsList));
 
-productRoute.get('/:id', asyncHandler(p.getProductInfo));
+productRoute.get('/:id', authenticate, asyncHandler(p.getProductInfo));
 
 productRoute.patch(
   '/:id',
