@@ -7,6 +7,7 @@ import {
   getProducts,
   patchProduct,
 } from '../controllers/productsController.js';
+import * as likesController from '../controllers/likesController.js';
 import commentsRouter from './commentsRouter.js';
 import { authenticate } from '../middlewares/authenticate.js';
 import { validate } from '../middlewares/validate.js';
@@ -16,7 +17,7 @@ const router = express.Router();
 
 router.post('/', authenticate, validate(CreateProductSchema, 'body'), createProduct);
 router.get('/', validatePagination, getProducts);
-
+router.post('/:productId/like', authenticate, likesController.changeProductLike);
 router.get('/:id', getProduct);
 router.patch('/:id', authenticate, validate(PatchProductSchema, 'body'), patchProduct);
 router.delete('/:id', authenticate, deleteProduct);

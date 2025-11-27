@@ -7,6 +7,7 @@ import {
   patchArticle,
   deleteArticle,
 } from '../controllers/articlesController.js';
+import * as likesController from '../controllers/likesController.js';
 import commentsRouter from './commentsRouter.js';
 import { authenticate } from '../middlewares/authenticate.js';
 import { validate } from '../middlewares/validate.js';
@@ -20,6 +21,8 @@ router.get('/', validatePagination, getArticles);
 router.get('/:id', getArticle);
 router.patch('/:id', authenticate, validate(PatchArticleSchema, 'body'), patchArticle);
 router.delete('/:id', authenticate, deleteArticle);
+
+router.post('/:articleId/like', authenticate, likesController.changeArticleLike);
 
 router.use('/:articleId/comments', commentsRouter);
 
