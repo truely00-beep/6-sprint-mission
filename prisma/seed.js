@@ -1,4 +1,4 @@
-import { prisma } from '../lib/prismaclient.js';
+import prisma from '../lib/prismaclient.js';
 import { PRODUCTS, ARTICLES } from './mock.js';
 
 async function seed() {

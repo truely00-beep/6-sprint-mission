@@ -5,8 +5,6 @@ export async function createArticle(req, res) {
   const userId = req.user.id;
   const findUser = await prisma.user.findUnique({ where: { id: userId } });
 
-  console.log(findUser);
-
   if (!findUser) return res.status(401).json({ message: 'Unauthorized' });
 
   // article 저장하기
@@ -71,7 +69,7 @@ export async function getArticlesList(req, res) {
 }
 
 export async function getArticleInfo(req, res) {
-  const id = req.params.id;
+  const id = Number(req.params.id);
   const article = await prisma.article.findUniqueOrThrow({
     where: { id },
     select: {
@@ -88,7 +86,7 @@ export async function getArticleInfo(req, res) {
 }
 
 export async function updateArticle(req, res) {
-  const articleId = req.params.id;
+  const articleId = Number(req.params.id);
   const userId = req.user.id;
 
   // article이 DB에 있는지 확인
@@ -115,7 +113,7 @@ export async function updateArticle(req, res) {
 }
 
 export async function deleteArticle(req, res) {
-  const articleId = req.params.id;
+  const articleId = Number(req.params.id);
   const userId = req.user.id;
 
   // Article이 DB에 있는지 확인
@@ -137,5 +135,5 @@ export async function deleteArticle(req, res) {
     where: { id: articleId },
   });
 
-  res.status(204);
+  res.status(204).json({ message: '삭제 완료' });
 }

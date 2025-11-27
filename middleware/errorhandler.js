@@ -1,3 +1,5 @@
+import { Prisma } from '@prisma/client';
+
 export default function errorHandler(err, req, res, next) {
   if (!err) {
     // err = undefined, null 인 경우

@@ -1,7 +1,7 @@
 import prisma from '../lib/prismaclient.js';
 
 export async function createProductComment(req, res) {
-  const productId = req.params.productId;
+  const productId = Number(req.params.productId);
   const userId = req.user.id;
 
   // product가 DB에 있는지 확인
@@ -31,7 +31,7 @@ export async function createProductComment(req, res) {
 }
 
 export async function getProductCommentList(req, res) {
-  const productId = req.params.productId;
+  const productId = Number(req.params.productId);
   const product = await prisma.product.findUnique({
     where: { id: productId },
   });
@@ -59,7 +59,7 @@ export async function getProductCommentList(req, res) {
 }
 
 export async function updateProductComment(req, res) {
-  const productId = req.params.productId;
+  const productId = Number(req.params.productId);
   const userId = req.user.id;
 
   // product가 DB에 있는지 확인
@@ -74,7 +74,7 @@ export async function updateProductComment(req, res) {
   if (!findUser) return res.status(401).json({ message: 'Unauthorized' });
 
   // comment가 DB에 존재 하는지 확인
-  const commentId = req.params.commentId;
+  const commentId = Number(req.params.commentId);
   const comment = await prisma.commentProduct.findUnique({
     where: { id: commentId },
   });
@@ -94,7 +94,7 @@ export async function updateProductComment(req, res) {
 }
 
 export async function deleteProductComment(req, res) {
-  const productId = req.params.productId;
+  const productId = Number(req.params.productId);
   const userId = req.user.id;
 
   // product가 DB에 있는지 확인
@@ -109,7 +109,7 @@ export async function deleteProductComment(req, res) {
   if (!findUser) return res.status(401).json({ message: 'Unauthorized' });
 
   // comment가 DB에 존재 하는지 확인
-  const commentId = req.params.commentId;
+  const commentId = Number(req.params.commentId);
   const comment = await prisma.commentProduct.findUnique({
     where: { id: commentId },
   });
@@ -124,5 +124,5 @@ export async function deleteProductComment(req, res) {
     where: { id: commentId },
   });
 
-  res.status(204).json(commentId);
+  res.status(204).json({ message: '삭제 완료' });
 }

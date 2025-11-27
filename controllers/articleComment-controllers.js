@@ -2,7 +2,7 @@ import prisma from '../lib/prismaclient.js';
 
 export async function createArticleComment(req, res) {
   // article이 DB에 있는지 확인
-  const articleId = req.params.articleId;
+  const articleId = Number(req.params.articleId);
   const article = await prisma.article.findUnique({ where: { id: articleId } });
 
   if (!article)
@@ -30,7 +30,7 @@ export async function createArticleComment(req, res) {
 }
 
 export async function getArticleCommentsList(req, res) {
-  const articleId = req.params.articleId;
+  const articleId = Number(req.params.articleId);
   const article = await prisma.article.findUnique({ where: { id: articleId } });
 
   if (!article)
@@ -57,7 +57,7 @@ export async function getArticleCommentsList(req, res) {
 
 export async function updateArticleComment(req, res) {
   // article이 DB에 있는지 확인
-  const articleId = req.params.articleId;
+  const articleId = Number(req.params.articleId);
   const article = await prisma.article.findUnique({ where: { id: articleId } });
 
   if (!article)
@@ -70,7 +70,7 @@ export async function updateArticleComment(req, res) {
   if (!findUser) return res.status(401).json({ message: 'Unauthorized' });
 
   // comment가 DB에 존재 하는지 확인
-  const commentId = req.params.commentId;
+  const commentId = Number(req.params.commentId);
   const comment = await prisma.commentArticle.findUnique({
     where: { id: commentId },
   });
@@ -92,7 +92,7 @@ export async function updateArticleComment(req, res) {
 
 export async function deleteArticleComment(req, res) {
   // article이 DB에 있는지 확인
-  const articleId = req.params.articleId;
+  const articleId = Number(req.params.articleId);
   const article = await prisma.article.findUnique({ where: { id: articleId } });
 
   if (!article)
@@ -105,7 +105,7 @@ export async function deleteArticleComment(req, res) {
   if (!findUser) return res.status(401).json({ message: 'Unauthorized' });
 
   // comment가 DB에 존재 하는지 확인
-  const commentId = req.params.commentId;
+  const commentId = Number(req.params.commentId);
   const comment = await prisma.commentArticle.findUnique({
     where: { id: commentId },
   });
@@ -121,5 +121,5 @@ export async function deleteArticleComment(req, res) {
     where: { id: commentId },
   });
 
-  res.status(204).json(commentId);
+  res.status(204).json({ message: '삭제 완료' });
 }

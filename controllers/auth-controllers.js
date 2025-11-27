@@ -5,7 +5,8 @@ import {
   clearTokenCookies,
   createTokenCookies,
 } from '../server/authService.js';
-import { createTokens } from '../lib/token.js';
+import { createTokens, verifyRefreshToken } from '../lib/token.js';
+import { REFRESH_TOKEN_COOKIE_NAME } from '../lib/constants.js';
 
 export async function register(req, res) {
   const { nickname, password, email } = req.body;
@@ -56,4 +57,28 @@ export async function login(req, res) {
 export async function logout(req, res) {
   clearTokenCookies(res);
   res.status(200).json({ message: 'log out!' });
+}
+
+export async function refreshToken(req, res) {
+  // 기존 refresh 토큰 받아온 뒤 검증
+  const refreshToken = req.cookies[REFRESH_TOKEN_COOKIE_NAME];
+
+  if (!refreshToken) return res.status(401).json({ message: 'Unauthorized' });
+
+  // User ID 추출
+  const { userId } = verifyRefreshToken(refreshToken);
+
+  // User Id 검증
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+
+  if (!user) return res.status(401).json({ message: 'Unauthorized' });
+
+  // console.log(user);
+  // 신규 토큰 생성 작업
+  const { accessToken, refreshToken: newRefreshToken } = createTokens(user.id);
+
+  // 신규 토큰을 쿠키에 담음
+  createTokenCookies(res, accessToken, newRefreshToken);
+
+  res.status(200).json({ message: '재발급 완료' });
 }

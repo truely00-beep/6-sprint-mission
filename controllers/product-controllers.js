@@ -70,7 +70,7 @@ export async function getProductsList(req, res) {
 }
 
 export async function getProductInfo(req, res) {
-  const id = req.params.id;
+  const id = Number(req.params.id);
   const product = await prisma.product.findUniqueOrThrow({
     where: { id },
     select: {
@@ -89,11 +89,13 @@ export async function getProductInfo(req, res) {
 }
 
 export async function updateProduct(req, res) {
-  const productId = req.params.id;
+  const productId = Number(req.params.id);
   const userId = req.user.id;
 
   // product가 DB에 있는지 확인
-  const product = await prisma.product.findUnique({ where: { id: productId } });
+  const product = await prisma.product.findUnique({
+    where: { id: productId },
+  });
 
   if (!product)
     return res.status(401).json({ message: 'Cannot found product' });
@@ -117,11 +119,13 @@ export async function updateProduct(req, res) {
 }
 
 export async function deleteProduct(req, res) {
-  const productId = req.params.id;
+  const productId = Number(req.params.id);
   const userId = req.user.id;
 
   // product가 DB에 있는지 확인
-  const product = await prisma.product.findUnique({ where: { id: productId } });
+  const product = await prisma.product.findUnique({
+    where: { id: productId },
+  });
 
   if (!product)
     return res.status(401).json({ message: 'Cannot found product' });
@@ -139,5 +143,5 @@ export async function deleteProduct(req, res) {
     where: { id: productId },
   });
 
-  res.status(204);
+  res.status(204).json({ message: '삭제 완료' });
 }
