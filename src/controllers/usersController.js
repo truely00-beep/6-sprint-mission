@@ -1,4 +1,5 @@
 import { usersService } from '../services/usersService.js';
+import { ACCESS_TOKEN_COOKIE_NAME, REFRESH_TOKEN_COOKIE_NAME } from '../utils/constants.js';
 
 export async function getMyInfo(req, res) {
   const userId = req.user.id;
@@ -37,6 +38,9 @@ export async function updatePassword(req, res) {
   }
 
   await usersService.changePassword(userId, currentPassword, newPassword);
+
+  res.clearCookie(ACCESS_TOKEN_COOKIE_NAME);
+  res.clearCookie(REFRESH_TOKEN_COOKIE_NAME);
 
   res.status(200).json({
     message: '비밀번호가 변경되었습니다. 다시 로그인해주세요.',
