@@ -2,6 +2,7 @@ import prisma from '../lib/prisma.js';
 import { assert } from 'superstruct';
 import { CreateArticle, PatchArticle } from '../structs/articleStructs.js';
 import { CreateComment } from '../structs/commentStructs.js';
+import NotFoundError from '../lib/errors/NotFoundError.js';
 
 class ArticleController {
   async getArticle(req, res) {
@@ -25,13 +26,34 @@ class ArticleController {
         }
       : {};
 
+    //게시물 목록 가져오기
     const articles = await prisma.article.findMany({
       where,
       orderBy,
       skip: parseInt(offset),
       take: parseInt(limit),
     });
-    res.send(articles);
+
+    //로그인 유저 아이디 가져오기
+    const userId = req.user.id;
+
+    //로그인 유저가 좋아요한 게시물 조회
+    const likeList = await prisma.like.findMany({
+      where: {
+        userId,
+        articleId: { not: null },
+      },
+      select: { articleId: true },
+    });
+
+    const likeIds = likeList.map((item) => item.articleId);
+
+    //각 상품에 불린값 추가
+    const result = articles.map((a) => ({
+      ...a,
+      isLiked: likeIds.includes(a.id),
+    }));
+    res.send(result);
   }
   async createArticle(req, res) {
     assert(req.body, CreateArticle);
@@ -43,14 +65,28 @@ class ArticleController {
   }
   async getArticleById(req, res) {
     const { id } = req.params;
-    const articles = await prisma.article.findUnique({
+    const article = await prisma.article.findUnique({
       where: { id: Number(id) },
     });
-    if (articles) {
-      res.send(articles);
-    } else {
-      res.status(404).send({ message: 'Cannot find given id' });
-    }
+
+    if (!article) throw new NotFoundError('해당 게시글이 없습니다.');
+
+    //로그인 유저 가져오기
+    const userId = req.user.id;
+
+    //유저가 해당 게시글에 좋아요 눌렀는지 조회
+    const existingLike = await prisma.like.findFirst({
+      where: {
+        userId,
+        articleId: Number(id),
+      },
+    });
+
+    //반환
+    return res.send({
+      ...article,
+      isLiked: Boolean(existingLike),
+    });
   }
   async updateArticle(req, res) {
     assert(req.body, PatchArticle);

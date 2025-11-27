@@ -8,13 +8,13 @@ import likeController from '../controller/likeController.js';
 const articleRouter = express.Router();
 
 articleRouter
-  .get('/', asyncHandler(articleController.getArticle))
+  .get('/', authenticate, asyncHandler(articleController.getArticle))
   .post('/', authenticate, asyncHandler(articleController.createArticle))
-  .get('/:id', asyncHandler(articleController.getArticleById))
+  .get('/:id', authenticate, asyncHandler(articleController.getArticleById))
   .patch('/:id', authenticate, authorizeSelf, asyncHandler(articleController.updateArticle))
   .delete('/:id', authenticate, authorizeSelf, asyncHandler(articleController.deleteArticle))
   .post('/:id/comments', authenticate, asyncHandler(articleController.createComment))
-  .get('/:id/comments', asyncHandler(articleController.getComment))
+  .get('/:id/comments', authenticate, asyncHandler(articleController.getComment))
   .post('/:id/like', authenticate, asyncHandler(likeController.toggleLike));
 
 export default articleRouter;

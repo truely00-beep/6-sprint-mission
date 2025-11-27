@@ -2,10 +2,12 @@ import prisma from '../lib/prisma.js';
 import { assert } from 'superstruct';
 import { CreateProduct, PatchProduct } from '../structs/productStructs.js';
 import { CreateComment } from '../structs/commentStructs.js';
+import NotFoundError from '../lib/errors/NotFoundError.js';
 
 class ProductController {
   async getProduct(req, res) {
     const { offset = 0, limit = 10, order = 'newest', search = '' } = req.query;
+
     let orderBy;
     switch (order) {
       case 'oldest':
@@ -25,32 +27,73 @@ class ProductController {
         }
       : {};
 
+    //상품 목록 가져오기
     const products = await prisma.product.findMany({
       where,
       orderBy,
       skip: parseInt(offset),
       take: parseInt(limit),
     });
-    res.send(products);
+
+    //로그인 유저 아이디 가져오기
+    const userId = req.user.id;
+
+    //로그인 유저가 좋아요한 상품 조회
+    const likeList = await prisma.like.findMany({
+      where: {
+        userId,
+        productId: { not: null },
+      },
+      select: { productId: true },
+    });
+
+    const likeIds = likeList.map((item) => item.productId);
+
+    //각 상품에 불린값 추가
+    const result = products.map((p) => ({
+      ...p,
+      isLiked: likeIds.includes(p.id),
+    }));
+    res.send(result);
   }
   async createProduct(req, res) {
     assert(req.body, CreateProduct);
+    const userId = req.user.id;
 
     const products = await prisma.product.create({
-      data: req.body,
+      data: {
+        ...req.body,
+        userId,
+      },
     });
     res.status(201).send(products);
   }
   async getProductById(req, res) {
     const { id } = req.params;
-    const products = await prisma.product.findUnique({
+    const product = await prisma.product.findUnique({
       where: { id: Number(id) },
     });
-    if (products) {
-      res.send(products);
-    } else {
-      res.status(404).send({ message: 'Cannot find given id' });
+
+    if (!product) {
+      throw new NotFoundError('해당 상품이 없습니다.');
     }
+
+    //로그인 유저 가져오기
+    const userId = req.user.id;
+
+    //유저가 해당 상품에 좋아요 눌렀는지 조회
+    const existingLike = await prisma.like.findFirst({
+      where: {
+        userId,
+        productId: Number(id),
+      },
+    });
+
+    //반환
+    return res.send({
+      ...product,
+      isLiked: Boolean(existingLike),
+    });
   }
   async updateProduct() {
     assert(req.body, PatchProduct);

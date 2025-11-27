@@ -181,6 +181,52 @@ class UserController {
     }
   }
   //자신이 등록한 상품 목록 조회 GET
+  async getUserProduct(req, res) {
+    const userId = req.user.id;
+
+    //등록한 상품 목록 조회
+    const products = await prisma.product.findMany({
+      where: {
+        userId,
+      },
+    });
+
+    return res.status(200).send(products);
+  }
+
+  //자신이 좋아요한 상품 목록 조회
+  async getLikedProducts(req, res) {
+    const userId = req.user.id;
+
+    //좋아요테이블에서 유저가 좋아요 한 상품 목록 조회
+    const likes = await prisma.like.findMany({
+      where: {
+        userId,
+        productId: { not: null },
+      },
+      select: {
+        productId: true,
+      },
+    });
+
+    //좋아요한 상품이없으면 빈 배열 반환
+    if (likes.length === 0) return res.send([]);
+
+    //productId 목록 추출
+    const productIds = likes.map((list) => list.productId);
+
+    //상품 정보 가져오기
+    const products = await prisma.product.findMany({
+      where: { id: { in: productIds } },
+    });
+
+    //모두 isLiked = true 붙임
+    const response = products.map((product) => ({
+      ...product,
+      isLiked: true,
+    }));
+    res.send(response);
+  }
 }
 
 export default new UserController();

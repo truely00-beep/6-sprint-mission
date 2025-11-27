@@ -18,6 +18,12 @@ userRouter
     authenticate,
     authorizeSelf,
     asyncHandler(UserController.updateUserPassword),
+  )
+  .get(
+    '/:nickname/products',
+    authenticate,
+    authorizeSelf,
+    asyncHandler(UserController.getUserProduct),
   );
 
 export default userRouter;
