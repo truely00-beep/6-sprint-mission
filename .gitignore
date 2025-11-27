@@ -1,15 +1,6 @@
 node_modules/
 .env
-<<<<<<< HEAD
-uploads/
-<<<<<<< HEAD
-.DS_Sotre
-mission2
-=======
-=======
 .vscode/
 public/*
 !public/.gitkeep
->>>>>>> e89fbd5 (주석 추가, 유저 프로필 조회(최근 좋아요 5개, 등록상품 5개 포함가능)기능 추가)
 .DS_Store
->>>>>>> 76ee695 (mission4)
