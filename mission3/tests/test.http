@@ -192,3 +192,7 @@ Accept: application/json
 ### Article unlike 테스트
 DELETE http://localhost:3000/articles/2/like
 Accept: application/json
+
+### 유저가 좋아요한 product 목록 가져오기 테스트
+GET http://localhost:3000/users/me/likes/products/?page=1&pageSize=10&orderBy=recent
+Accept: application/json
