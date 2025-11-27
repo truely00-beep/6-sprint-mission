@@ -53,3 +53,14 @@ export async function getMyProducts(req, res) {
     data: products,
   });
 }
+
+export async function getMyLikedProducts(req, res) {
+  const userId = req.user.id;
+
+  const products = await usersService.getUserLikedProducts(userId);
+
+  res.status(200).json({
+    message: '좋아요한 상품 목록을 조회했습니다.',
+    data: products,
+  });
+}

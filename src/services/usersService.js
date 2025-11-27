@@ -88,9 +88,33 @@ async function getUserProducts(userId) {
   return products;
 }
 
+async function getUserLikedProducts(userId) {
+  const products = await prisma.product.findMany({
+    where: {
+      likes: {
+        some: {
+          userId,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+    select: {
+      id: true,
+      name: true,
+      price: true,
+      createdAt: true,
+    },
+  });
+
+  return products;
+}
+
 export const usersService = {
   getUserById,
   updateUser,
   changePassword,
   getUserProducts,
+  getUserLikedProducts,
 };
