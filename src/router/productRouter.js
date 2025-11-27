@@ -7,7 +7,7 @@ import {
   getProduct, // 상품 상세 조회
   patchProduct, // 상품 수정
   deleteProduct // 상품 삭제
-} from '../controller/product.js';
+} from '../controller/productController.js';
 
 const productRouter = express.Router();
 

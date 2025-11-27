@@ -1,33 +1,45 @@
 import * as s from 'superstruct';
-import isUuid from 'is-uuid';
+
+export const CreateUser = s.object({
+  email: s.string(),
+  nickname: s.string(),
+  image: s.optional(s.string()),
+  password: s.string() // hashed
+});
+
+export const PatchUser = s.partial(CreateUser);
 
 export const CreateProduct = s.object({
   name: s.string(),
   description: s.string(),
   price: s.min(s.number(), 0),
   tags: s.array(s.string()),
-  imageUrls: s.optional(s.array())
+  imageUrls: s.optional(s.array()),
+  userId: s.number()
 });
 
 export const PatchProduct = s.partial(CreateProduct);
 
 export const CreateArticle = s.object({
   title: s.string(),
-  content: s.string()
+  content: s.string(),
+  imageUrls: s.optional(s.array()),
+  userId: s.number()
 });
 
 export const PatchArticle = s.partial(CreateArticle);
 
-export const CreateComment = s.object({
+export const CreateArticleComment = s.object({
   content: s.string(),
-  productId: s.optional(s.define('Uuid', (value) => isUuid.v4(value))),
-  articleId: s.optional(s.define('Uuid', (value) => isUuid.v4(value)))
+  articleId: s.number(),
+  userId: s.number()
 });
 
-// export const checkComment = s.refine(CreateComment, 'ValidComment', (value) => {
-//   const hasContent = value.content.trim() !== '';
-//   const hasProduct = typeof value.productId === 'string' && isUUID(value.productId);
-//   const hasArticle = typeof value.articleId === 'string' && isUUID(value.articleId);
-//   return hasContent && hasProduct !== hasArticle;
-// });
-export const PatchComment = s.partial(CreateComment);
+export const CreateProductComment = s.object({
+  content: s.string(),
+  productId: s.number(),
+  userId: s.number()
+});
+
+export const PatchArticleComment = s.partial(CreateArticleComment);
+export const PatchProductComment = s.partial(CreateProductComment);

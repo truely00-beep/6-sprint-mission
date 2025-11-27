@@ -7,7 +7,7 @@ import {
   postArticleImage, // 게시물 이미지 등록
   getArticleImageList, // 게시물 이미지 목록 조회
   deleteArticleImageList // 게시물 이미지 목록 삭제
-} from '../controller/image.js';
+} from '../controller/imageController.js';
 
 const imageRouter = express.Router();
 const upload = multer({ dest: 'uploads/' });

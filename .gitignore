@@ -3,6 +3,12 @@ mission2/
 images/
 .env
 .prettierrc
-test.js
 Readme0.md
-src/middleware/errhandler0.js
+prisma/mock copy.js
+prisma/seed_old.js
+main.js
+test.js
+src/router/index.txt
+src/controller/index.txt
+src/service/index.txt
+src/repository/index.txt

@@ -7,35 +7,68 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id              Int              @id @default(autoincrement())
+  email           String           @unique
+  nickname        String
+  image           String?
+  password        String
+  products        Product[]
+  articles        Article[]
+  productComments ProductComment[]
+  articleComments ArticleComment[]
+  likedProducts   Product[]        @relation("LikedProducts")
+  likedArticles   Article[]        @relation("likedArticles")
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
 model Product {
-  id          String    @id @default(uuid())
+  id          Int              @id @default(autoincrement())
   name        String
   description String
   price       Float
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
   tags        String[]
   imageUrls   String[]
-  comments    Comment[]
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int
+  comments    ProductComment[]
+  likedUsers  User[]           @relation("LikedProducts")
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
 }
 
 model Article {
-  id        String    @id @default(uuid())
-  title     String
-  content   String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  imageUrls String[]
-  comments  Comment[]
+  id         Int              @id @default(autoincrement())
+  title      String
+  content    String
+  imageUrls  String[]
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     Int
+  comments   ArticleComment[]
+  likedUsers User[]           @relation("likedArticles")
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
 }
 
-model Comment {
-  id        String   @id @default(uuid())
-  productId String?
-  articleId String?
+model ArticleComment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  articleId Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model ProductComment {
+  id        Int      @id @default(autoincrement())
   content   String
-  article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade)
-  product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
 }
