@@ -1,5 +1,13 @@
 import { prismaClient } from '../libs/constants.js';
 
+async function findByAuthorId(authorId) {
+    return prismaClient.product.findMany({
+        where: {
+            authorId,
+        },
+    });
+}
+
 async function findById(id) {
     return prismaClient.product.findUniqueOrThrow({
         where: {
@@ -11,10 +19,10 @@ async function findById(id) {
 async function update(id, data) {
     return prismaClient.product.update({
         where: {
-            id
+            id,
         },
         data: {
-            ...data
+            ...data,
         },
     });
 }
@@ -22,7 +30,7 @@ async function update(id, data) {
 async function create(userFields) {
     return await prismaClient.product.create({
         data: {
-            ...userFields
+            ...userFields,
         },
     });
 }
@@ -30,7 +38,7 @@ async function create(userFields) {
 async function ondelete(id) {
     return await prismaClient.product.delete({
         where: {
-            id
+            id,
         },
     });
 }
@@ -40,4 +48,5 @@ export default {
     update,
     create,
     ondelete,
+    findByAuthorId,
 };
