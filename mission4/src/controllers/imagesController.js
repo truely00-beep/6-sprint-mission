@@ -7,6 +7,7 @@ import { BadRequestError } from '../lib/errors/customErrors.js';
 const ALLOWED_MIME_TYPES = ['image/png', 'image/jpeg', 'image/jpg'];
 const FILE_SIZE_LIMIT = 5 * 1024 * 1024;
 
+//이미지 업로드 설정
 export const upload = multer({
   storage: multer.diskStorage({
     destination(req, file, cb) {
@@ -32,7 +33,7 @@ export const upload = multer({
     cb(null, true);
   },
 });
-
+//이미지 업로드 핸들러
 export async function uploadImage(req, res) {
   const host = req.get('host');
   const filePath = path.join(host, STATIC_PATH, req.file.filename);

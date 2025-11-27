@@ -117,7 +117,7 @@ export async function createComment(req, res) {
   const comment = await prisma.comment.create({ data: { productId, content, userId: user.id } });
   return res.status(201).send(comment);
 }
-
+//상품 댓글 목록 조회
 export async function getCommentList(req, res) {
   const { id: productId } = create(req.params, IdParamsStruct);
   const { cursor, limit } = create(req.query, GetCommentListParamsStruct);
@@ -141,7 +141,7 @@ export async function getCommentList(req, res) {
     nextCursor,
   });
 }
-
+//상품 좋아요 등록
 export async function likeProduct(req, res) {
   const { id: productId } = create(req.params, IdParamsStruct);
   const user = req.user;
@@ -169,7 +169,7 @@ export async function likeProduct(req, res) {
   });
   return res.status(200).send({ message: `${product.name}상품에 좋아요를 눌렀습니다` });
 }
-
+//상품 좋아요 취소
 export async function unlikeProduct(req, res) {
   const { id: productId } = create(req.params, IdParamsStruct);
   const user = req.user;

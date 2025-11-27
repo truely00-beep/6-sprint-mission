@@ -110,7 +110,7 @@ export async function createComment(req, res) {
 
   return res.status(201).send(comment);
 }
-
+//댓글 목록 조회
 export async function getCommentList(req, res) {
   const { id: articleId } = create(req.params, IdParamsStruct);
   const { cursor, limit } = create(req.query, GetCommentListParamsStruct);

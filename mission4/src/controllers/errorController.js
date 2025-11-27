@@ -6,12 +6,11 @@ import {
   UnauthorizedError,
 } from '../lib/errors/customErrors.js';
 import { Prisma } from '@prisma/client';
-
-//존재하지 않는 api 요청에 대한 404, 라우터 중 매칭되는 경로가 하나도 없을 때 프론트에게 이 url이 없음을 명확히 알려주기 위해 필요함
+//404 처리 미들웨어
 export function defaultNotFoundHandler(req, res, next) {
   return res.status(404).send({ message: '존재하지 않습니다' });
 }
-
+//전역 에러 처리 미들웨어(400,401,403,404,500)
 export function globalErrorHandler(err, req, res, next) {
   if (err instanceof StructError || err instanceof BadRequestError) {
     return res.status(400).send({ message: '잘못된 요청입니다' });

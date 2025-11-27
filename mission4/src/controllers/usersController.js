@@ -14,6 +14,7 @@ import { clearTokenCookies, setTokenCookies } from '../lib/cookies.js';
 import { UnauthorizedError } from '../lib/errors/customErrors.js';
 import { REFRESH_TOKEN_COOKIE_NAME } from '../lib/constants.js';
 
+//회원가입
 export async function register(req, res) {
   const { nickname, email, password, image } = create(req.body, CreateUserBodyStruct);
   const salt = await bcrpyt.genSalt(10);
@@ -24,7 +25,7 @@ export async function register(req, res) {
   const { password: _, ...userWithoutPassword } = user;
   return res.status(201).send(userWithoutPassword);
 }
-
+//로그인
 export async function login(req, res) {
   const { email, password } = create(req.body, LoginBodyStruct);
   const user = await prisma.user.findUnique({ where: { email } });
@@ -39,21 +40,43 @@ export async function login(req, res) {
   setTokenCookies(res, accessToken, refreshToken);
   return res.status(200).send({ message: '로그인에 성공했습니다.' });
 }
-
+//로그아웃
 export async function logout(req, res) {
   clearTokenCookies(res);
   return res.status(200).send({ message: '로그아웃에 성공했습니다.' });
 }
-
+//내 프로필 조회 (최근 등록한 상품 5개, 최근 좋아요한 상품 5개 포함)
 export async function getProfile(req, res) {
   const user = req.user;
   if (!user) {
     throw new UnauthorizedError();
   }
   const { password: _, ...userWithoutPassword } = user;
-  return res.status(200).send(userWithoutPassword);
+  const [myProducts, likeProducts] = await Promise.all([
+    prisma.product.findMany({
+      where: { userId: user.id },
+      orderBy: { id: 'desc' },
+      take: 5,
+    }),
+    prisma.product.findMany({
+      where: {
+        likes: {
+          some: {
+            userId: user.id,
+          },
+        },
+      },
+      orderBy: { id: 'desc' },
+      take: 5,
+    }),
+  ]);
+  return res.status(200).send({
+    user: userWithoutPassword,
+    myRecentProducts: myProducts,
+    myRecentLikeProducts: likeProducts,
+  });
 }
-
+//내 프로필 수정
 export async function updateProfile(req, res) {
   const { nickname, email, image } = create(req.body, UpdateUserBodyStruct);
   const user = req.user;
@@ -72,7 +95,7 @@ export async function updateProfile(req, res) {
   const { password: _, ...userWithoutPassword } = updatedUser;
   return res.status(200).send(userWithoutPassword);
 }
-
+//내 비밀번호 변경
 export async function patchPassword(req, res) {
   const { currentPassword, newPassword } = create(req.body, ChangePasswordBodyStruct);
   const user = req.user;
@@ -91,19 +114,20 @@ export async function patchPassword(req, res) {
   });
   return res.status(200).send({ message: '비밀번호가 성공적으로 변경되었습니다.' });
 }
-
+//내가 등록한 상품 목록 조회 (상품이 꽤 많이 있을 경우 페이징 처리, 키워드 검색 가능)
 export async function getMyProductList(req, res) {
   const { page, pageSize, orderBy, keyword } = create(req.query, GetMyProductListParamsStruct);
   const user = req.user;
   if (!user) {
     throw new UnauthorizedError();
   }
+  //프리즈마 where 객체를 만들기 위한 키워드 조건(삼항연산자) / (키워드 있으면 스프레드로 펼쳐서 추가, 없으면 undefined로 무시)
   const whereKeyword = keyword
     ? {
         OR: [
           { name: { contains: keyword } },
           { description: { contains: keyword } },
-          { tags: { has: keyword } },
+          { tags: { has: keyword } }, //태그는 배열이므로 has 사용
         ],
       }
     : undefined;
@@ -119,7 +143,7 @@ export async function getMyProductList(req, res) {
     totalCount,
   });
 }
-
+//토큰 갱신(리프레시)
 export async function refreshToken(req, res) {
   const refreshToken = req.cookies[REFRESH_TOKEN_COOKIE_NAME];
   if (!refreshToken) {
@@ -134,7 +158,7 @@ export async function refreshToken(req, res) {
     return res.status(401).send({ message: '유효하지 않은 리프레시 토큰입니다.' });
   }
 }
-//유저가 좋아요한 상품 목록 조회
+//내가 좋아요한 상품 목록 조회(상품이 꽤 많이 있을 경우 페이징 처리)
 export async function getMyLikedProducts(req, res) {
   const { page, pageSize, orderBy } = create(req.query, GetMyLikedProductListParamsStruct);
   const user = req.user;

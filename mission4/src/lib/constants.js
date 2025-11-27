@@ -4,8 +4,8 @@ dotenv.config();
 const DATABASE_URL = process.env.DATABASE_URL;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const PORT = process.env.PORT || 3000;
-const PUBLIC_PATH = 'uploads';
-const STATIC_PATH = '/uploads';
+const PUBLIC_PATH = 'public';
+const STATIC_PATH = '/public';
 const JWT_ACCESS_TOKEN_SECRET =
   process.env.JWT_ACCESS_TOKEN_SECRET || 'your_jwt_access_token_secret';
 const JWT_REFRESH_TOKEN_SECRET =
