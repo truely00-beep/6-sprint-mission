@@ -203,4 +203,17 @@ export class AuthController {
       return res.status(e.status).send({ message: e.message });
     }
   };
+
+  static getLikedProduct = async (req, res) => {
+    const userId = parseInt(req.params.userId, 10);
+    const user = req.user;
+    if (userId !== user.id) {
+      return res.status(401).send({ message: '접근 권한이 없습니다.' });
+    }
+
+    const likedProduct = await prisma.like.findMany({
+      where: { userId: userId },
+    });
+    res.status(200).send(likedProduct);
+  };
 }

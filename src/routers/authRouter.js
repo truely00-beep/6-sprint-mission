@@ -42,6 +42,12 @@ authRouter
     authenticate,
     profileUpload.none(),
     tryCatchHandler(AuthController.getCreatedProduct),
+  )
+  .get(
+    '/:userId/likedproducts',
+    authenticate,
+    profileUpload.none(),
+    tryCatchHandler(AuthController.getLikedProduct),
   );
 
 export default authRouter;
