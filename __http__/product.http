@@ -20,7 +20,7 @@ GET http://localhost:4000/products/d4b9d004-5a8b-41ed-a723-8c75e9d8496e
 
 // 상품 수정
 ###
-PATCH http://localhost:4000/products/d4b9d004-5a8b-41ed-a723-8c75e9d8496e
+PATCH http://localhost:4000/products/ba475c2b-2618-40c7-bd79-9669d5e0b3cc
 Content-Type: application/json
 
 {

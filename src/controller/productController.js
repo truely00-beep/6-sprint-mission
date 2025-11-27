@@ -38,28 +38,33 @@ async function getProducts(req, res, next) {
 
   const userId = req.auth?.userId; // 옵셔널체이닝이 없으면 오류가 나는 이유가 뭘까?
   if (userId) {
-    const likeProductIds = await prisma.user.findUniqueOrThrow({
+    const likedUser = await prisma.user.findUnique({
       where: { id: userId },
+      include: { likedProducts: true },
     });
-    const filterLikeData = data
-      .filter((d) => likeProductIds.likeProductId.includes(d.id))
-      .map((d) => ({
-        ...d,
-        isLiked: true,
-      }));
-    const filterData = data
-      .filter((d) => !likeProductIds.likeProductId.includes(d.id))
-      .map((d) => ({
-        ...d,
-        isLiked: false,
-      }));
-    const userData = [...filterLikeData, ...filterData];
-    const formattedData = userData.sort((a, b) =>
-      sort === 'recent'
-        ? new Date(b.createdAt) - new Date(a.createdAt)
-        : new Date(a.createdAt) - new Date(b.createdAt)
-    );
-    return res.status(200).json(formattedData);
+    const likedProducts = likedUser.likedProducts.map((pid) => pid.productId);
+    const filterlikedProducts = data
+      .filter((d) => likedProducts.includes(d.id))
+      .map((d) => {
+        const liked = { ...d, isLiked: true };
+        return liked;
+      });
+    const filterProducts = data
+      .filter((d) => !likedProducts.includes(d.id))
+      .map((d) => {
+        const notLiked = { ...d, isLiked: false };
+        return notLiked;
+      });
+    const userData = [...filterlikedProducts, ...filterProducts];
+    return res
+      .status(200)
+      .json(
+        userData.sort((a, b) =>
+          sort === 'recent'
+            ? b.createdAt.getTime() - a.createdAt.getTime()
+            : a.createdAt.getTime() - b.createdAt.getTime()
+        )
+      );
   } else {
     return res.status(200).json(data);
   }
@@ -79,16 +84,19 @@ async function getProductById(req, res, next) {
     },
   });
 
-  const userId = req.auth?.userId; // 옵셔널체이닝이 없으면 오류가 나는 이유가 뭘까?
+  const userId = req.auth?.userId;
   if (userId) {
-    const likeProductIds = await prisma.user.findUniqueOrThrow({
-      where: { id: userId },
+    const likedProduct = await prisma.likedProduct.findUnique({
+      where: { userId_productId: { userId, productId: id } },
     });
-    likeProductIds.likeProductId.includes(id)
-      ? (data.isLiked = true)
-      : (data.isLiked = false);
+    if (likedProduct) {
+      data.isLiked = true;
+    } else {
+      data.isLiked = false;
+    }
   }
-  return res.status(200).json(data);
+
+  res.status(200).json(data);
 }
 
 async function updateProduct(req, res, next) {

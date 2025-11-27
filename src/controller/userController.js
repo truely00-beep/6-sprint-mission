@@ -122,73 +122,71 @@ async function getUserProducts(req, res, next) {
 }
 
 async function likeProductButton(req, res, next) {
-  const { id } = req.user;
+  const userId = req.user.id;
   const { productId } = req.params;
   await prisma.product.findUniqueOrThrow({ where: { id: productId } });
-  const { likeProductId } = await prisma.user.findUniqueOrThrow({
-    where: { id },
+  const existing = await prisma.likedProduct.findUnique({
+    where: { userId_productId: { userId, productId } },
   });
-  if (!likeProductId.includes(productId)) {
-    const productIds = [...likeProductId, productId]; // 스프레드 연산자로 새 배열 만듦
-    await prisma.user.update({
-      where: { id },
-      data: { likeProductId: productIds },
-    });
+  if (!existing) {
+    await prisma.likedProduct.create({ data: { userId, productId } });
     return res.status(200).json({ message: '상품 좋아요 등록' });
   } else {
-    const productIds = likeProductId.filter((pid) => pid !== productId);
-    await prisma.user.update({
-      where: { id },
-      data: { likeProductId: productIds },
+    await prisma.likedProduct.delete({
+      where: { userId_productId: { userId, productId } },
     });
     return res.status(200).json({ message: '상품 좋아요 해제' });
   }
 }
 
 async function likeArticleButton(req, res, next) {
-  const { id } = req.user;
+  const userId = req.user.id;
   const { articleId } = req.params;
   await prisma.article.findUniqueOrThrow({ where: { id: articleId } });
-  const { likeArticleId } = await prisma.user.findUniqueOrThrow({
-    where: { id },
+  const existing = await prisma.likedArticle.findUnique({
+    where: { userId_articleId: { userId, articleId } },
   });
-  if (!likeArticleId.includes(articleId)) {
-    const articleIds = [...likeArticleId, articleId]; // 스프레드 연산자로 새 배열 만듦
-    await prisma.user.update({
-      where: { id },
-      data: { likeArticleId: articleIds },
-    });
+  if (!existing) {
+    await prisma.likedArticle.create({ data: { userId, articleId } });
     return res.status(200).json({ message: '게시글 좋아요 등록' });
   } else {
-    const articleIds = likeArticleId.filter((aid) => aid !== articleId);
-    await prisma.user.update({
-      where: { id },
-      data: { likeArticleId: articleIds },
+    await prisma.likedArticle.delete({
+      where: { userId_articleId: { userId, articleId } },
     });
     return res.status(200).json({ message: '게시글 좋아요 해제' });
   }
 }
 
 async function likeProductList(req, res, next) {
-  const { id } = req.user;
-  const { likeProductId } = await prisma.user.findUniqueOrThrow({
-    where: { id },
+  const userId = req.user.id;
+  const likedProduct = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      likedProducts: {
+        select: {
+          product: true,
+        },
+      },
+    },
   });
-  const likeProductList = await prisma.product.findMany({
-    where: { id: { in: likeProductId } }, // likeProductId 안에 있는 id가 db에 있으면 찾아서 가져옴
-  });
-  res.status(200).json({ likeProductList });
+
+  res.status(200).json(likedProduct.likedProducts);
 }
 
 async function likeArticleList(req, res, next) {
-  const { id } = req.user;
-  const { likeArticleId } = await prisma.user.findUniqueOrThrow({
-    where: { id },
+  const userId = req.user.id;
+  const likedArticle = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      likedArticles: {
+        select: {
+          article: true,
+        },
+      },
+    },
   });
-  const likeArticleList = await prisma.article.findMany({
-    where: { id: { in: likeArticleId } }, // likeProductId 안에 있는 id가 db에 있으면 찾아서 가져옴
-  });
-  res.status(200).json({ likeArticleList });
+
+  res.status(200).json(likedArticle.likedArticles);
 }
 
 export {
