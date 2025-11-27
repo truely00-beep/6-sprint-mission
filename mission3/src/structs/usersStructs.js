@@ -44,3 +44,5 @@ export const RefreshTokenBodyStruct = s.object({
 });
 
 export const GetMyProductListParamsStruct = PageParamsStruct;
+
+export const GetMyLikedProductListParamsStruct = PageParamsStruct;

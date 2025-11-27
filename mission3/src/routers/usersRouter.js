@@ -9,6 +9,7 @@ import {
   updateProfile,
   getMyProductList,
   refreshToken,
+  getMyLikedProducts,
 } from '../controllers/usersController.js';
 import authenticate from '../../middlewares/authenticate.js';
 
@@ -22,5 +23,6 @@ usersRouter.get('/me', authenticate, withAsync(getProfile));
 usersRouter.patch('/me', authenticate, withAsync(updateProfile));
 usersRouter.patch('/me/password', authenticate, withAsync(patchPassword));
 usersRouter.get('/me/products', authenticate, withAsync(getMyProductList));
+usersRouter.get('/me/likes/products', authenticate, withAsync(getMyLikedProducts));
 
 export default usersRouter;

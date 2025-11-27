@@ -19,16 +19,27 @@ export async function createProduct(req, res) {
   });
   res.status(201).send(product);
 }
-
+//특정 상품 조회(좋아요 포함)
 export async function getProduct(req, res) {
   const { id } = create(req.params, IdParamsStruct);
-
-  const product = await prisma.product.findUnique({ where: { id } });
-  if (!product) {
-    throw new NotFoundError('product', id);
+  const user = req.user;
+  if (!user) {
+    throw new UnauthorizedError();
   }
-
-  return res.send(product);
+  const product = await prisma.product.findUniqueOrThrow({
+    where: { id },
+    include: user
+      ? {
+          likes: {
+            where: { userId: user.id },
+            select: { id: true },
+          },
+        }
+      : undefined,
+  });
+  const isLiked = user ? product.likes.length > 0 : false;
+  const { likes, ...productWithoutLikes } = product;
+  return res.send({ ...productWithoutLikes, isLiked });
 }
 //상품 수정
 export async function updateProduct(req, res) {
@@ -56,10 +67,13 @@ export async function deleteProduct(req, res) {
   await prisma.product.delete({ where: { id } });
   return res.status(204).send();
 }
-
+//상품 목록 조회(좋아요 포함)
 export async function getProductList(req, res) {
   const { page, pageSize, orderBy, keyword } = create(req.query, GetProductListParamsStruct);
-
+  const user = req.user;
+  if (!user) {
+    throw new UnauthorizedError();
+  }
   const where = keyword
     ? {
         OR: [
@@ -75,10 +89,22 @@ export async function getProductList(req, res) {
     take: pageSize,
     orderBy: orderBy === 'recent' ? { id: 'desc' } : { id: 'asc' },
     where,
+    include: user
+      ? {
+          likes: {
+            where: { userId: user.id },
+            select: { id: true },
+          },
+        }
+      : undefined,
   });
-
+  const productsWithIsLiked = products.map((m) => {
+    const isLiked = user ? m.likes.length > 0 : false;
+    const { likes, ...productWithoutLikes } = m;
+    return { ...productWithoutLikes, isLiked };
+  });
   return res.send({
-    list: products,
+    list: productsWithIsLiked,
     totalCount,
   });
 }
@@ -114,4 +140,58 @@ export async function getCommentList(req, res) {
     list: comments,
     nextCursor,
   });
+}
+
+export async function likeProduct(req, res) {
+  const { id: productId } = create(req.params, IdParamsStruct);
+  const user = req.user;
+  if (!user) {
+    throw new UnauthorizedError();
+  }
+  const product = await prisma.product.findUniqueOrThrow({ where: { id: productId } });
+  const existingLike = await prisma.like.findUnique({
+    where: {
+      userId_productId: {
+        userId: user.id,
+        productId,
+      },
+    },
+  });
+  if (existingLike) {
+    return res.status(400).send({ message: '해당 상품에 이미 좋아요를 눌렀습니다.' });
+  }
+  await prisma.like.create({
+    data: {
+      userId: user.id,
+      productId,
+      articleId: null,
+    },
+  });
+  return res.status(200).send({ message: `${product.name}상품에 좋아요를 눌렀습니다` });
+}
+
+export async function unlikeProduct(req, res) {
+  const { id: productId } = create(req.params, IdParamsStruct);
+  const user = req.user;
+  if (!user) {
+    throw new UnauthorizedError();
+  }
+  const product = await prisma.product.findUniqueOrThrow({ where: { id: productId } });
+  try {
+    await prisma.like.delete({
+      where: {
+        //@@prisma 복합 unique key 사용, / 이로인해 한 상품, 게시물에 좋아요 중복 불가능 / ex) userId_poductId
+        userId_productId: {
+          userId: user.id,
+          productId,
+        },
+      },
+    });
+  } catch (error) {
+    if (error.code === 'P2025') {
+      return res.status(400).send({ message: '해당 상품에 대한 좋아요가 존재하지 않습니다.' });
+    }
+    throw error;
+  }
+  return res.status(200).send({ message: `${product.name}상품의 좋아요를 취소했습니다` });
 }

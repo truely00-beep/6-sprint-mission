@@ -12,3 +12,5 @@ export const CreateProductBodyStruct = object({
 export const GetProductListParamsStruct = PageParamsStruct;
 
 export const UpdateProductBodyStruct = partial(CreateProductBodyStruct);
+
+export const LikeProductParamsStruct = PageParamsStruct;

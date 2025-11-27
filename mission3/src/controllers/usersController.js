@@ -4,6 +4,7 @@ import {
   LoginBodyStruct,
   ChangePasswordBodyStruct,
   GetMyProductListParamsStruct,
+  GetMyLikedProductListParamsStruct,
 } from '../structs/usersStructs.js';
 import bcrpyt from 'bcrypt';
 import { create } from 'superstruct';
@@ -132,4 +133,25 @@ export async function refreshToken(req, res) {
   } catch (error) {
     return res.status(401).send({ message: '유효하지 않은 리프레시 토큰입니다.' });
   }
+}
+//유저가 좋아요한 상품 목록 조회
+export async function getMyLikedProducts(req, res) {
+  const { page, pageSize, orderBy } = create(req.query, GetMyLikedProductListParamsStruct);
+  const user = req.user;
+  if (!user) throw new UnauthorizedError();
+  const where = {
+    likes: {
+      some: {
+        userId: user.id,
+      },
+    },
+  };
+  const totalCount = await prisma.product.count({ where });
+  const myLikdeProducts = await prisma.product.findMany({
+    skip: (page - 1) * pageSize,
+    take: pageSize,
+    orderBy: orderBy === 'recent' ? { id: 'desc' } : { id: 'asc' },
+    where,
+  });
+  return res.send({ list: myLikdeProducts, totalCount });
 }

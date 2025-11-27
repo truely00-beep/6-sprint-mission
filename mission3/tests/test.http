@@ -7,13 +7,13 @@ POST http://localhost:3000/articles
 Content-Type: application/json
 
 {
-    "title": "새로운 Article",
+    "title": "3번째 Article 제목입니다.",
     "content": "이것은 새로운 Article의 내용입니다.",
     "image": "https://example.com/image.jpg"
 }
 
-### 특정 ID의 Article 가져오기
-GET http://localhost:3000/articles/2
+### 특정 ID의 Article 가져오기(좋아요 포함)
+GET http://localhost:3000/articles/3
 Accept: application/json
 
 ### Article 업데이트하기
@@ -66,11 +66,11 @@ Content-Type: application/json
 }
 
 ### 모든 Product 가져오기 테스트
-GET http://localhost:3000/products/?page=1&pageSize=10&orderBy=recent&keyword=바지
+GET http://localhost:3000/products/?page=1&pageSize=10&orderBy=recent&
 Accept: application/json
 
 ### 특정 ID의 Product 가져오기 테스트
-GET http://localhost:3000/products/1
+GET http://localhost:3000/products/4
 Accept: application/json
 
 ### Product 업데이트하기 테스트
@@ -176,3 +176,19 @@ Accept: application/json
 
 ###refresh token 테스트
 POST http://localhost:3000/users/refresh
+
+###like 테스트
+POST http://localhost:3000/products/54/like
+Accept: application/json
+
+###unlike 테스트 , 취소가 됐음에도 불구하고 다시 시도하는 경우 에러메세지(존재하지 않습니다) 변경 고려
+DELETE http://localhost:3000/products/33/like
+Accept: application/json
+
+### Article like 테스트
+POST http://localhost:3000/articles/5/like
+Accept: application/json
+
+### Article unlike 테스트
+DELETE http://localhost:3000/articles/2/like
+Accept: application/json
