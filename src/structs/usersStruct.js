@@ -1,4 +1,15 @@
-import { coerce, nonempty, object, string, optional, min } from 'superstruct';
+import { coerce, nonempty, object, string, optional } from 'superstruct';
+
+// 문자열 최소 길이 검증 (8자 이상)
+const minLengthPassword = (value) => {
+  if (typeof value !== 'string') {
+    throw new Error('비밀번호는 문자열이어야 합니다.');
+  }
+  if (value.length < 8) {
+    throw new Error('비밀번호는 최소 8자 이상이어야 합니다.');
+  }
+  return value;
+};
 
 export const signupStruct = object({
   email: coerce(string(), nonempty(string()), (value) => {
@@ -12,7 +23,12 @@ export const signupStruct = object({
     return value;
   }),
   nickname: nonempty(string()),
-  password: min(nonempty(string()), 8),
+  password: coerce(string(), string(), (value) => {
+    if (!value || typeof value !== 'string' || value.length === 0) {
+      throw new Error('비밀번호는 필수입니다.');
+    }
+    return minLengthPassword(value);
+  }),
 });
 
 export const loginStruct = object({
@@ -27,5 +43,10 @@ export const updateUserStruct = object({
 
 export const changePasswordStruct = object({
   currentPassword: nonempty(string()),
-  newPassword: min(nonempty(string()), 8),
+  newPassword: coerce(string(), string(), (value) => {
+    if (!value || typeof value !== 'string' || value.length === 0) {
+      throw new Error('새 비밀번호는 필수입니다.');
+    }
+    return minLengthPassword(value);
+  }),
 });

@@ -1,3 +1,86 @@
+
+
+### 1. 회원가입 (POST /users/signup)
+POST http://localhost:3000/users/signup
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "nickname": "테스트유저",
+  "password": "password123"
+}
+
+### 2. 로그인 (POST /users/login)
+POST http://localhost:3000/users/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+### 3. 토큰 갱신 (POST /users/refresh)
+# 위 로그인 응답에서 받은 refreshToken을 사용하세요
+POST http://localhost:3000/users/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "your-refresh-token-here"
+}
+
+### 4. 내 정보 조회 (GET /users/me)
+# 로그인 후 받은 accessToken을 Authorization 헤더에 넣으세요
+GET http://localhost:3000/users/me
+Authorization: Bearer your-access-token-here
+Accept: application/json
+
+### 5. 내 정보 수정 (PATCH /users/me)
+PATCH http://localhost:3000/users/me
+Authorization: Bearer your-access-token-here
+Content-Type: application/json
+
+{
+  "nickname": "수정된닉네임",
+  "image": "https://example.com/image.jpg"
+}
+
+### 6. 비밀번호 변경 (PATCH /users/me/password)
+PATCH http://localhost:3000/users/me/password
+Authorization: Bearer your-access-token-here
+Content-Type: application/json
+
+{
+  "currentPassword": "password123",
+  "newPassword": "newpassword456"
+}
+
+### 7. 내가 등록한 상품 목록 조회 (GET /users/me/products)
+GET http://localhost:3000/users/me/products
+Authorization: Bearer your-access-token-here
+Accept: application/json
+
+
+### 좋아요 API 테스트
+
+
+### 상품 좋아요/취소 (POST /likes/products/:id)
+POST http://localhost:3000/likes/products/1
+Authorization: Bearer your-access-token-here
+Accept: application/json
+
+### 게시글 좋아요/취소 (POST /likes/articles/:id)
+POST http://localhost:3000/likes/articles/1
+Authorization: Bearer your-access-token-here
+Accept: application/json
+
+### 내가 좋아요한 상품 목록 조회 (GET /likes/products)
+GET http://localhost:3000/likes/products
+Authorization: Bearer your-access-token-here
+Accept: application/json
+
+
+### 게시글 API 테스트
+
 ### 모든 Article 가져오기
 GET http://localhost:3000/articles?orderBy=recent
 Accept: application/json
