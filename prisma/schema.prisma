@@ -13,6 +13,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  nickname  String    @unique
+  image     String?
+  password  String
+  articles  Article[]
+  products  Product[]
+  comments  Comment[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
 model Article {
   id             Int       @id @default(autoincrement())
   title          String
@@ -21,6 +34,8 @@ model Article {
   ArticleComment Comment[]
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
+  author         User      @relation(fields: [authorId], references: [id])
+  authorId       Int
 }
 
 model Product {
@@ -33,6 +48,8 @@ model Product {
   ProductComment Comment[]
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
+  author         User      @relation(fields: [authorId], references: [id])
+  authorId       Int
 }
 
 model Comment {
@@ -44,4 +61,6 @@ model Comment {
   articleId Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
 }

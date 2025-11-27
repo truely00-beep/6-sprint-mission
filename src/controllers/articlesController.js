@@ -1,6 +1,7 @@
 import { create } from 'superstruct';
 import { prismaClient } from '../lib/prismaClient.js';
 import NotFoundError from '../lib/errors/NotFoundError.js';
+import ForbiddenError from '../lib/errors/ForbiddenError.js';
 import { IdParamsStruct } from '../structs/commonStructs.js';
 import {
   CreateArticleBodyStruct,
@@ -11,10 +12,11 @@ import { CreateCommentBodyStruct, GetCommentListParamsStruct } from '../structs/
 
 export async function createArticle(req, res) {
   const data = create(req.body, CreateArticleBodyStruct);
+  const user = req.user;
 
-  const article = await prismaClient.article.create({ data });
+  const article = await prismaClient.article.create({ data: { ...data, authorId: user.id } });
 
-  return res.status(201).send(article);
+  return res.status(201).send({ message: 'article 생성됨', article });
 }
 
 export async function getArticle(req, res) {
@@ -31,26 +33,38 @@ export async function getArticle(req, res) {
 export async function updateArticle(req, res) {
   const { id } = create(req.params, IdParamsStruct);
   const data = create(req.body, UpdateArticleBodyStruct);
+  const user = req.user;
 
-  const article = await prismaClient.article.update({ where: { id }, data });
+  const article = await prismaClient.article.findUnique({ where: { id } });
   if (!article) {
     throw new NotFoundError('article', articleId);
   }
 
-  return res.send(article);
+  if (article.authorId !== user.id) {
+    throw new ForbiddenError('article', articleId);
+  }
+
+  const updateArticle = await prismaClient.article.update({ where: { id }, data });
+
+  return res.send({ message: 'article 수정됨', updateArticle });
 }
 
 export async function deleteArticle(req, res) {
   const { id } = create(req.params, IdParamsStruct);
+  const user = req.user;
 
-  const existingArticle = await prismaClient.article.findUnique({ where: { id } });
-  if (!existingArticle) {
+  const article = await prismaClient.article.findUnique({ where: { id } });
+  if (!article) {
     throw new NotFoundError('article', id);
+  }
+
+  if (article.authorId !== user.id) {
+    throw new ForbiddenError('article', articleId);
   }
 
   await prismaClient.article.delete({ where: { id } });
 
-  return res.status(204).send();
+  return res.status(204).send({ message: 'article 삭제됨' });
 }
 
 export async function getArticleList(req, res) {
@@ -77,6 +91,7 @@ export async function getArticleList(req, res) {
 export async function createComment(req, res) {
   const { id: articleId } = create(req.params, IdParamsStruct);
   const { content } = create(req.body, CreateCommentBodyStruct);
+  const user = req.user;
 
   const existingArticle = await prismaClient.article.findUnique({ where: { id: articleId } });
   if (!existingArticle) {
@@ -87,6 +102,7 @@ export async function createComment(req, res) {
     data: {
       articleId,
       content,
+      authorId: user.id,
     },
   });
 

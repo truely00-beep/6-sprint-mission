@@ -9,15 +9,16 @@ import {
   createComment,
   getCommentList,
 } from '../controllers/articlesController.js';
+import authenticate from '../middleware/authenticate.js';
 
 const articlesRouter = express.Router();
 
-articlesRouter.post('/', withAsync(createArticle));
+articlesRouter.post('/', authenticate, withAsync(createArticle));
 articlesRouter.get('/', withAsync(getArticleList));
 articlesRouter.get('/:id', withAsync(getArticle));
-articlesRouter.patch('/:id', withAsync(updateArticle));
-articlesRouter.delete('/:id', withAsync(deleteArticle));
-articlesRouter.post('/:id/comments', withAsync(createComment));
+articlesRouter.patch('/:id', authenticate, withAsync(updateArticle));
+articlesRouter.delete('/:id', authenticate, withAsync(deleteArticle));
+articlesRouter.post('/:id/comments', authenticate, withAsync(createComment));
 articlesRouter.get('/:id/comments', withAsync(getCommentList));
 
 export default articlesRouter;

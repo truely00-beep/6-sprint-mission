@@ -9,15 +9,16 @@ import {
   createComment,
   getCommentList,
 } from '../controllers/productsController.js';
+import authenticate from '../middleware/authenticate.js';
 
 const productsRouter = express.Router();
 
-productsRouter.post('/', withAsync(createProduct));
+productsRouter.post('/', authenticate, withAsync(createProduct));
 productsRouter.get('/:id', withAsync(getProduct));
-productsRouter.patch('/:id', withAsync(updateProduct));
-productsRouter.delete('/:id', withAsync(deleteProduct));
+productsRouter.patch('/:id', authenticate, withAsync(updateProduct));
+productsRouter.delete('/:id', authenticate, withAsync(deleteProduct));
 productsRouter.get('/', withAsync(getProductList));
-productsRouter.post('/:id/comments', withAsync(createComment));
+productsRouter.post('/:id/comments', authenticate, withAsync(createComment));
 productsRouter.get('/:id/comments', withAsync(getCommentList));
 
 export default productsRouter;
