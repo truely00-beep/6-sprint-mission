@@ -9,7 +9,6 @@ import imgRouter from './routers/imgRoute.js';
 import authRoute from './routers/authRoute.js';
 import productRoute from './routers/productRoute.js';
 import articleRoute from './routers/articleRoute.js';
-import mypageRoute from './routers/mypageRoute.js';
 
 const app = express();
 
@@ -27,7 +26,6 @@ app.use('/files', express.static('files'));
 app.use('/auth', authRoute);
 app.use('/products', productRoute);
 app.use('/articles', articleRoute);
-app.use('/mypage', mypageRoute);
 
 // comment CRUD 작업은 product, article에서 직접 작업 진행
 // app.use('/comments', commentRoute);

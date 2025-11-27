@@ -2,6 +2,7 @@ import express from 'express';
 import asyncHandler from '../lib/asyncHandler.js';
 import * as a from '../controllers/article-controllers.js';
 import * as ac from '../controllers/articleComment-controllers.js';
+import * as al from '../controllers/articleLike-controllers.js';
 
 import {
   articleCreateValidation,
@@ -16,6 +17,10 @@ import {
 import authenticate from '../middleware/authenticate.js';
 
 const articleRoute = express.Router();
+
+// ======= ======= ======= ======= =======
+// =======  article 자체 API 명령어  =======
+// ======= ======= ======= ======= =======
 
 articleRoute.post(
   '/',
@@ -34,9 +39,9 @@ articleRoute.patch(
 );
 articleRoute.delete('/:id', authenticate, asyncHandler(a.deleteArticle));
 
+// ======= ======= ======= ======= =======
 // ======= article에 연결 된 comment =======
-// article와 comment가 별도의 모델로 구동되므로
-// 별도의 작업으로 제작 하였습니다
+// ======= ======= ======= ======= =======
 
 articleRoute.post(
   '/:articleId/comments',
@@ -59,6 +64,17 @@ articleRoute.delete(
   '/:articleId/comments/:commentId',
   authenticate,
   asyncHandler(ac.deleteArticleComment)
+);
+
+// ======= ======= ======= ======= =======
+// ====== article에 연결 된 likeCount ======
+// ======= ======= ======= ======= =======
+
+articleRoute.post('/:id/likeCount', authenticate, asyncHandler(al.likeCountUp));
+articleRoute.delete(
+  '/:id/likeCount',
+  authenticate,
+  asyncHandler(al.likeCountDown)
 );
 
 export default articleRoute;
