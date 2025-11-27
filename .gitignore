@@ -2,5 +2,9 @@ node_modules/
 __http__
 .env
 uploads/
+<<<<<<< HEAD
 .DS_Sotre
 mission2
+=======
+.DS_Store
+>>>>>>> 76ee695 (mission4)
