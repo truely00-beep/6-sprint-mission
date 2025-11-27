@@ -171,10 +171,6 @@ Content-Type: application/json
     "newPassword": "newpassword123"
 }
 
-### 내가 올린 상품 목록 가져오기 테스트, &keword=세탁기(상품이 꽤 많이 있을 경우 페이징 처리, 키워드 검색 가능)
-GET http://localhost:3000/users/me/products/?page=1&pageSize=10&orderBy=recent
-Accept: application/json
-
 ###refresh token 테스트
 POST http://localhost:3000/users/refresh
 
@@ -195,5 +191,9 @@ DELETE http://localhost:3000/articles/5/like
 Accept: application/json
 
 ### 내가 좋아요한 product 목록 가져오기 테스트(상품이 꽤 많이 있을 경우 페이징 처리)
-GET http://localhost:3000/users/me/likes/products/?page=1&pageSize=10&orderBy=recent
+GET http://localhost:3000/products/me/likes/?page=1&pageSize=10&orderBy=recent
+Accept: application/json
+
+### 내가 등록한 상품 목록 가져오기 테스트, &keword=세탁기(상품이 꽤 많이 있을 경우 페이징 처리, 키워드 검색 가능)
+GET http://localhost:3000/products/me/?page=1&pageSize=10&orderBy=recent
 Accept: application/json

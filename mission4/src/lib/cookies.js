@@ -16,6 +16,13 @@ export function setTokenCookies(res, accessToken, refreshToken) {
 }
 
 export function clearTokenCookies(res) {
-  res.clearCookie(ACCESS_TOKEN_COOKIE_NAME);
-  res.clearCookie(REFRESH_TOKEN_COOKIE_NAME);
+  res.clearCookie(ACCESS_TOKEN_COOKIE_NAME, {
+    httpOnly: true,
+    secure: NODE_ENV === 'production',
+  });
+  res.clearCookie(REFRESH_TOKEN_COOKIE_NAME, {
+    httpOnly: true,
+    secure: NODE_ENV === 'production',
+    path: '/users/refresh',
+  });
 }
