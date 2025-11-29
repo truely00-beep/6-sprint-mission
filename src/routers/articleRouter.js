@@ -11,6 +11,7 @@ import {
   deleteArticle,
 } from '../controllers/articleController.js';
 import authenticate from '../middlewares/authenticate.js';
+import { likeController } from '../controllers/likeController.js';
 
 const router = express.Router();
 
@@ -19,8 +20,18 @@ router.use('/comments', articleCommRouter);
 
 router
   .route('/')
-  .post(validate(CreateArticle), authenticate, asyncHandler(createArticle))
+  .post(
+    validate(CreateArticle),
+    // '/:articleId/like',
+    authenticate,
+    // likeController.handleToggleArticleLike,
+    asyncHandler(createArticle),
+  )
   .get(asyncHandler(getArticleList));
+
+router
+  .route('/:articleId/like')
+  .post(authenticate, asyncHandler(likeController.handleToggleArticleLike));
 
 router
   .route('/:id')

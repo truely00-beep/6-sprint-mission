@@ -18,6 +18,23 @@ export class ProductRepository {
     const db = tx || this.prisma;
     return db.product.delete({ where: { id } });
   }
+  // async findProductById(id, userId) {
+  // const product = await this.prisma.product.findUnique({
+  //   where: { id },
+  //   include: {
+  //     tags: true,
+  //     images: true,
+  //     comments: true,
+  //     likes: userId ? { where: { userId } } : false,
+  //   },
+  // });
+  // if (product) {
+  //   product.isLiked = product.likes && product.likes.length > 0;
+  //   delete product.likes;
+  // }
+  // return product;
+  // }
+
   async findProductById(id) {
     return this.prisma.product.findUnique({
       where: { id },
@@ -28,6 +45,7 @@ export class ProductRepository {
       },
     });
   }
+
   async findProducts(findOptions) {
     return this.prisma.product.findMany(findOptions);
   }

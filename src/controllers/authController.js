@@ -5,8 +5,7 @@ export const refresh = async (req, res, next) => {
   try {
     // 1. 요청 쿠키에서 리프레시 토큰 가져오기(나중에 service로 옮길 수도 있음)
     const refreshToken = req.cookies['refresh-token'];
-    // console.log(req.cookies);
-    // const { refreshToken } = req.body;
+
     if (!refreshToken) {
       const error = new Error('리프레시 토큰이 없습니다.');
       error.status = 401;

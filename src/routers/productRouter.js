@@ -13,6 +13,7 @@ import {
   deleteProduct,
 } from '../controllers/productController.js';
 import authenticate from '../middlewares/authenticate.js';
+import { likeController } from '../controllers/likeController.js';
 
 const router = express.Router();
 
@@ -25,10 +26,16 @@ router
     upload.array('images', 1),
     parseFormData,
     validate(CreateProduct),
+    // '/:productId/like',
     authenticate,
+    // likeController.handleToggleProductLike,
     asyncHandler(createProduct),
   )
   .get(asyncHandler(getProductList));
+
+router
+  .route('/:productId/like')
+  .post(authenticate, asyncHandler(likeController.handleToggleProductLike));
 
 router
   .route('/:id')
