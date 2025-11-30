@@ -8,6 +8,7 @@ import {
 import { createTokens, verifyRefreshToken } from '../lib/token.js';
 import { REFRESH_TOKEN_COOKIE_NAME } from '../lib/constants.js';
 
+// 1. 회원가입
 export async function register(req, res) {
   const { nickname, password, email } = req.body;
 
@@ -32,6 +33,7 @@ export async function register(req, res) {
   res.status(200).json(createUser);
 }
 
+// 2. 로그인
 export async function login(req, res) {
   const { email, password } = req.body;
 
@@ -54,11 +56,13 @@ export async function login(req, res) {
   res.status(200).json({ message: 'login ok!' });
 }
 
+// 3. 로그아웃
 export async function logout(req, res) {
   clearTokenCookies(res);
   res.status(200).json({ message: 'log out!' });
 }
 
+// 4. Refresh Token 재발급
 export async function refreshToken(req, res) {
   // 기존 refresh 토큰 받아온 뒤 검증
   const refreshToken = req.cookies[REFRESH_TOKEN_COOKIE_NAME];
