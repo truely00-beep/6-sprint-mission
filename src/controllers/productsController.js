@@ -10,6 +10,7 @@ import {
 } from '../structs/productsStruct.js';
 import { CreateCommentBodyStruct, GetCommentListParamsStruct } from '../structs/commentsStruct.js';
 
+//기본 주요 기능
 export async function createProduct(req, res) {
   const { name, description, price, tags, images } = create(req.body, CreateProductBodyStruct);
   const user = req.user;
@@ -23,13 +24,18 @@ export async function createProduct(req, res) {
 
 export async function getProduct(req, res) {
   const { id } = create(req.params, IdParamsStruct);
+  const user = req.user;
 
   const product = await prismaClient.product.findUnique({ where: { id } });
   if (!product) {
     throw new NotFoundError('product', id);
   }
 
-  return res.send(product);
+  const isLiked = await prismaClient.likeProduct.findFirst({
+    where: { userId: user.id, productId: id },
+  });
+
+  return res.send({ product: product, isLike: Boolean(isLiked) });
 }
 
 export async function updateProduct(req, res) {
@@ -94,6 +100,7 @@ export async function getProductList(req, res) {
   });
 }
 
+//댓글 기능
 export async function createComment(req, res) {
   const { id: productId } = create(req.params, IdParamsStruct);
   const { content } = create(req.body, CreateCommentBodyStruct);
@@ -137,4 +144,41 @@ export async function getCommentList(req, res) {
     list: comments,
     nextCursor,
   });
+}
+
+//좋아요 기능
+
+export async function likeProduct(req, res) {
+  try {
+    const { id } = create(req.params, IdParamsStruct);
+    const userId = req.user.id;
+
+    const like = await prismaClient.likeProduct.create({ data: { userId, productId: id } });
+    res.status(200).send({ message: 'Like!', like });
+  } catch (err) {
+    return res.status(400).send('already liked Product!');
+  }
+}
+
+export async function dislikeProduct(req, res) {
+  try {
+    const { id } = create(req.params, IdParamsStruct);
+    const userId = req.user.id;
+
+    const likeProductFind = await prismaClient.likeProduct.findFirst({
+      where: { ProductId: id, userId: userId },
+    });
+
+    if (!likeProductFind) {
+      throw new NotFoundError('no liked Product', likeProductFind.id);
+    }
+
+    const dislikeProduct = await prismaClient.likeProduct.delete({
+      where: { id: likeProductFind.id },
+    });
+
+    res.status(200).send({ message: 'Dislike!', dislikeProduct });
+  } catch (err) {
+    return res.status(400).send('already disliked Product');
+  }
 }

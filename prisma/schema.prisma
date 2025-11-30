@@ -14,41 +14,45 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  nickname  String    @unique
-  image     String?
-  password  String
-  articles  Article[]
-  products  Product[]
-  comments  Comment[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id           Int           @id @default(autoincrement())
+  email        String        @unique
+  nickname     String        @unique
+  image        String?
+  password     String
+  articles     Article[]
+  products     Product[]
+  comments     Comment[]
+  likeArticle  LikeArticle[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  likeProducts LikeProduct[]
 }
 
 model Article {
-  id             Int       @id @default(autoincrement())
+  id             Int           @id @default(autoincrement())
   title          String
   content        String
   image          String?
   ArticleComment Comment[]
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  author         User      @relation(fields: [authorId], references: [id])
+  like           LikeArticle[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  author         User          @relation(fields: [authorId], references: [id])
   authorId       Int
 }
 
 model Product {
-  id             Int       @id @default(autoincrement())
+  id             Int           @id @default(autoincrement())
   name           String
   description    String
   price          Int
   tags           String[]
   images         String[]
   ProductComment Comment[]
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  author         User      @relation(fields: [authorId], references: [id])
+  like           LikeProduct[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  author         User          @relation(fields: [authorId], references: [id])
   authorId       Int
 }
 
@@ -63,4 +67,24 @@ model Comment {
   updatedAt DateTime @updatedAt
   author    User     @relation(fields: [authorId], references: [id])
   authorId  Int
+}
+
+model LikeArticle {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  articleId Int
+  user      User    @relation(fields: [userId], references: [id])
+  article   Article @relation(fields: [articleId], references: [id])
+
+  @@unique([userId, articleId])
+}
+
+model LikeProduct {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  productId Int
+  user      User    @relation(fields: [userId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId])
 }

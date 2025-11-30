@@ -52,11 +52,35 @@ CREATE TABLE "Comment" (
     CONSTRAINT "Comment_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "LikeArticle" (
+    "id" SERIAL NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "articleId" INTEGER NOT NULL,
+
+    CONSTRAINT "LikeArticle_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "LikeProduct" (
+    "id" SERIAL NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "productId" INTEGER NOT NULL,
+
+    CONSTRAINT "LikeProduct_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_nickname_key" ON "User"("nickname");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "LikeArticle_userId_articleId_key" ON "LikeArticle"("userId", "articleId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "LikeProduct_userId_productId_key" ON "LikeProduct"("userId", "productId");
 
 -- AddForeignKey
 ALTER TABLE "Article" ADD CONSTRAINT "Article_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -72,3 +96,15 @@ ALTER TABLE "Comment" ADD CONSTRAINT "Comment_articleId_fkey" FOREIGN KEY ("arti
 
 -- AddForeignKey
 ALTER TABLE "Comment" ADD CONSTRAINT "Comment_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "LikeArticle" ADD CONSTRAINT "LikeArticle_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "LikeArticle" ADD CONSTRAINT "LikeArticle_articleId_fkey" FOREIGN KEY ("articleId") REFERENCES "Article"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "LikeProduct" ADD CONSTRAINT "LikeProduct_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "LikeProduct" ADD CONSTRAINT "LikeProduct_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -21,13 +21,18 @@ export async function createArticle(req, res) {
 
 export async function getArticle(req, res) {
   const { id } = create(req.params, IdParamsStruct);
+  const user = req.user;
 
   const article = await prismaClient.article.findUnique({ where: { id } });
   if (!article) {
     throw new NotFoundError('article', id);
   }
 
-  return res.send(article);
+  const isLiked = await prismaClient.likeArticle.findFirst({
+    where: { userId: user.id, articleId: id },
+  });
+
+  return res.send({ article: article, isLike: Boolean(isLiked) });
 }
 
 export async function updateArticle(req, res) {
@@ -132,4 +137,39 @@ export async function getCommentList(req, res) {
     list: comments,
     nextCursor,
   });
+}
+
+export async function likeArticle(req, res) {
+  try {
+    const { id } = create(req.params, IdParamsStruct);
+    const userId = req.user.id;
+
+    const like = await prismaClient.likeArticle.create({ data: { userId, articleId: id } });
+    res.status(200).send({ message: 'Like!', like });
+  } catch (err) {
+    return res.status(400).send('already liked Article!');
+  }
+}
+
+export async function dislikeArticle(req, res) {
+  try {
+    const { id } = create(req.params, IdParamsStruct);
+    const userId = req.user.id;
+
+    const likeArticleFind = await prismaClient.likeArticle.findFirst({
+      where: { articleId: id, userId: userId },
+    });
+
+    if (!likeArticleFind) {
+      throw new NotFoundError('no liked Article', likeArticleFind.id);
+    }
+
+    const dislikeArticle = await prismaClient.likeArticle.delete({
+      where: { id: likeArticleFind.id },
+    });
+
+    res.status(200).send({ message: 'Dislike!', dislikeArticle });
+  } catch (err) {
+    return res.status(400).send('already disliked Article');
+  }
 }

@@ -86,7 +86,25 @@ function clearTokenCookies(res) {
 export async function userInfo(req, res) {
   const user = req.user;
   const userData = await prismaClient.user.findUnique({
-    select: { email: true, nickname: true, image: true, createdAt: true },
+    select: {
+      email: true,
+      nickname: true,
+      image: true,
+      createdAt: true,
+      likeProducts: {
+        select: {
+          product: {
+            select: {
+              name: true,
+              description: true,
+              price: true,
+              tags: true,
+              images: true,
+            },
+          },
+        },
+      },
+    },
     where: { id: user.id },
   });
   return res.status(200).send(userData);
