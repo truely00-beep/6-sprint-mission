@@ -5,14 +5,20 @@ import { createArticleComment, getArticleComment } from '../controllers/commentC
 const articleRouter = express.Router()
 
 // 기사 등록 
-articleRouter.post('/', postArticle)
-articleRouter.get('/:id', getDetailArticle)
-articleRouter.patch('/:id', patchArticle)
-articleRouter.delete('/:id', deleteArticle)
-articleRouter.get('/', getListArticle)
+articleRouter.route('/')
+    .post(postArticle)
+    .get(getListArticle)
+
+articleRouter.route('/:id')
+    .get(getDetailArticle)
+    .delete(deleteArticle)
+    .patch(patchArticle)
+
 
 // 기사 댓글 생성 & 조회
-articleRouter.post('/:articleId/comments', createArticleComment)
-articleRouter.get('/:articleId/comments', getArticleComment)
+articleRouter.route('/:articleId/comments')
+    .post(createArticleComment)
+    .get(getArticleComment)
 
+    
 export default articleRouter

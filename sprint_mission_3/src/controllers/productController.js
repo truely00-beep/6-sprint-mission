@@ -1,6 +1,6 @@
 import { prisma } from '../lib/prismaClient.js';
 import { assert } from 'superstruct'
-import { CreateProduct, PatchProduct } from '../structs.js'
+import { CreateProduct, PatchProduct } from '../struct.js'
 import { asyncHandler } from '../middlewares/asyncHandler.js'
 
 // 상품 등록 POST
@@ -52,30 +52,33 @@ export const deleteProduct = asyncHandler(async(req, res) => {
   res.status(204).send(deleted_product)
 })
 
-// 상품 목록 조회 GET 
-export const getListProduct = asyncHandler(async (req, res) => {
-  const { offset=0, limit=10, order='newest'} = req.query;
+// 상품 목록 조회 GET  http://localhost:3000/products?keyword=""&offset=""&limit=""&order=""
+export const getListProduct = asyncHandler(async(req, res) => {
+  const { offset=0, limit=10, order="newest", keyword } = req.query;
   let orderBy;
   switch (order) {
-    case 'oldest':
-      orderBy = { createdAt: 'asc'}
+    case "oldest":
+      orderBy = { createdAt: "asc" }
       break;
-    case 'newest':
-      orderBy = { createdAt: 'desc'}
-      break;
+    case "newest":
+      orderBy = { createdAt: "desc" }
     default:
-      orderBy = { createdAt: 'desc'}
+      orderBy = { createdAt: "desc" }
   }
-  const get_List_product = await prisma.product.findMany({
+  const where = keyword
+    ? {
+      OR:[
+        { name: { contains: keyword, mode: "insensitive" }},
+        { description: { contains: keyword, mode: "insensitive"}}
+      ]
+    }
+    : undefined
+  
+  const getList = await prisma.product.findMany({
+    where,
     orderBy,
     skip: parseInt(offset),
-    take: parseInt(limit),
-    select: {
-      id: true,
-      name: true,
-      price: true,
-      createdAt: true
-    }
-  }) 
-  res.status(200).send(get_List_product)
+    take: parseInt(limit)
+  })
+  res.status(200).send(getList)
 })

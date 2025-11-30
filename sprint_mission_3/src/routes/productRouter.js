@@ -5,16 +5,23 @@ import { createProductComment, getProductComment } from '../controllers/commentC
 
 const productRouter = express.Router()
 
-// 상품 등록 
-productRouter.post('/', postProduct)
-productRouter.get('/:id', getDetailProduct)
-productRouter.patch('/:id', patchProduct)
-productRouter.delete('/:id', deleteProduct)
-productRouter.get('/', getListProduct)
+// 상품
+productRouter.route('/')
+    .post(postProduct)
+    .get(getListProduct)
+
+
+productRouter.route('/:id')
+    .get(getDetailProduct)
+    .patch(patchProduct)
+    .delete(deleteProduct)
+
 
 
 // 상품에 대한 댓글
-productRouter.post('/:productId/comments', createProductComment)
-productRouter.get('/:productId/comments', getProductComment)
+productRouter.route('/:productId/comments')
+    .post(createProductComment)
+    .get(getProductComment)
+
 
 export default productRouter

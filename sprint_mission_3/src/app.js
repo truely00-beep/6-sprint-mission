@@ -14,6 +14,8 @@ app.use('/products', productRouter)
 app.use('/articles', articleRouter)
 app.use('/comments', commentRouter)
 
+
+
 app.use(errorHandler)
 app.listen(3000, () => console.log("Server Start"))
 

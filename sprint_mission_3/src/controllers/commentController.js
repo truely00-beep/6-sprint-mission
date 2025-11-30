@@ -1,6 +1,6 @@
 import { prisma } from '../lib/prismaClient.js'
 import { assert } from 'superstruct'
-import { CreateComment, PatchComment } from '../structs.js'
+import { CreateComment, PatchComment } from '../struct.js'
 import { asyncHandler } from '../middlewares/asyncHandler.js'
 
 ///////////////////////////상품(Product)///////////////////////////////
