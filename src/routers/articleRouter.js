@@ -6,20 +6,29 @@ import {
   createArticle,
   updateArticle,
   deleteArticle,
+  getMyArticles,
+  toggleArticleLike,
 } from '../controllers/articleController.js';
 import { validateArticle } from '../middleware/validation.js';
+import authenticate from '../middleware/authenticate.js';
 
 const router = express.Router();
 
 router
   .route('/')
   .get(asyncHandler(getArticles))
-  .post(validateArticle, asyncHandler(createArticle));
+  .post(authenticate, validateArticle, asyncHandler(createArticle));
+
+// 내가 작성한 게시글
+router.get('/me', authenticate, asyncHandler(getMyArticles));
+
+// 게시글 좋아요 토글
+router.post('/:id/like', authenticate, asyncHandler(toggleArticleLike));
 
 router
   .route('/:id')
   .get(asyncHandler(getArticleById))
-  .patch(asyncHandler(updateArticle))
-  .delete(asyncHandler(deleteArticle));
+  .patch(authenticate, asyncHandler(updateArticle))
+  .delete(authenticate, asyncHandler(deleteArticle));
 
 export default router;
