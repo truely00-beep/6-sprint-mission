@@ -30,8 +30,8 @@ export async function getArticle(req, res) {
 
   let isLiked = false;
   if (userId) {
-    const like = await prismaClient.articleLike.findUnique({
-      where: { userId_articleId: { userId, articleId: id } },
+    const like = await prismaClient.like.findFirst({
+      where: { userId, articleId: id },
     });
     isLiked = !!like;
   }
@@ -96,7 +96,7 @@ export async function getArticleList(req, res) {
   let likedArticles = new Set();
   if (userId && articles.length > 0) {
     articleIds = articles.map((a) => a.id);
-    const likes = await prismaClient.articleLike.findMany({
+    const likes = await prismaClient.like.findMany({
       where: {
         userId,
         articleId: { in: articleIds },

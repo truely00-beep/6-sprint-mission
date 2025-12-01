@@ -13,18 +13,18 @@ export const likeProduct = withAsync(async (req, res) => {
     throw new NotFoundError('product', productId);
   }
 
-  const existingLike = await prismaClient.productLike.findUnique({
-    where: { userId_productId: { userId, productId } },
+  const existingLike = await prismaClient.favorite.findFirst({
+    where: { userId, productId },
   });
 
   if (existingLike) {
-    await prismaClient.productLike.delete({
-      where: { userId_productId: { userId, productId } },
+    await prismaClient.favorite.delete({
+      where: { id: existingLike.id },
     });
     return res.json({ message: '좋아요가 취소되었습니다.', isLiked: false });
   }
 
-  await prismaClient.productLike.create({
+  await prismaClient.favorite.create({
     data: { userId, productId },
   });
 
@@ -40,18 +40,18 @@ export const likeArticle = withAsync(async (req, res) => {
     throw new NotFoundError('article', articleId);
   }
 
-  const existingLike = await prismaClient.articleLike.findUnique({
-    where: { userId_articleId: { userId, articleId } },
+  const existingLike = await prismaClient.like.findFirst({
+    where: { userId, articleId },
   });
 
   if (existingLike) {
-    await prismaClient.articleLike.delete({
-      where: { userId_articleId: { userId, articleId } },
+    await prismaClient.like.delete({
+      where: { id: existingLike.id },
     });
     return res.json({ message: '좋아요가 취소되었습니다.', isLiked: false });
   }
 
-  await prismaClient.articleLike.create({
+  await prismaClient.like.create({
     data: { userId, articleId },
   });
 
@@ -61,7 +61,7 @@ export const likeArticle = withAsync(async (req, res) => {
 export const getLikedProducts = withAsync(async (req, res) => {
   const userId = req.userId;
 
-  const likedProducts = await prismaClient.productLike.findMany({
+  const likedProducts = await prismaClient.favorite.findMany({
     where: { userId },
     include: {
       product: true,
@@ -69,8 +69,8 @@ export const getLikedProducts = withAsync(async (req, res) => {
     orderBy: { createdAt: 'desc' },
   });
 
-  const products = likedProducts.map((like) => ({
-    ...like.product,
+  const products = likedProducts.map((favorite) => ({
+    ...favorite.product,
     isLiked: true,
   }));
 

@@ -32,10 +32,10 @@ export async function getProduct(req, res) {
 
   let isLiked = false;
   if (userId) {
-    const like = await prismaClient.productLike.findUnique({
-      where: { userId_productId: { userId, productId: id } },
+    const favorite = await prismaClient.favorite.findFirst({
+      where: { userId, productId: id },
     });
-    isLiked = !!like;
+    isLiked = !!favorite;
   }
 
   return res.send({ ...product, isLiked });
@@ -102,13 +102,13 @@ export async function getProductList(req, res) {
   let likedProducts = new Set();
   if (userId && products.length > 0) {
     productIds = products.map((p) => p.id);
-    const likes = await prismaClient.productLike.findMany({
+    const favorites = await prismaClient.favorite.findMany({
       where: {
         userId,
         productId: { in: productIds },
       },
     });
-    likedProducts = new Set(likes.map((like) => like.productId));
+    likedProducts = new Set(favorites.map((favorite) => favorite.productId));
   }
 
   const productsWithLiked = products.map((product) => ({
