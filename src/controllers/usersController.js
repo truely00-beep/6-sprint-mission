@@ -2,7 +2,12 @@ import bcrypt from 'bcrypt';
 import { prismaClient } from '../lib/prismaClient.js';
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '../lib/jwt.js';
 import { create } from 'superstruct';
-import { signupStruct, loginStruct, updateUserStruct, changePasswordStruct } from '../structs/usersStruct.js';
+import {
+  signupStruct,
+  loginStruct,
+  updateUserStruct,
+  changePasswordStruct,
+} from '../structs/usersStruct.js';
 import BadRequestError from '../lib/errors/BadRequestError.js';
 import NotFoundError from '../lib/errors/NotFoundError.js';
 import UnauthorizedError from '../lib/errors/UnauthorizedError.js';
@@ -182,6 +187,3 @@ export const getMyProducts = withAsync(async (req, res) => {
 
   res.json({ products });
 });
-
-
-

@@ -5,5 +5,9 @@ export const DATABASE_URL = process.env.DATABASE_URL;
 export const PORT = process.env.PORT || 3000;
 export const PUBLIC_PATH = './public';
 export const STATIC_PATH = '/public';
-export const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
-export const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'your-refresh-secret-key';
+export const JWT_SECRET =
+  process.env.JWT_ACCESS_TOKEN_SECRET || process.env.JWT_SECRET || 'your-secret-key';
+export const JWT_REFRESH_SECRET =
+  process.env.JWT_REFRESH_TOKEN_SECRET ||
+  process.env.JWT_REFRESH_SECRET ||
+  'your-refresh-secret-key';
