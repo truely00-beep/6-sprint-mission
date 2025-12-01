@@ -23,3 +23,5 @@ router.get('/me/products', authMiddleware, getMyProducts);
 
 export default router;
 
+
+
