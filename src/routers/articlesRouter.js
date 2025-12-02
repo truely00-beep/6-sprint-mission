@@ -7,23 +7,22 @@ import {
   patchArticle,
   deleteArticle,
 } from '../controllers/articlesController.js';
+import * as likesController from '../controllers/likesController.js';
 import commentsRouter from './commentsRouter.js';
-
+import { authenticate } from '../middlewares/authenticate.js';
 import { validate } from '../middlewares/validate.js';
 import { CreateArticleSchema, PatchArticleSchema } from '../validations/articlesSchema.js';
 
 const router = express.Router();
 
-router
-  .route('/')
-  .post(validate(CreateArticleSchema, 'body'), createArticle)
-  .get(validatePagination, getArticles);
+router.post('/', authenticate, validate(CreateArticleSchema, 'body'), createArticle);
+router.get('/', validatePagination, getArticles);
 
-router
-  .route('/:id')
-  .get(getArticle)
-  .patch(validate(PatchArticleSchema, 'body'), patchArticle)
-  .delete(deleteArticle);
+router.get('/:id', getArticle);
+router.patch('/:id', authenticate, validate(PatchArticleSchema, 'body'), patchArticle);
+router.delete('/:id', authenticate, deleteArticle);
+
+router.post('/:articleId/like', authenticate, likesController.changeArticleLike);
 
 router.use('/:articleId/comments', commentsRouter);
 

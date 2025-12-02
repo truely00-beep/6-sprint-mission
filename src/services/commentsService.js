@@ -1,33 +1,39 @@
-// src/services/commentsService.js
-
 import { prisma } from '../utils/prisma.js';
 
-async function createArticleComment(articleId, content) {
+async function createArticleComment(articleId, content, userId) {
   return prisma.comment.create({
     data: {
-      content: content,
-      article: { connect: { id: articleId } },
+      content,
+      articleId,
+      userId,
     },
     select: {
       id: true,
       content: true,
       createdAt: true,
       articleId: true,
+      user: {
+        select: { nickname: true },
+      },
     },
   });
 }
 
-async function createProductComment(productId, content) {
+async function createProductComment(productId, content, userId) {
   return prisma.comment.create({
     data: {
       content: content,
-      product: { connect: { id: productId } },
+      productId,
+      userId,
     },
     select: {
       id: true,
       content: true,
       createdAt: true,
       productId: true,
+      user: {
+        select: { nickname: true },
+      },
     },
   });
 }
@@ -88,14 +94,30 @@ async function findCommentsByProductId({ productId, limit, cursor }) {
   return { comments, nextCursor };
 }
 
-async function updateCommentInDb(commentId, content) {
+async function updateCommentInDb(commentId, content, userId) {
+  const comment = await prisma.comment.findUniqueOrThrow({ where: { id: commentId } });
+
+  if (comment.userId !== userId) {
+    const error = new Error('수정 권한이 없습니다.');
+    error.status = 403;
+    throw error;
+  }
+
   return prisma.comment.update({
     where: { id: commentId },
-    data: { content: content },
+    data: { content },
   });
 }
 
-async function deleteCommentInDb(commentId) {
+async function deleteCommentInDb(commentId, userId) {
+  const comment = await prisma.comment.findUniqueOrThrow({ where: { id: commentId } });
+
+  if (comment.userId !== userId) {
+    const error = new Error('삭제 권한이 없습니다.');
+    error.status = 403;
+    throw error;
+  }
+
   return prisma.comment.delete({
     where: { id: commentId },
   });

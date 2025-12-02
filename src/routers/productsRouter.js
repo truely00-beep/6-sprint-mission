@@ -7,23 +7,20 @@ import {
   getProducts,
   patchProduct,
 } from '../controllers/productsController.js';
+import * as likesController from '../controllers/likesController.js';
 import commentsRouter from './commentsRouter.js';
-
+import { authenticate } from '../middlewares/authenticate.js';
 import { validate } from '../middlewares/validate.js';
 import { CreateProductSchema, PatchProductSchema } from '../validations/productsSchema.js';
 
 const router = express.Router();
 
-router
-  .route('/')
-  .post(validate(CreateProductSchema, 'body'), createProduct)
-  .get(validatePagination, getProducts);
-
-router
-  .route('/:id')
-  .get(getProduct)
-  .patch(validate(PatchProductSchema, 'body'), patchProduct)
-  .delete(deleteProduct);
+router.post('/', authenticate, validate(CreateProductSchema, 'body'), createProduct);
+router.get('/', validatePagination, getProducts);
+router.post('/:productId/like', authenticate, likesController.changeProductLike);
+router.get('/:id', getProduct);
+router.patch('/:id', authenticate, validate(PatchProductSchema, 'body'), patchProduct);
+router.delete('/:id', authenticate, deleteProduct);
 
 router.use('/:productId/comments', commentsRouter);
 
