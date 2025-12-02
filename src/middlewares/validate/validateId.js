@@ -15,7 +15,7 @@ const validateArticleId = s.object({
 
 export const validateIdParam = (req, res, next) => {
   try {
-    s.assert(req.params, validateId);
+    const _ = s.create(req.params, validateId);
     next();
   } catch (e) {
     next(e);
@@ -24,7 +24,7 @@ export const validateIdParam = (req, res, next) => {
 
 export const validateProductIdParam = (req, res, next) => {
   try {
-    s.assert(req.params, validateProductId);
+    const _ = s.create(req.params, validateProductId);
     next();
   } catch (e) {
     next(e);
@@ -33,7 +33,7 @@ export const validateProductIdParam = (req, res, next) => {
 
 export const validateArticleIdParam = (req, res, next) => {
   try {
-    s.assert(req.params, validateArticleId);
+    const _ = s.create(req.params, validateArticleId);
     next();
   } catch (e) {
     next(e);

@@ -7,14 +7,7 @@ async function main() {
   await prisma.comment.deleteMany();
   await prisma.product.deleteMany();
   await prisma.article.deleteMany();
-
-  for (const product of products) {
-    await prisma.product.create({ data: product });
-  }
-
-  for (const article of articles) {
-    await prisma.article.create({ data: article });
-  }
+  await prisma.user.deleteMany();
 }
 
 main()

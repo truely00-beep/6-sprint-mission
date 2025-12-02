@@ -13,24 +13,68 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  nickname      String
+  password      String
+  image         String?
+  refreshToken  String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  products      Product[]
+  articles      Article[]
+  comments      Comment[]
+  likedProducts LikedProduct[]
+  likedArticles LikedArticle[]
+}
+
+model LikedProduct {
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
+
+  @@id([userId, productId])
+}
+
+model LikedArticle {
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  articleId String
+
+  @@id([userId, articleId])
+}
+
 model Product {
-  id          String    @id @default(uuid())
-  name        String
-  description String
-  price       Float
-  tags        String[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  comment     Comment[]
+  id               String         @id @default(uuid())
+  name             String
+  description      String
+  price            Float
+  tags             String[]
+  productLikeCount Int            @default(0)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  comments         Comment[]
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           String
+  likedProducts    LikedProduct[]
 }
 
 model Article {
-  id        String    @id @default(uuid())
-  title     String
-  content   String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  comment   Comment[]
+  id               String         @id @default(uuid())
+  title            String
+  content          String
+  articleLikeCount Int            @default(0)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  comments         Comment[]
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           String
+  likedArticles    LikedArticle[]
 }
 
 model Comment {
@@ -42,4 +86,6 @@ model Comment {
   productId String?
   article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade)
   articleId String?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
 }

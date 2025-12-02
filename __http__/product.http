@@ -1,0 +1,36 @@
+// 상품 목록 조회
+###
+GET http://localhost:4000/products?page=&sort=&search=
+
+// 상품 생성
+###
+POST http://localhost:4000/products
+Content-Type: application/json
+
+{
+    "name": "aaa의 상품",
+    "description": "사람 입니다.",
+    "price": 500,
+    "tags": ["인간"]
+}
+
+// 상품 상세 조회
+###
+GET http://localhost:4000/products/d4b9d004-5a8b-41ed-a723-8c75e9d8496e
+
+// 상품 수정
+###
+PATCH http://localhost:4000/products/ba475c2b-2618-40c7-bd79-9669d5e0b3cc
+Content-Type: application/json
+
+{
+    "name": "삼성 수퍼 울트라 갤럭시 S23",
+    "description": "새것 같은 중고다 이말이야",
+    "price": 500000,
+    "tags": ["전자기기","폰","중고"]
+}
+
+// 상품 삭제
+###
+DELETE http://localhost:4000/products/d4b9d004-5a8b-41ed-a723-8c75e9d8496e
+
