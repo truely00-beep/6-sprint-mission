@@ -1,25 +1,41 @@
 import express from 'express';
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import productRouter from './router/product.js';
-import articleRouter from './router/article.js';
-import commentRouter from './router/comment.js';
-import imageRouter from './router/image.js';
+import path from 'path';
+import { defaultNotFoundHandler, globalErrorHandler } from './middleware/errorHandler.js';
+import { PUBLIC_IMG_PATH, STATIC_IMG_PATH } from './lib/constants.js';
 import { PORT } from './lib/constants.js';
-import prismaErrHandler from './middleware/prismaErrHandler.js';
-import routeErrHandler from './middleware/routeErrHandler.js';
-import errHandler from './middleware/errHandler.js';
+import userRouter from './router/userRouter.js';
+import productRouter from './router/productRouter.js';
+import articleRouter from './router/articleRouter.js';
+import commentRouter from './router/commentRouter.js';
+import imageRouter from './router/imageRouter.js';
 
 const app = express();
-app.use(express.json());
-app.use(cors());
 
+app.use(cors());
+app.use(cookieParser());
+app.use(express.json());
+
+app.use(
+  path.join(PUBLIC_IMG_PATH, 'product'),
+  express.static(path.join(STATIC_IMG_PATH, 'product'))
+);
+app.use(
+  path.join(PUBLIC_IMG_PATH, 'article'),
+  express.static(path.join(STATIC_IMG_PATH, 'article'))
+);
+app.use(path.join(PUBLIC_IMG_PATH, 'user'), express.static(path.join(STATIC_IMG_PATH, 'user')));
+
+app.use('/users', userRouter);
 app.use('/products', productRouter);
 app.use('/articles', articleRouter);
 app.use('/comments', commentRouter);
 app.use('/images', imageRouter);
 
-app.use(prismaErrHandler); // 프리즈마 에러
-app.use(routeErrHandler); // 경로 에러: 알아 차리기 힘들어서 추가
-app.use(errHandler); // Express 내부 에러
+app.use(defaultNotFoundHandler);
+app.use(globalErrorHandler);
 
-app.listen(PORT || 3000, () => console.log(`Server started`));
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
