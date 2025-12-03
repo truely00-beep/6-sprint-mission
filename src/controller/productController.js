@@ -3,9 +3,10 @@ import { assert } from 'superstruct';
 import { CreateProduct, PatchProduct } from '../structs/productStructs.js';
 import { CreateComment } from '../structs/commentStructs.js';
 import NotFoundError from '../lib/errors/NotFoundError.js';
+import ForbiddenError from '../lib/errors/ForbiddenError.js';
 
 class ProductController {
-  async getProduct(req, res) {
+  async getProducts(req, res) {
     const { offset = 0, limit = 10, order = 'newest', search = '' } = req.query;
 
     let orderBy;
@@ -99,6 +100,14 @@ class ProductController {
     assert(req.body, PatchProduct);
 
     const { id } = req.params;
+
+    const loginUser = req.user;
+    const existingProduct = await prisma.article.findUnique({ where: id });
+
+    if (loginUser.id !== existingProduct.id) {
+      throw new ForbiddenError('본인만 접근할 수 있습니다.');
+    }
+
     const products = await prisma.product.update({
       where: { id: Number(id) },
       data: req.body,
@@ -107,6 +116,14 @@ class ProductController {
   }
   async deleteProduct(req, res) {
     const { id } = req.params;
+
+    const loginUser = req.user;
+    const existingProduct = await prisma.article.findUnique({ where: id });
+
+    if (loginUser.id !== existingProduct.id) {
+      throw new ForbiddenError('본인만 접근할 수 있습니다.');
+    }
+
     const products = await prisma.product.delete({
       where: { id: Number(id) },
     });
@@ -153,11 +170,11 @@ class ProductController {
       },
     });
 
-    //const nextCursor = comments.length > 0 ? comments[comments.length - 1].id : null;
+    const nextCursor = comments.length > 0 ? comments[comments.length - 1].id : null;
 
     res.send({
       data: comments,
-      //nextCursor,
+      nextCursor,
     });
   }
 }

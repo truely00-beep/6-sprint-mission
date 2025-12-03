@@ -7,6 +7,7 @@ import { defaultNotFoundHandler, errorHandler } from './handler/errorHandler.js'
 import commentRouter from './router/commentRouter.js';
 import uploadRouter from './router/uploadRouter.js';
 import userRouter from './router/userRouter.js';
+import authRouter from './router/authRouter.js';
 
 const app = express();
 // app.use(cors());
@@ -29,6 +30,9 @@ app.use('/comments', commentRouter);
 //image
 app.use('/files', express.static('uploads'));
 app.use('/files', uploadRouter);
+
+//auth
+app.use('/auth', authRouter);
 
 //user
 app.use('/user', userRouter);

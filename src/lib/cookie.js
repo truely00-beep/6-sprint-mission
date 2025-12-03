@@ -10,7 +10,7 @@ export function setTokenCookies(res, accessToken, refreshToken) {
     httpOnly: true,
     secure: NODE_ENV === 'production',
     maxAge: 7 * 24 * 60 * 60 * 1000,
-    path: '/user/refresh',
+    path: '/auth/refresh',
   });
 }
 

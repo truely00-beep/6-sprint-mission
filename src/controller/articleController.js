@@ -3,16 +3,17 @@ import { assert } from 'superstruct';
 import { CreateArticle, PatchArticle } from '../structs/articleStructs.js';
 import { CreateComment } from '../structs/commentStructs.js';
 import NotFoundError from '../lib/errors/NotFoundError.js';
+import ForbiddenError from '../lib/errors/ForbiddenError.js';
 
 class ArticleController {
-  async getArticle(req, res) {
+  async getArticles(req, res) {
     const { offset = 0, limit = 10, order = 'newest', search = '' } = req.query;
     let orderBy;
     switch (order) {
       case 'oldest':
         orderBy = { createdAt: 'asc' };
         break;
-      case ' newest':
+      case 'newest':
       default:
         orderBy = { createdAt: 'desc' };
     }
@@ -96,6 +97,13 @@ class ArticleController {
     assert(req.body, PatchArticle);
 
     const { id } = req.params;
+    const loginUser = req.user;
+    const existingArticle = await prisma.article.findUnique({ where: id });
+
+    if (loginUser.id !== existingArticle.id) {
+      throw new ForbiddenError('본인만 접근할 수 있습니다.');
+    }
+
     const articles = await prisma.article.update({
       where: { id: Number(id) },
       data: req.body,
@@ -104,6 +112,14 @@ class ArticleController {
   }
   async deleteArticle(req, res) {
     const { id } = req.params;
+
+    const loginUser = req.user;
+    const existingArticle = await prisma.article.findUnique({ where: id });
+
+    if (loginUser.id !== existingArticle.id) {
+      throw new ForbiddenError('본인만 접근할 수 있습니다.');
+    }
+
     const articles = await prisma.article.delete({
       where: { id: Number(id) },
     });
@@ -149,8 +165,12 @@ class ArticleController {
         createdAt: 'desc',
       },
     });
+
+    const nextCursor = comments.length > 0 ? comments[comments.length - 1].id : null;
+
     res.send({
       data: comments,
+      nextCursor,
     });
   }
 }
