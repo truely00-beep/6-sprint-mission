@@ -23,9 +23,6 @@ export async function createProduct(req, res) {
 export async function getProduct(req, res) {
   const { id } = create(req.params, IdParamsStruct);
   const user = req.user;
-  if (!user) {
-    throw new UnauthorizedError();
-  }
   const product = await prisma.product.findUniqueOrThrow({
     where: { id },
     include: user
@@ -37,7 +34,10 @@ export async function getProduct(req, res) {
         }
       : undefined,
   });
-  const isLiked = user ? product.likes.length > 0 : false;
+  if (!user) {
+    return res.send(product);
+  }
+  const isLiked = product.likes?.length > 0;
   const { likes, ...productWithoutLikes } = product;
   return res.send({ ...productWithoutLikes, isLiked });
 }
@@ -71,9 +71,6 @@ export async function deleteProduct(req, res) {
 export async function getProductList(req, res) {
   const { page, pageSize, orderBy, keyword } = create(req.query, GetProductListParamsStruct);
   const user = req.user;
-  if (!user) {
-    throw new UnauthorizedError();
-  }
   const where = keyword
     ? {
         OR: [
@@ -84,22 +81,26 @@ export async function getProductList(req, res) {
       }
     : undefined;
   const totalCount = await prisma.product.count({ where });
+  const include = user
+    ? {
+        likes: {
+          where: { userId: user.id },
+          select: { id: true },
+        },
+      }
+    : undefined;
   const products = await prisma.product.findMany({
     skip: (page - 1) * pageSize,
     take: pageSize,
-    orderBy: orderBy === 'recent' ? { id: 'desc' } : { id: 'asc' },
+    orderBy: orderBy === 'recent' ? { createdAt: 'desc' } : { createdAt: 'asc' },
     where,
-    include: user
-      ? {
-          likes: {
-            where: { userId: user.id },
-            select: { id: true },
-          },
-        }
-      : undefined,
+    include,
   });
+  if (!user) {
+    return res.send({ list: products, totalCount });
+  }
   const productsWithIsLiked = products.map((m) => {
-    const isLiked = user ? m.likes.length > 0 : false;
+    const isLiked = m.likes?.length > 0;
     const { likes, ...productWithoutLikes } = m;
     return { ...productWithoutLikes, isLiked };
   });
@@ -145,9 +146,6 @@ export async function getCommentList(req, res) {
 export async function likeProduct(req, res) {
   const { id: productId } = create(req.params, IdParamsStruct);
   const user = req.user;
-  if (!user) {
-    throw new UnauthorizedError();
-  }
   const product = await prisma.product.findUniqueOrThrow({ where: { id: productId } });
   const existingLike = await prisma.like.findUnique({
     where: {
@@ -173,9 +171,6 @@ export async function likeProduct(req, res) {
 export async function unlikeProduct(req, res) {
   const { id: productId } = create(req.params, IdParamsStruct);
   const user = req.user;
-  if (!user) {
-    throw new UnauthorizedError();
-  }
   const product = await prisma.product.findUniqueOrThrow({ where: { id: productId } });
   try {
     await prisma.like.delete({

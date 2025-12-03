@@ -6,19 +6,18 @@ import {
   GetMyProductListParamsStruct,
   GetMyLikedProductListParamsStruct,
 } from '../structs/usersStructs.js';
-import bcrpyt from 'bcrypt';
+import bcrypt from 'bcrypt';
 import { create } from 'superstruct';
 import { prisma } from '../lib/prismaClient.js';
 import { generateToken, verifyRefreshToken } from '../lib/token.js';
 import { clearTokenCookies, setTokenCookies } from '../lib/cookies.js';
-import { UnauthorizedError } from '../lib/errors/customErrors.js';
 import { REFRESH_TOKEN_COOKIE_NAME } from '../lib/constants.js';
 
 //회원가입
 export async function register(req, res) {
   const { nickname, email, password, image } = create(req.body, CreateUserBodyStruct);
-  const salt = await bcrpyt.genSalt(10);
-  const hashedPassword = await bcrpyt.hash(password, salt);
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
   const user = await prisma.user.create({
     data: { nickname, email, password: hashedPassword, image },
   });
@@ -32,7 +31,7 @@ export async function login(req, res) {
   if (!user) {
     return res.status(401).send({ message: '이메일 또는 비밀번호가 올바르지 않습니다.' });
   }
-  const isPasswordValid = await bcrpyt.compare(password, user.password);
+  const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
     return res.status(401).send({ message: '이메일 또는 비밀번호가 올바르지 않습니다.' });
   }
@@ -48,14 +47,11 @@ export async function logout(req, res) {
 //내 프로필 조회 (최근 등록한 상품 5개, 최근 좋아요한 상품 5개 포함)
 export async function getProfile(req, res) {
   const user = req.user;
-  if (!user) {
-    throw new UnauthorizedError();
-  }
   const { password: _, ...userWithoutPassword } = user;
   const [myProducts, likeProducts] = await Promise.all([
     prisma.product.findMany({
       where: { userId: user.id },
-      orderBy: { id: 'desc' },
+      orderBy: { createdAt: 'desc' },
       take: 5,
     }),
     prisma.product.findMany({
@@ -66,7 +62,7 @@ export async function getProfile(req, res) {
           },
         },
       },
-      orderBy: { id: 'desc' },
+      orderBy: { createdAt: 'desc' },
       take: 5,
     }),
   ]);
@@ -80,9 +76,6 @@ export async function getProfile(req, res) {
 export async function updateProfile(req, res) {
   const { nickname, email, image } = create(req.body, UpdateUserBodyStruct);
   const user = req.user;
-  if (!user) {
-    throw new UnauthorizedError();
-  }
   //undefined 값은 덮어쓰지 않도록 처리
   const data = {};
   if (nickname) data.nickname = nickname;
@@ -99,15 +92,12 @@ export async function updateProfile(req, res) {
 export async function patchPassword(req, res) {
   const { currentPassword, newPassword } = create(req.body, ChangePasswordBodyStruct);
   const user = req.user;
-  if (!user) {
-    throw new UnauthorizedError();
-  }
-  const isPasswordValid = await bcrpyt.compare(currentPassword, user.password);
+  const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
   if (!isPasswordValid) {
     return res.status(401).send({ message: '현재 비밀번호가 올바르지 않습니다.' });
   }
-  const salt = await bcrpyt.genSalt(10);
-  const hashedNewPassword = await bcrpyt.hash(newPassword, salt);
+  const salt = await bcrypt.genSalt(10);
+  const hashedNewPassword = await bcrypt.hash(newPassword, salt);
   await prisma.user.update({
     where: { id: user.id },
     data: { password: hashedNewPassword },
@@ -118,9 +108,6 @@ export async function patchPassword(req, res) {
 export async function getMyProductList(req, res) {
   const { page, pageSize, orderBy, keyword } = create(req.query, GetMyProductListParamsStruct);
   const user = req.user;
-  if (!user) {
-    throw new UnauthorizedError();
-  }
   //프리즈마 where 객체를 만들기 위한 키워드 조건(삼항연산자) / (키워드 있으면 스프레드로 펼쳐서 추가, 없으면 undefined로 무시)
   const whereKeyword = keyword
     ? {
@@ -135,7 +122,7 @@ export async function getMyProductList(req, res) {
   const myProducts = await prisma.product.findMany({
     skip: (page - 1) * pageSize,
     take: pageSize,
-    orderBy: orderBy === 'recent' ? { id: 'desc' } : { id: 'asc' },
+    orderBy: orderBy === 'recent' ? { createdAt: 'desc' } : { createdAt: 'asc' },
     where: { userId: user.id, ...whereKeyword },
   });
   return res.send({
@@ -162,7 +149,6 @@ export async function refreshToken(req, res) {
 export async function getMyLikedProducts(req, res) {
   const { page, pageSize, orderBy } = create(req.query, GetMyLikedProductListParamsStruct);
   const user = req.user;
-  if (!user) throw new UnauthorizedError();
   const where = {
     likes: {
       some: {
@@ -171,11 +157,11 @@ export async function getMyLikedProducts(req, res) {
     },
   };
   const totalCount = await prisma.product.count({ where });
-  const myLikdeProducts = await prisma.product.findMany({
+  const myLikedProducts = await prisma.product.findMany({
     skip: (page - 1) * pageSize,
     take: pageSize,
-    orderBy: orderBy === 'recent' ? { id: 'desc' } : { id: 'asc' },
+    orderBy: orderBy === 'recent' ? { createdAt: 'desc' } : { createdAt: 'asc' },
     where,
   });
-  return res.send({ list: myLikdeProducts, totalCount });
+  return res.send({ list: myLikedProducts, totalCount });
 }
