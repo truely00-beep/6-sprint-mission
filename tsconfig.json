@@ -18,7 +18,6 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "allowSyntheticDefaultImports": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "tests"],
@@ -27,4 +26,3 @@
     "experimentalSpecifierResolution": "node"
   }
 }
-
