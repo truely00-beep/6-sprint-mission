@@ -1,21 +1,33 @@
-import express from 'express';
-import { PORT } from './libs/constants.js';
-import productRouter from './Routers/productRouter.js';
-import articleRouter from './Routers/articleRouter.js';
-import commentRouter from './Routers/commentRouter.js';
-import uploadRouter from './Routers/uploadRouter.js';
+import { PORT, EXPRESS } from './libs/constants.js';
 import cors from 'cors';
+import { RouterManager } from './Routers/routerManager.js';
+import { getCorsOrigin, corsOriginChecker } from './libs/corsSetUp.js';
+import errorHandler from './libs/Handler/errorHandler.js';
+
+const app = EXPRESS();
 
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+app.use(cors({
+    origin: getCorsOrigin(),
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 
-app.use('/products', productRouter);
-app.use('/articles', articleRouter);
-app.use('/comments', commentRouter);
-app.use('/files', uploadRouter);
+
+app.use(EXPRESS.json());
+app.use(EXPRESS.urlencoded({ extended: true }));
+
+app.use('/upload', EXPRESS.static('upload'));
+
+
+
+app.use('/', RouterManager);
+
+
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
     console.log(`Server is running`);

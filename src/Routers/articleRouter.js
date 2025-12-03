@@ -1,38 +1,20 @@
-import express from 'express';
-import { Prisma } from '@prisma/client';
-import {
-    GetArticle,
-    PostArticle,
-    GetArticleById,
-    PatchArticleById,
-    DeleteArticleById
-} from '../apis/articleapi.js';
+import { EXPRESS } from './../libs/constants.js';
+import { catchAsync } from './../libs/catchAsync.js';
+import auth from './../middlewares/auth.js';
+import ArticleController from '../controller/articleController.js';
 
-const articleRouter = express.Router();
-
-
+const articleRouter = EXPRESS.Router();
+const articleController = new ArticleController();
 
 articleRouter.route('/')
-    .get(GetArticle)
-    .post(PostArticle);
+    .get(auth.softVerifyAccessToken, catchAsync(articleController.getArticles))
+    .post(auth.verifyAccessToken, catchAsync(articleController.postArticle));
 
 articleRouter.route('/:id')
-    .get(GetArticleById)
-    .patch(PatchArticleById)
-    .delete(DeleteArticleById);
+    .get(auth.softVerifyAccessToken, catchAsync(articleController.getArticleById))
+    .patch(auth.verifyAccessToken, auth.verifyArticleAuth, catchAsync(articleController.patchArticleById))
+    .delete(auth.verifyAccessToken, auth.verifyArticleAuth, catchAsync(articleController.deleteArticleById));
 
-
-articleRouter.use((err, req, res, next) => {
-    console.error(err.name);
-    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code == "P2025") {
-        res.sendStatus(404);
-    } else if (err instanceof Prisma.PrismaClientKnownRequestError && err.code == "P2002") {
-        res.status(400).send({ message: err.message });
-    } else if (err.name == "StructError") {
-        res.status(400).send({ message: err.message });
-    } else {
-        res.status(500).send({ message: err.message });
-    }
-});
+articleRouter.post('/:id/like', auth.verifyAccessToken, catchAsync(articleController.likeArticle));
 
 export default articleRouter;

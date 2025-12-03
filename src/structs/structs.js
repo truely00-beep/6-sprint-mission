@@ -1,5 +1,4 @@
 import * as s from "superstruct";
-import isUuid from "is-uuid";
 
 
 export const CreateProduct = s.object({
@@ -17,8 +16,8 @@ export const CreateArticle = s.object({
 
 export const CreateComment = s.refine(s.object({
     content: s.string(),
-    productId: s.optional(s.define('Uuid', (value) => isUuid.v4(value))),
-    articleId: s.optional(s.define('Uuid', (value) => isUuid.v4(value))),
+    productId: s.optional(s.number()),
+    articleId: s.optional(s.number()),
 }),
     'EitherProductIdOrArticleId',//검증 규칙 이름
     (value) => {

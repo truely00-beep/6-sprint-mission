@@ -1,38 +1,20 @@
-import express from 'express';
-import { Prisma } from '@prisma/client';
-import {
-    GetProduct,
-    PostProduct,
-    GetProductById,
-    PatchProductById,
-    DeleteProductById
-} from '../apis/productapi.js';
+import { EXPRESS } from './../libs/constants.js';
+import { catchAsync } from './../libs/catchAsync.js';
+import auth from './../middlewares/auth.js';
+import ProductController from '../controller/productController.js';
 
-const productRouter = express.Router();
-
-
+const productRouter = EXPRESS.Router();
+const productController = new ProductController();
 
 productRouter.route('/')
-    .get(GetProduct)
-    .post(PostProduct);
+    .get(auth.softVerifyAccessToken, catchAsync(productController.GetProduct))
+    .post(auth.verifyAccessToken, catchAsync(productController.PostProduct));
 
 productRouter.route('/:id')
-    .get(GetProductById)
-    .patch(PatchProductById)
-    .delete(DeleteProductById);
+    .get(auth.softVerifyAccessToken, catchAsync(productController.GetProductById))
+    .patch(auth.verifyAccessToken, catchAsync(productController.PatchProductById))
+    .delete(auth.verifyAccessToken, catchAsync(productController.DeleteProductById));
 
-
-productRouter.use((err, req, res, next) => {
-    console.error(err.name);
-    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code == "P2025") {
-        res.sendStatus(404);
-    } else if (err instanceof Prisma.PrismaClientKnownRequestError && err.code == "P2002") {
-        res.status(400).send({ message: err.message });
-    } else if (err.name == "StructError") {
-        res.status(400).send({ message: err.message });
-    } else {
-        res.status(500).send({ message: err.message });
-    }
-});
+productRouter.post('/:id/like', auth.verifyAccessToken, catchAsync(productController.likeProduct));
 
 export default productRouter;

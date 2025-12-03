@@ -1,9 +1,8 @@
-import { PrismaClient } from '@prisma/client';
+import { prismaClient } from '../libs/constants.js';
 import { assert } from 'superstruct';
-import { CreateComment, PatchComment } from '../libs/structs.js';
+import { CreateComment, PatchComment } from '../structs/structs.js';
 
 
-const prisma = new PrismaClient();
 
 export async function GetComment(req, res) {
     const { productId, articleId } = req.query;
@@ -37,7 +36,7 @@ export async function GetComment(req, res) {
         };
     }
 
-    const comments = await prisma.comment.findMany(findOptions); // 
+    const comments = await prismaClient.comment.findMany(findOptions); // 
     let nextCursor = null;
     if (comments.length === parsedTake) {
         nextCursor = comments[comments.length - 1].id;
@@ -46,12 +45,13 @@ export async function GetComment(req, res) {
         comments,
         nextCursor,
     });
+
 }
 
 
 export async function GetCommentById(req, res) {
     const { id } = req.params;
-    const Comment = await prisma.comment.findUniqueOrThrow({
+    const Comment = await prismaClient.comment.findUniqueOrThrow({
         where: {
             id
         },
@@ -63,11 +63,6 @@ export async function GetCommentById(req, res) {
 export async function PostComment(req, res) {
     assert(req.body, CreateComment);
     const { content, productId, articleId } = req.body;
-    console.log("=====================");
-    console.log(content);
-    console.log(productId);
-    console.log(articleId);
-    console.log("=====================");
     if ((productId && articleId) || (!productId && !articleId)) {
         return res.status(400).json({
             error: 'Comment must belong to EITHER a Product OR an Article.',
@@ -77,7 +72,7 @@ export async function PostComment(req, res) {
         return res.status(400).json({ error: 'Content cannot be empty.' });
     }
 
-    const comment = await prisma.comment.create({
+    const comment = await prismaClient.comment.create({
         data: {
             content: content,
             productId: productId,
@@ -96,7 +91,7 @@ export async function PatchCommentById(req, res) {
         return res.status(400).json({ error: 'Content cannot be empty.' });
     }
 
-    const comment = await prisma.comment.update({
+    const comment = await prismaClient.comment.update({
         where: {
             id
         },
@@ -109,7 +104,7 @@ export async function PatchCommentById(req, res) {
 
 export async function DeleteCommentById(req, res) {
     const { id } = req.params;
-    const Comment = await prisma.comment.delete({
+    const Comment = await prismaClient.comment.delete({
         where: {
             id
         },

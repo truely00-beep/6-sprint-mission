@@ -1,36 +1,24 @@
-import express from 'express';
-import { Prisma } from '@prisma/client';
+import { EXPRESS } from './../libs/constants.js';
+import { catchAsync, catchAsyncAll } from './../libs/catchAsync.js';
+import auth from './../middlewares/auth.js';
 import {
     GetComment,
     PostComment,
     GetCommentById,
     PatchCommentById,
     DeleteCommentById
-} from '../apis/commentapi.js';
+} from '../controller/commentController.js';
 
-const commentRouter = express.Router();
+const commentRouter = EXPRESS.Router();
 
 commentRouter.route('/')
-    .get(GetComment)
-    .post(PostComment);
+    .get(catchAsync(GetComment))
+    .post(auth.verifyAccessToken, catchAsync(PostComment));
 
 commentRouter.route('/:id')
-    .get(GetCommentById)
-    .patch(PatchCommentById)
-    .delete(DeleteCommentById);
+    .get(catchAsync(GetCommentById))
+    .patch(auth.verifyAccessToken, catchAsyncAll(auth.verifyProduectAuth, PatchCommentById))
+    .delete(auth.verifyAccessToken, catchAsyncAll(auth.verifyProduectAuth, DeleteCommentById));
 
-
-commentRouter.use((err, req, res, next) => {
-    console.error(err.name);
-    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code == "P2025") {
-        res.sendStatus(404);
-    } else if (err instanceof Prisma.PrismaClientKnownRequestError && err.code == "P2002") {
-        res.status(400).send({ message: err.message });
-    } else if (err.name == "StructError") {
-        res.status(400).send({ message: err.message });
-    } else {
-        res.status(500).send({ message: err.message });
-    }
-});
 
 export default commentRouter;
