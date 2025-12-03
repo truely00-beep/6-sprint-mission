@@ -2,6 +2,7 @@ import { StructError } from 'superstruct';
 import BadRequestError from '../lib/errors/BadRequestError.js';
 import NotFoundError from '../lib/errors/NotFoundError.js';
 import UnauthorizedError from '../lib/errors/UnauthorizedError.js';
+import ForbiddenError from '../lib/errors/ForbiddenError.js';
 
 export function defaultNotFoundHandler(req, res, next) {
   return res.status(404).send({ message: 'Not found' });
@@ -21,6 +22,11 @@ export function globalErrorHandler(err, req, res, next) {
   /** Unauthorized error */
   if (err instanceof UnauthorizedError) {
     return res.status(401).send({ message: err.message });
+  }
+
+  /** Forbidden error */
+  if (err instanceof ForbiddenError) {
+    return res.status(403).send({ message: err.message });
   }
 
   /** Prisma error codes */

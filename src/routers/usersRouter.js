@@ -1,27 +1,20 @@
 import express from 'express';
+import { withAsync } from '../lib/withAsync.js';
 import {
-  signup,
-  login,
-  refresh,
   getMe,
   updateMe,
-  changePassword,
-  getMyProducts,
+  updateMyPassword,
+  getMyProductList,
+  getMyFavoriteList,
 } from '../controllers/usersController.js';
-import { authMiddleware } from '../lib/authMiddleware.js';
+import authenticate from '../middlewares/authenticate.js';
 
-const router = express.Router();
+const usersRouter = express.Router();
 
-router.post('/signup', signup);
-router.post('/login', login);
-router.post('/refresh', refresh);
+usersRouter.get('/me', authenticate(), withAsync(getMe));
+usersRouter.patch('/me', authenticate(), withAsync(updateMe));
+usersRouter.patch('/me/password', authenticate(), withAsync(updateMyPassword));
+usersRouter.get('/me/products', authenticate(), withAsync(getMyProductList));
+usersRouter.get('/me/favorites', authenticate(), withAsync(getMyFavoriteList));
 
-router.get('/me', authMiddleware, getMe);
-router.patch('/me', authMiddleware, updateMe);
-router.patch('/me/password', authMiddleware, changePassword);
-router.get('/me/products', authMiddleware, getMyProducts);
-
-export default router;
-
-
-
+export default usersRouter;

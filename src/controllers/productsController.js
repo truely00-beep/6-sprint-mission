@@ -1,7 +1,6 @@
 import { create } from 'superstruct';
 import { prismaClient } from '../lib/prismaClient.js';
 import NotFoundError from '../lib/errors/NotFoundError.js';
-import UnauthorizedError from '../lib/errors/UnauthorizedError.js';
 import { IdParamsStruct } from '../structs/commonStructs.js';
 import {
   CreateProductBodyStruct,
@@ -9,40 +8,55 @@ import {
   UpdateProductBodyStruct,
 } from '../structs/productsStruct.js';
 import { CreateCommentBodyStruct, GetCommentListParamsStruct } from '../structs/commentsStruct.js';
+import UnauthorizedError from '../lib/errors/UnauthorizedError.js';
+import ForbiddenError from '../lib/errors/ForbiddenError.js';
+import BadRequestError from '../lib/errors/BadRequestError.js';
 
 export async function createProduct(req, res) {
-  const userId = req.userId;
-  const { name, description, price, tags, images } = create(req.body, CreateProductBodyStruct);
+  if (!req.user) {
+    throw new UnauthorizedError('Unauthorized');
+  }
 
-  const product = await prismaClient.product.create({
-    data: { name, description, price, tags, images, userId },
+  const data = create(req.body, CreateProductBodyStruct);
+
+  const createdProduct = await prismaClient.product.create({
+    data: {
+      ...data,
+      userId: req.user.id,
+    },
   });
 
-  res.status(201).send(product);
+  res.status(201).send(createdProduct);
 }
 
 export async function getProduct(req, res) {
   const { id } = create(req.params, IdParamsStruct);
-  const userId = req.userId;
 
-  const product = await prismaClient.product.findUnique({ where: { id } });
+  const product = await prismaClient.product.findUnique({
+    where: { id },
+    include: { favorites: true },
+  });
   if (!product) {
     throw new NotFoundError('product', id);
   }
 
-  let isLiked = false;
-  if (userId) {
-    const favorite = await prismaClient.favorite.findFirst({
-      where: { userId, productId: id },
-    });
-    isLiked = !!favorite;
-  }
+  const productWithFavorites = {
+    ...product,
+    favorites: undefined,
+    favoriteCount: product.favorites.length,
+    isFavorited: req.user
+      ? product.favorites.some((favorite) => favorite.userId === req.user.id)
+      : undefined,
+  };
 
-  return res.send({ ...product, isLiked });
+  return res.send(productWithFavorites);
 }
 
 export async function updateProduct(req, res) {
-  const userId = req.userId;
+  if (!req.user) {
+    throw new UnauthorizedError('Unauthorized');
+  }
+
   const { id } = create(req.params, IdParamsStruct);
   const { name, description, price, tags, images } = create(req.body, UpdateProductBodyStruct);
 
@@ -51,8 +65,8 @@ export async function updateProduct(req, res) {
     throw new NotFoundError('product', id);
   }
 
-  if (existingProduct.userId !== userId) {
-    throw new UnauthorizedError('상품을 수정할 권한이 없습니다.');
+  if (existingProduct.userId !== req.user.id) {
+    throw new ForbiddenError('Should be the owner of the product');
   }
 
   const updatedProduct = await prismaClient.product.update({
@@ -64,7 +78,10 @@ export async function updateProduct(req, res) {
 }
 
 export async function deleteProduct(req, res) {
-  const userId = req.userId;
+  if (!req.user) {
+    throw new UnauthorizedError('Unauthorized');
+  }
+
   const { id } = create(req.params, IdParamsStruct);
   const existingProduct = await prismaClient.product.findUnique({ where: { id } });
 
@@ -72,58 +89,54 @@ export async function deleteProduct(req, res) {
     throw new NotFoundError('product', id);
   }
 
-  if (existingProduct.userId !== userId) {
-    throw new UnauthorizedError('상품을 삭제할 권한이 없습니다.');
+  if (existingProduct.userId !== req.user.id) {
+    throw new ForbiddenError('Should be the owner of the product');
   }
 
   await prismaClient.product.delete({ where: { id } });
-
   return res.status(204).send();
 }
 
 export async function getProductList(req, res) {
   const { page, pageSize, orderBy, keyword } = create(req.query, GetProductListParamsStruct);
-  const userId = req.userId;
 
   const where = keyword
     ? {
         OR: [{ name: { contains: keyword } }, { description: { contains: keyword } }],
       }
     : undefined;
+
   const totalCount = await prismaClient.product.count({ where });
   const products = await prismaClient.product.findMany({
     skip: (page - 1) * pageSize,
     take: pageSize,
     orderBy: orderBy === 'recent' ? { id: 'desc' } : { id: 'asc' },
     where,
+    include: {
+      favorites: true,
+    },
   });
 
-  let productIds = [];
-  let likedProducts = new Set();
-  if (userId && products.length > 0) {
-    productIds = products.map((p) => p.id);
-    const favorites = await prismaClient.favorite.findMany({
-      where: {
-        userId,
-        productId: { in: productIds },
-      },
-    });
-    likedProducts = new Set(favorites.map((favorite) => favorite.productId));
-  }
-
-  const productsWithLiked = products.map((product) => ({
+  const productsWithFavorites = products.map((product) => ({
     ...product,
-    isLiked: userId ? likedProducts.has(product.id) : false,
+    favorites: undefined,
+    favoriteCount: product.favorites.length,
+    isFavorited: req.user
+      ? product.favorites.some((favorite) => favorite.userId === req.user.id)
+      : undefined,
   }));
 
   return res.send({
-    list: productsWithLiked,
+    list: productsWithFavorites,
     totalCount,
   });
 }
 
 export async function createComment(req, res) {
-  const userId = req.userId;
+  if (!req.user) {
+    throw new UnauthorizedError('Unauthorized');
+  }
+
   const { id: productId } = create(req.params, IdParamsStruct);
   const { content } = create(req.body, CreateCommentBodyStruct);
 
@@ -132,9 +145,11 @@ export async function createComment(req, res) {
     throw new NotFoundError('product', productId);
   }
 
-  const comment = await prismaClient.comment.create({ data: { productId, content, userId } });
+  const createdComment = await prismaClient.comment.create({
+    data: { productId, content, userId: req.user.id },
+  });
 
-  return res.status(201).send(comment);
+  return res.status(201).send(createdComment);
 }
 
 export async function getCommentList(req, res) {
@@ -159,4 +174,45 @@ export async function getCommentList(req, res) {
     list: comments,
     nextCursor,
   });
+}
+
+export async function createFavorite(req, res) {
+  if (!req.user) {
+    throw new UnauthorizedError('Unauthorized');
+  }
+
+  const { id: productId } = create(req.params, IdParamsStruct);
+
+  const existingProduct = await prismaClient.product.findUnique({ where: { id: productId } });
+  if (!existingProduct) {
+    throw new NotFoundError('product', productId);
+  }
+
+  const existingFavorite = await prismaClient.favorite.findFirst({
+    where: { productId, userId: req.user.id },
+  });
+  if (existingFavorite) {
+    throw new BadRequestError('Already favorited');
+  }
+
+  await prismaClient.favorite.create({ data: { productId, userId: req.user.id } });
+  return res.status(201).send();
+}
+
+export async function deleteFavorite(req, res) {
+  if (!req.user) {
+    throw new UnauthorizedError('Unauthorized');
+  }
+
+  const { id: productId } = create(req.params, IdParamsStruct);
+
+  const existingFavorite = await prismaClient.favorite.findFirst({
+    where: { productId, userId: req.user.id },
+  });
+  if (!existingFavorite) {
+    throw new BadRequestError('Not favorited');
+  }
+
+  await prismaClient.favorite.delete({ where: { id: existingFavorite.id } });
+  return res.status(204).send();
 }

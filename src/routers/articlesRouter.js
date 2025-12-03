@@ -1,7 +1,5 @@
 import express from 'express';
 import { withAsync } from '../lib/withAsync.js';
-import { authMiddleware } from '../lib/authMiddleware.js';
-import { optionalAuthMiddleware } from '../lib/optionalAuthMiddleware.js';
 import {
   createArticle,
   getArticleList,
@@ -10,16 +8,21 @@ import {
   deleteArticle,
   createComment,
   getCommentList,
+  createLike,
+  deleteLike,
 } from '../controllers/articlesController.js';
+import authenticate from '../middlewares/authenticate.js';
 
 const articlesRouter = express.Router();
 
-articlesRouter.post('/', authMiddleware, withAsync(createArticle));
-articlesRouter.get('/', optionalAuthMiddleware, withAsync(getArticleList));
-articlesRouter.get('/:id', optionalAuthMiddleware, withAsync(getArticle));
-articlesRouter.patch('/:id', authMiddleware, withAsync(updateArticle));
-articlesRouter.delete('/:id', authMiddleware, withAsync(deleteArticle));
-articlesRouter.post('/:id/comments', authMiddleware, withAsync(createComment));
+articlesRouter.post('/', authenticate(), withAsync(createArticle));
+articlesRouter.get('/', authenticate({ optional: true }), withAsync(getArticleList));
+articlesRouter.get('/:id', authenticate({ optional: true }), withAsync(getArticle));
+articlesRouter.patch('/:id', authenticate(), withAsync(updateArticle));
+articlesRouter.delete('/:id', authenticate(), withAsync(deleteArticle));
+articlesRouter.post('/:id/comments', authenticate(), withAsync(createComment));
 articlesRouter.get('/:id/comments', withAsync(getCommentList));
+articlesRouter.post('/:id/likes', authenticate(), withAsync(createLike));
+articlesRouter.delete('/:id/likes', authenticate(), withAsync(deleteLike));
 
 export default articlesRouter;

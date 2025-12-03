@@ -1,7 +1,6 @@
 import { create } from 'superstruct';
 import { prismaClient } from '../lib/prismaClient.js';
 import NotFoundError from '../lib/errors/NotFoundError.js';
-import UnauthorizedError from '../lib/errors/UnauthorizedError.js';
 import { IdParamsStruct } from '../structs/commonStructs.js';
 import {
   CreateArticleBodyStruct,
@@ -9,38 +8,55 @@ import {
   GetArticleListParamsStruct,
 } from '../structs/articlesStructs.js';
 import { CreateCommentBodyStruct, GetCommentListParamsStruct } from '../structs/commentsStruct.js';
+import UnauthorizedError from '../lib/errors/UnauthorizedError.js';
+import ForbiddenError from '../lib/errors/ForbiddenError.js';
+import BadRequestError from '../lib/errors/BadRequestError.js';
 
 export async function createArticle(req, res) {
-  const userId = req.userId;
+  if (!req.user) {
+    throw new UnauthorizedError('Unauthorized');
+  }
+
   const data = create(req.body, CreateArticleBodyStruct);
 
-  const article = await prismaClient.article.create({ data: { ...data, userId } });
+  const article = await prismaClient.article.create({
+    data: {
+      ...data,
+      userId: req.user.id,
+    },
+  });
 
   return res.status(201).send(article);
 }
 
 export async function getArticle(req, res) {
   const { id } = create(req.params, IdParamsStruct);
-  const userId = req.userId;
 
-  const article = await prismaClient.article.findUnique({ where: { id } });
+  const article = await prismaClient.article.findUnique({
+    where: { id },
+    include: {
+      likes: true,
+    },
+  });
   if (!article) {
     throw new NotFoundError('article', id);
   }
 
-  let isLiked = false;
-  if (userId) {
-    const like = await prismaClient.like.findFirst({
-      where: { userId, articleId: id },
-    });
-    isLiked = !!like;
-  }
+  const articleWithLikes = {
+    ...article,
+    likes: undefined,
+    likeCount: article.likes.length,
+    isLiked: req.user ? article.likes.some((like) => like.userId === req.user.id) : undefined,
+  };
 
-  return res.send({ ...article, isLiked });
+  return res.send(articleWithLikes);
 }
 
 export async function updateArticle(req, res) {
-  const userId = req.userId;
+  if (!req.user) {
+    throw new UnauthorizedError('Unauthorized');
+  }
+
   const { id } = create(req.params, IdParamsStruct);
   const data = create(req.body, UpdateArticleBodyStruct);
 
@@ -49,17 +65,19 @@ export async function updateArticle(req, res) {
     throw new NotFoundError('article', id);
   }
 
-  if (existingArticle.userId !== userId) {
-    throw new UnauthorizedError('게시글을 수정할 권한이 없습니다.');
+  if (existingArticle.userId !== req.user.id) {
+    throw new ForbiddenError('Should be the owner of the article');
   }
 
-  const article = await prismaClient.article.update({ where: { id }, data });
-
-  return res.send(article);
+  const updatedArticle = await prismaClient.article.update({ where: { id }, data });
+  return res.send(updatedArticle);
 }
 
 export async function deleteArticle(req, res) {
-  const userId = req.userId;
+  if (!req.user) {
+    throw new UnauthorizedError('Unauthorized');
+  }
+
   const { id } = create(req.params, IdParamsStruct);
 
   const existingArticle = await prismaClient.article.findUnique({ where: { id } });
@@ -67,18 +85,16 @@ export async function deleteArticle(req, res) {
     throw new NotFoundError('article', id);
   }
 
-  if (existingArticle.userId !== userId) {
-    throw new UnauthorizedError('게시글을 삭제할 권한이 없습니다.');
+  if (existingArticle.userId !== req.user.id) {
+    throw new ForbiddenError('Should be the owner of the article');
   }
 
   await prismaClient.article.delete({ where: { id } });
-
   return res.status(204).send();
 }
 
 export async function getArticleList(req, res) {
   const { page, pageSize, orderBy, keyword } = create(req.query, GetArticleListParamsStruct);
-  const userId = req.userId;
 
   const where = {
     title: keyword ? { contains: keyword } : undefined,
@@ -90,34 +106,29 @@ export async function getArticleList(req, res) {
     take: pageSize,
     orderBy: orderBy === 'recent' ? { createdAt: 'desc' } : { id: 'asc' },
     where,
+    include: {
+      likes: true,
+    },
   });
 
-  let articleIds = [];
-  let likedArticles = new Set();
-  if (userId && articles.length > 0) {
-    articleIds = articles.map((a) => a.id);
-    const likes = await prismaClient.like.findMany({
-      where: {
-        userId,
-        articleId: { in: articleIds },
-      },
-    });
-    likedArticles = new Set(likes.map((like) => like.articleId));
-  }
-
-  const articlesWithLiked = articles.map((article) => ({
+  const articlesWithLikes = articles.map((article) => ({
     ...article,
-    isLiked: userId ? likedArticles.has(article.id) : false,
+    likes: undefined,
+    likeCount: article.likes.length,
+    isLiked: req.user ? article.likes.some((like) => like.userId === req.user.id) : undefined,
   }));
 
   return res.send({
-    list: articlesWithLiked,
+    list: articlesWithLikes,
     totalCount,
   });
 }
 
 export async function createComment(req, res) {
-  const userId = req.userId;
+  if (!req.user) {
+    throw new UnauthorizedError('Unauthorized');
+  }
+
   const { id: articleId } = create(req.params, IdParamsStruct);
   const { content } = create(req.body, CreateCommentBodyStruct);
 
@@ -126,15 +137,15 @@ export async function createComment(req, res) {
     throw new NotFoundError('article', articleId);
   }
 
-  const comment = await prismaClient.comment.create({
+  const createdComment = await prismaClient.comment.create({
     data: {
       articleId,
       content,
-      userId,
+      userId: req.user.id,
     },
   });
 
-  return res.status(201).send(comment);
+  return res.status(201).send(createdComment);
 }
 
 export async function getCommentList(req, res) {
@@ -160,4 +171,50 @@ export async function getCommentList(req, res) {
     list: comments,
     nextCursor,
   });
+}
+
+export async function createLike(req, res) {
+  if (!req.user) {
+    throw new UnauthorizedError('Unauthorized');
+  }
+
+  const { id: articleId } = create(req.params, IdParamsStruct);
+
+  const existingArticle = await prismaClient.article.findUnique({ where: { id: articleId } });
+  if (!existingArticle) {
+    throw new NotFoundError('article', articleId);
+  }
+
+  const existingLike = await prismaClient.like.findFirst({
+    where: { articleId, userId: req.user.id },
+  });
+  if (existingLike) {
+    throw new BadRequestError('Already liked');
+  }
+
+  await prismaClient.like.create({ data: { articleId, userId: req.user.id } });
+  return res.status(201).send();
+}
+
+export async function deleteLike(req, res) {
+  if (!req.user) {
+    throw new UnauthorizedError('Unauthorized');
+  }
+
+  const { id: articleId } = create(req.params, IdParamsStruct);
+
+  const existingArticle = await prismaClient.article.findUnique({ where: { id: articleId } });
+  if (!existingArticle) {
+    throw new NotFoundError('article', articleId);
+  }
+
+  const existingLike = await prismaClient.like.findFirst({
+    where: { articleId, userId: req.user.id },
+  });
+  if (!existingLike) {
+    throw new BadRequestError('Not liked');
+  }
+
+  await prismaClient.like.delete({ where: { id: existingLike.id } });
+  return res.status(204).send();
 }

@@ -3,10 +3,14 @@ import { prismaClient } from '../lib/prismaClient.js';
 import { UpdateCommentBodyStruct } from '../structs/commentsStruct.js';
 import NotFoundError from '../lib/errors/NotFoundError.js';
 import UnauthorizedError from '../lib/errors/UnauthorizedError.js';
+import ForbiddenError from '../lib/errors/ForbiddenError.js';
 import { IdParamsStruct } from '../structs/commonStructs.js';
 
 export async function updateComment(req, res) {
-  const userId = req.userId;
+  if (!req.user) {
+    throw new UnauthorizedError('Unauthorized');
+  }
+
   const { id } = create(req.params, IdParamsStruct);
   const { content } = create(req.body, UpdateCommentBodyStruct);
 
@@ -15,8 +19,8 @@ export async function updateComment(req, res) {
     throw new NotFoundError('comment', id);
   }
 
-  if (existingComment.userId !== userId) {
-    throw new UnauthorizedError('댓글을 수정할 권한이 없습니다.');
+  if (existingComment.userId !== req.user.id) {
+    throw new ForbiddenError('Should be the owner of the comment');
   }
 
   const updatedComment = await prismaClient.comment.update({
@@ -28,7 +32,10 @@ export async function updateComment(req, res) {
 }
 
 export async function deleteComment(req, res) {
-  const userId = req.userId;
+  if (!req.user) {
+    throw new UnauthorizedError('Unauthorized');
+  }
+
   const { id } = create(req.params, IdParamsStruct);
 
   const existingComment = await prismaClient.comment.findUnique({ where: { id } });
@@ -36,8 +43,8 @@ export async function deleteComment(req, res) {
     throw new NotFoundError('comment', id);
   }
 
-  if (existingComment.userId !== userId) {
-    throw new UnauthorizedError('댓글을 삭제할 권한이 없습니다.');
+  if (existingComment.userId !== req.user.id) {
+    throw new ForbiddenError('Should be the owner of the comment');
   }
 
   await prismaClient.comment.delete({ where: { id } });
