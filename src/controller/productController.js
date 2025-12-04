@@ -39,11 +39,13 @@ class ProductController {
     //로그인 유저 아이디 가져오기
     const userId = req.user.id;
 
+    const productIds = products.map((a) => a.id);
+
     //로그인 유저가 좋아요한 상품 조회
     const likeList = await prisma.like.findMany({
       where: {
         userId,
-        productId: { not: null },
+        productId: { in: productIds },
       },
       select: { productId: true },
     });

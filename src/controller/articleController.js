@@ -38,15 +38,18 @@ class ArticleController {
     //로그인 유저 아이디 가져오기
     const userId = req.user.id;
 
+    const articleIds = articles.map((a) => a.id);
+
     //로그인 유저가 좋아요한 게시물 조회
     const likeList = await prisma.like.findMany({
       where: {
         userId,
-        articleId: { not: null },
+        articleId: { in: articleIds },
       },
       select: { articleId: true },
     });
 
+    console.log(likeList);
     const likeIds = likeList.map((item) => item.articleId);
 
     //각 상품에 불린값 추가
