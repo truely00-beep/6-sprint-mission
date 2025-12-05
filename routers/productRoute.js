@@ -1,50 +1,84 @@
 import express from 'express';
-import asyncHandler from '../lib/asynchandler.js';
-import * as p from '../controllers/product_controllers.js';
-import * as pc from '../controllers/productComment_controllers.js';
+import asyncHandler from '../lib/asyncHandler.js';
+import * as p from '../controllers/product-controllers.js';
+import * as pc from '../controllers/productComment-controllers.js';
+import * as pl from '../controllers/productLike-controllers.js';
 
 import {
   productCreateValidation,
   productUpdateValidation,
-} from '../lib/product_validation.js';
+} from '../validators/product-validation.js';
 
 import {
   commentCreateValidation,
   commentUpdateValidation,
-} from '../lib/comment_validation.js';
+} from '../validators/comment-validation.js';
+
+import authenticate from '../middleware/authenticate.js';
 
 const productRoute = express.Router();
-const productCommentRoute = express.Router();
 
-const product = productRoute.route('/');
-const product_id = productRoute.route('/:id');
+// ======= ======= ======= ======= =======
+// =======  product 자체 API 명령어  =======
+// ======= ======= ======= ======= =======
 
-product.get(asyncHandler(p.productsList));
-product.post(productCreateValidation, asyncHandler(p.productNew));
+productRoute.post(
+  '/',
+  authenticate,
+  productCreateValidation,
+  asyncHandler(p.createProduct)
+);
+productRoute.get('/', asyncHandler(p.getProductsList));
 
-product_id.get(asyncHandler(p.productOnly));
-product_id.patch(productUpdateValidation, asyncHandler(p.productUpdate));
-product_id.delete(asyncHandler(p.productDelete));
+productRoute.get('/:id', authenticate, asyncHandler(p.getProductInfo));
 
+productRoute.patch(
+  '/:id',
+  authenticate,
+  productUpdateValidation,
+  asyncHandler(p.updateProduct)
+);
+
+productRoute.delete('/:id', authenticate, asyncHandler(p.deleteProduct));
+
+// ======= ======= ======= ======= =======
 // ======= product에 연결 된 comment =======
-// Product와 comment가 별도의 모델로 구동되므로
-// 별도의 작업으로 제작 하였습니다
+// ======= ======= ======= ======= =======
 
-const productComment = productRoute.route('/:productId/productcomments');
-const productComment_id = productRoute.route(
-  '/:productId/productcomments/:commentId'
-);
-
-productComment.get(asyncHandler(pc.oneProductComment));
-productComment.post(
+productRoute.post(
+  '/:productId/comments',
+  authenticate,
   commentCreateValidation,
-  asyncHandler(pc.productCommentNew)
+  asyncHandler(pc.createProductComment)
 );
 
-productComment_id.patch(
+productRoute.get(
+  '/:productId/comments',
+  asyncHandler(pc.getProductCommentList)
+);
+
+productRoute.patch(
+  '/:productId/comments/:commentId',
+  authenticate,
   commentUpdateValidation,
-  asyncHandler(pc.productCommentUpdate)
+  asyncHandler(pc.updateProductComment)
 );
-productComment_id.delete(asyncHandler(pc.productCommentDelete));
 
-export { productRoute, productCommentRoute };
+productRoute.delete(
+  '/:productId/comments/:commentId',
+  authenticate,
+  asyncHandler(pc.deleteProductComment)
+);
+
+// ======= ======= ======= ======= =======
+// ====== product에 연결 된 likeCount ======
+// ======= ======= ======= ======= =======
+
+productRoute.post('/:id/likeCount', authenticate, asyncHandler(pl.likeCountUp));
+productRoute.delete(
+  '/:id/likeCount',
+  authenticate,
+  asyncHandler(pl.likeCountDown)
+);
+
+export default productRoute;

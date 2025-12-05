@@ -1,47 +1,80 @@
 import express from 'express';
-import asyncHandler from '../lib/asynchandler.js';
-import * as a from '../controllers/article_controllers.js';
-import * as ac from '../controllers/articleComment_controllers.js';
+import asyncHandler from '../lib/asyncHandler.js';
+import * as a from '../controllers/article-controllers.js';
+import * as ac from '../controllers/articleComment-controllers.js';
+import * as al from '../controllers/articleLike-controllers.js';
 
 import {
   articleCreateValidation,
   articleUpdateValidation,
-} from '../lib/article_validation.js';
+} from '../validators/article-validation.js';
 
 import {
   commentCreateValidation,
   commentUpdateValidation,
-} from '../lib/comment_validation.js';
+} from '../validators/comment-validation.js';
+
+import authenticate from '../middleware/authenticate.js';
 
 const articleRoute = express.Router();
-const articleCommentRoute = express.Router();
 
-const article = articleRoute.route('/');
-const article_id = articleRoute.route('/:id');
+// ======= ======= ======= ======= =======
+// =======  article 자체 API 명령어  =======
+// ======= ======= ======= ======= =======
 
-article.get(asyncHandler(a.articlesList));
-article.post(articleCreateValidation, asyncHandler(a.articleNew));
+articleRoute.post(
+  '/',
+  authenticate,
+  articleCreateValidation,
+  asyncHandler(a.createArticle)
+);
+articleRoute.get('/', asyncHandler(a.getArticlesList));
 
-article_id.get(asyncHandler(a.articleOnly));
-article_id.patch(articleUpdateValidation, asyncHandler(a.articleUpdate));
-article_id.delete(asyncHandler(a.articleDelete));
+articleRoute.get('/:id', authenticate, asyncHandler(a.getArticleInfo));
+articleRoute.patch(
+  '/:id',
+  authenticate,
+  articleUpdateValidation,
+  asyncHandler(a.updateArticle)
+);
+articleRoute.delete('/:id', authenticate, asyncHandler(a.deleteArticle));
 
+// ======= ======= ======= ======= =======
 // ======= article에 연결 된 comment =======
-// article와 comment가 별도의 모델로 구동되므로
-// 별도의 작업으로 제작 하였습니다
+// ======= ======= ======= ======= =======
 
-const articleComment = articleRoute.route('/:articleId/articlecomments');
-const articleComment_id = articleRoute.route(
-  '/:articleId/articlecomments/:commentId'
-);
-
-articleComment.get(asyncHandler(ac.articleCommentsList));
-articleComment.post(
+articleRoute.post(
+  '/:articleId/comments',
+  authenticate,
   commentCreateValidation,
-  asyncHandler(ac.articleCommentNew)
+  asyncHandler(ac.createArticleComment)
+);
+articleRoute.get(
+  '/:articleId/comments',
+  asyncHandler(ac.getArticleCommentsList)
 );
 
-articleComment_id.patch(asyncHandler(ac.articleCommentUpdate));
-articleComment_id.delete(asyncHandler(ac.articleCommentDelete));
+articleRoute.patch(
+  '/:articleId/comments/:commentId',
+  authenticate,
+  commentUpdateValidation,
+  asyncHandler(ac.updateArticleComment)
+);
+articleRoute.delete(
+  '/:articleId/comments/:commentId',
+  authenticate,
+  asyncHandler(ac.deleteArticleComment)
+);
 
-export { articleRoute, articleCommentRoute };
+// ======= ======= ======= ======= =======
+// ====== article에 연결 된 likeCount ======
+// ======= ======= ======= ======= =======
+
+articleRoute.post('/:id/likeCount', authenticate, asyncHandler(al.likeCountUp));
+articleRoute.delete(
+  '/:id/likeCount',
+  authenticate,
+  asyncHandler(al.likeCountDown)
+);
+
+export default articleRoute;

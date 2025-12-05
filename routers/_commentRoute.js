@@ -5,13 +5,14 @@ import { commentUpdateValidation } from '../lib/comment_validation.js';
 
 const commentRoute = express.Router();
 
-const coment = commentRoute.route('/');
-const coment_id = commentRoute.route('/:id');
+commentRoute.get('/', asyncHandler(c.commentsList));
 
-coment.get(asyncHandler(c.commentsList));
-
-coment_id.get(asyncHandler(c.commentOnly));
-coment_id.patch(commentUpdateValidation, asyncHandler(c.commentUpdate));
-coment_id.delete(asyncHandler(c.commentDelete));
+commentRoute.get('/:id', asyncHandler(c.commentOnly));
+commentRoute.patch(
+  '/:id',
+  commentUpdateValidation,
+  asyncHandler(c.commentUpdate)
+);
+commentRoute.delete('/:id', asyncHandler(c.commentDelete));
 
 export { commentRoute };
