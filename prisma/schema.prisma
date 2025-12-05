@@ -22,9 +22,11 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  likes    Like[]
-  products Product[]
-  articles Article[]
+  productlikes ProductLike[]
+  articlelikes ArticleLike[]
+  products     Product[]
+  articles     Article[]
+  comments     Comment[]
 }
 
 model Product {
@@ -43,7 +45,7 @@ model Product {
   userId Int?
 
   comments Comment[]
-  likes    Like[]
+  likes    ProductLike[]
 }
 
 model Article {
@@ -58,22 +60,29 @@ model Article {
   userId Int?
 
   comments Comment[]
-  likes    Like[]
+  likes    ArticleLike[]
 }
 
-model Like {
-  id     Int      @id @default(autoincrement())
+model ArticleLike {
+  id     Int @id @default(autoincrement())
   userId Int
-  type   LikeType
 
-  user      User     @relation(fields: [userId], references: [id])
-  Product   Product? @relation(fields: [productId], references: [id])
-  productId Int?
-  Article   Article? @relation(fields: [articleId], references: [id])
-  articleId Int?
+  user      User    @relation(fields: [userId], references: [id])
+  Article   Article @relation(fields: [articleId], references: [id])
+  articleId Int
+
+  @@unique([userId, articleId])
+}
+
+model ProductLike {
+  id     Int @id @default(autoincrement())
+  userId Int
+
+  user      User    @relation(fields: [userId], references: [id])
+  Product   Product @relation(fields: [productId], references: [id])
+  productId Int
 
   @@unique([userId, productId])
-  @@unique([userId, articleId])
 }
 
 model Comment {
@@ -85,6 +94,9 @@ model Comment {
   articleId Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  userId Int?
+  user   User? @relation(fields: [userId], references: [id])
 }
 
 // model CommentToProduct {
@@ -115,9 +127,4 @@ enum Category {
   HOME_INTERIOR
   HOUSEHOLD_SUPPLIES
   KITCHENWARE
-}
-
-enum LikeType {
-  Product
-  Article
 }
