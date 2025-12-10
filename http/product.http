@@ -1,27 +1,39 @@
-POST http://localhost:3000/products
+@baseUrl = http://localhost:3000
+@productId1 = 10000000-0000-0000-0000-000000000001
+### 상품 생성 (로그인 필요)
+POST {{baseUrl}}/products
 Content-Type: application/json
 
 {
-  "name": "MacBook Pro 16",
-  "description": "Apple M3 Max Laptop",
-  "price": 4599.99,
-  "tags": "electronics,apple,laptop"
+  "name": "새로운 키보드",
+  "description": "갈축 기계식 키보드입니다.",
+  "price": 89000,
+  "tags": "전자제품"
 }
 
-### 
-GET http://localhost:3000/products?offset=0&limit=5&order=recent
+### 상품 전체 목록 조회
+GET {{baseUrl}}/products
 
-### 
-GET http://localhost:3000/products/
+### 특정 상품 상세 조회
+GET {{baseUrl}}/products/{{productId1}}
 
-### 
-PATCH http://localhost:3000/products/:id
+### 등록한 상품 목록 조회
+GET {{baseUrl}}/products/me
+
+### 상품 수정 (작성자만 가능)
+PATCH {{baseUrl}}/products/{{productId1}}
 Content-Type: application/json
 
 {
-  "description": "Updated description for MacBook Pro",
-  "price": 4299.00
+  "price": 1800000,
+  "description": "가격 조금 조정했습니다."
 }
 
-### 
-DELETE http://localhost:3000/products/:id
+### 상품 삭제 (작성자만 가능)
+DELETE {{baseUrl}}/products/{{productId1}}
+
+### 상품 좋아요 
+POST {{baseUrl}}/products/{{productId1}}/like
+
+### 좋아요한 상품 목록 조회
+GET {{baseUrl}}/products/likes

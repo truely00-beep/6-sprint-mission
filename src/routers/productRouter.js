@@ -6,20 +6,33 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
+  getMyProducts,
+  toggleProductLike,
+  getLikedProducts,
 } from '../controllers/productController.js';
 import { validateProduct } from '../middleware/validation.js';
+import authenticate from '../middleware/authenticate.js';
 
 const router = express.Router();
 
 router
   .route('/')
   .get(asyncHandler(getProducts))
-  .post(validateProduct, asyncHandler(createProduct));
+  .post(authenticate, validateProduct, asyncHandler(createProduct));
+
+// 내가 등록한 상품
+router.get('/me', authenticate, asyncHandler(getMyProducts));
+
+// 내가 좋아요한 상품 목록
+router.get('/likes', authenticate, asyncHandler(getLikedProducts));
+
+// 좋아요
+router.post('/:id/like', authenticate, asyncHandler(toggleProductLike));
 
 router
   .route('/:id')
   .get(asyncHandler(getProductById))
-  .patch(asyncHandler(updateProduct))
-  .delete(asyncHandler(deleteProduct));
+  .patch(authenticate, asyncHandler(updateProduct))
+  .delete(authenticate, asyncHandler(deleteProduct));
 
 export default router;
