@@ -1,0 +1,25 @@
+###
+// 유저 조회 // GET http://localhost:3000/users/{userId}
+GET http://localhost:3000/users/me
+Cookie: access-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaWF0IjoxNzY0MzI2NTUzLCJleHAiOjE3NjQzOTg1NTN9.GrCQUqDy4OilT66n8j0Bb0FTzm-F0ScLNtHY6v_Wzlw;
+
+###
+
+// 유저가 자신의 정보를 수정
+PATCH http://localhost:3000/users/me
+Content-Type: application/json
+Cookie: access-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaWF0IjoxNzY0MTM4MDIzLCJleHAiOjE3NjQyMTAwMjN9.4r-OsLqRYqiF9IoJ82lIHde8MA9UpIK5r7KhUXs7Hek;
+
+{
+  "nickname" : "김진영"
+}
+
+###
+// 유저가 자신의 비밀번호를 변경
+PATCH http://localhost:3000/users/me/password
+Content-Type: application/json
+Cookie: access-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaWF0IjoxNzY0MTM4MDIzLCJleHAiOjE3NjQyMTAwMjN9.4r-OsLqRYqiF9IoJ82lIHde8MA9UpIK5r7KhUXs7Hek;
+
+{
+  "password" : "6666"
+}

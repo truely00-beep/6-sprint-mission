@@ -1,1 +1,50 @@
 
+###
+// 로그인 한 유저만 article 등록 
+// POST http://localhost:3000/articles
+POST http://localhost:3000/articles
+Content-Type: application/json
+Cookie: access-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaWF0IjoxNzY0MzI2NTUzLCJleHAiOjE3NjQzOTg1NTN9.GrCQUqDy4OilT66n8j0Bb0FTzm-F0ScLNtHY6v_Wzlw;
+
+{
+  "title": "축구선수 이야기",
+  "content": "축구"
+}
+
+###
+// 로그인 한 유저만 article 수정 
+// PATCH http://localhost:3000/articles/{articleId}
+PATCH http://localhost:3000/articles/1
+Content-Type: application/json
+Cookie: access-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaWF0IjoxNzY0MzI2NTUzLCJleHAiOjE3NjQzOTg1NTN9.GrCQUqDy4OilT66n8j0Bb0FTzm-F0ScLNtHY6v_Wzlw;
+
+{
+  "title": "10년 뒤 AI의 모습",
+  "content": "나의 직업은 괜찮은가"
+}
+
+###
+// 로그인 한 유저만 article 삭제 
+// 삭제 DELETE http://localhost:3000/articles/{articleId}
+DELETE http://localhost:3000/articles/1
+Content-Type: application/json
+Cookie: access-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiaWF0IjoxNzY0MTE2NDkzLCJleHAiOjE3NjQxNTI0OTN9.bGo1wb03xSR6Vx0muCk1hZKu7bfh12jVJsmoKkZnmDQ;
+
+
+###
+// 로그인 한 유저가 article에 '좋아요' 클릭
+// http://localhost:3000/articles/{articleId}/like
+Post http://localhost:3000/articles/1/like
+Cookie: access-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaWF0IjoxNzY0MzI2NTUzLCJleHAiOjE3NjQzOTg1NTN9.GrCQUqDy4OilT66n8j0Bb0FTzm-F0ScLNtHY6v_Wzlw;
+
+###
+// 로그인 한 유저가 article에 '좋아요 취소' 클릭
+// http://localhost:3000/articles/{articleId}/like
+DELETE http://localhost:3000/articles/1/like
+Cookie: access-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaWF0IjoxNzY0MzI2NTUzLCJleHAiOjE3NjQzOTg1NTN9.GrCQUqDy4OilT66n8j0Bb0FTzm-F0ScLNtHY6v_Wzlw;
+
+###
+// 로그인 한 유저의 article 조회 
+// GET http://localhost:3000/articles/{articleId}
+GET http://localhost:3000/articles/1
+Cookie: access-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaWF0IjoxNzY0MzI2NTUzLCJleHAiOjE3NjQzOTg1NTN9.GrCQUqDy4OilT66n8j0Bb0FTzm-F0ScLNtHY6v_Wzlw;
