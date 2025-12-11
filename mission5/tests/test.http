@@ -1,5 +1,5 @@
 ### Article 목록 조회하기(좋아요 포함)
-GET http://localhost:3000/articles/?page=1&pageSize=10&orderBy=recent
+GET http://localhost:3000/articles/?page=1&pageSize=3&orderBy=recent
 Accept: application/json
 
 ### 새로운 Article 만들기
@@ -13,7 +13,7 @@ Content-Type: application/json
 }
 
 ### 특정 ID의 Article 가져오기(좋아요 포함)
-GET http://localhost:3000/articles
+GET http://localhost:3000/articles/4
 Accept: application/json
 
 ### Article 업데이트하기
@@ -26,7 +26,7 @@ Content-Type: application/json
 }
 
 ### Article 삭제하기
-DELETE http://localhost:3000/articles/3
+DELETE http://localhost:3000/articles/9
 Accept: application/json
 
 ### Article에 Comment 달기 테스트
@@ -42,7 +42,7 @@ GET http://localhost:3000/articles/2/comments?limit=200
 Accept: application/json
 
 ### Comment 업데이트 테스트
-PATCH http://localhost:3000/comments/7
+PATCH http://localhost:3000/comments/6
 Content-Type: application/json
 
 {
@@ -50,7 +50,7 @@ Content-Type: application/json
 }
 
 ### Comment 삭제 테스트
-DELETE http://localhost:3000/comments/8
+DELETE http://localhost:3000/comments/7
 Accept: application/json
 
 ### 새로운 Product 만들기 테스트
@@ -80,13 +80,13 @@ Content-Type: application/json
 {
     "name": "업데이트된 테스트 Product",
     "description": "이것은 업데이트된 테스트 Product 설명입니다.",
-    "price": 150,
+    "price": 15000,
     "tags": ["업데이트", "Product"],
     "images": ["업데이트된_image1.png"]
 }
 
 ### Product 삭제하기 테스트
-DELETE http://localhost:3000/products/3
+DELETE http://localhost:3000/products/60
 Accept: application/json
 
 ### Product에 Comment 달기 테스트
@@ -173,20 +173,20 @@ Content-Type: application/json
 ###refresh token 테스트
 POST http://localhost:3000/users/refresh
 
-###like 테스트
+###상품like 테스트
 POST http://localhost:3000/products/35/like
 Accept: application/json
 
-###unlike 테스트 , 취소가 됐음에도 불구하고 다시 시도하는 경우 에러메세지(존재하지 않습니다) 변경 고려
+###상품unlike 테스트 , 취소가 됐음에도 불구하고 다시 시도하는 경우 에러메세지(존재하지 않습니다) 변경 고려
 DELETE http://localhost:3000/products/35/like
 Accept: application/json
 
 ### Article like 테스트
-POST http://localhost:3000/articles/5/like
+POST http://localhost:3000/articles/8/like
 Accept: application/json
 
 ### Article unlike 테스트
-DELETE http://localhost:3000/articles/5/like
+DELETE http://localhost:3000/articles/8/like
 Accept: application/json
 
 ### 내가 좋아요한 product 목록 가져오기 테스트(상품이 꽤 많이 있을 경우 페이징 처리)
