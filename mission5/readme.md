@@ -1,21 +1,12 @@
-# 스프린트 미션4
+# 스프린트 미션5
 
-- 기존 스프린트 미션3을 토대로 미션4를 진행하고자 했으나 스키마 프리즈마의 관계 설정, 기존 모델과 추가될 모델 간의 구조적 간극을 좁히지 못하고 미션3의 모범답안을 참조하여 작성되었음을 명시합니다.
+- 미션4 js -> ts전환, 레이어드 아키텍처 적용
 
 ## 추가된 주요 기능
 
-- 유저 모델 추가
-- 좋아요 모델 추가
-- 인증 / 인가
-- 회원가입
-- 로그인 / 로그아웃
-- 프로필 조회
-- 프로필 수정(이미지, 닉네임, 이메일)
-- 비밀번호 변경
-- 좋아요 / 좋아요 취소
-- 좋아요 여부 isLiked 포함 응답
-- 내가 작성한 상품 목록 페이지네이션
-- 내가 좋아요한 상품 목록 페이지네이션
+- repository 추가
+- service 추가
+- type 및 dto 추가
 
 ## ERD 다이어그램
 
@@ -42,53 +33,67 @@ graph TD
 ## 프로젝트 구조
 
 ```
-mission4
-├── middlewares
-│   └── authenticate.js
-│
+mission5
+├── dist
 ├── prisma
 │   ├── migrations
 │   └── schema.prisma
+├── public
 │
 ├── src
 │   ├── controllers
-│   │   ├── articlesController.js
-│   │   ├── commentsController.js
-│   │   ├── errorController.js
-│   │   ├── imagesController.js
-│   │   ├── productsController.js
-│   │   └── usersController.js
+│   │   ├── articlesController.ts
+│   │   ├── commentsController.ts
+│   │   ├── errorController.ts
+│   │   ├── imagesController.ts
+│   │   ├── productsController.ts
+│   │   └── usersController.ts
 │   │
 │   ├── lib
-│   │   ├── constants.js
-│   │   ├── cookies.js
 │   │   ├── errors
-│   │   │   └── customErrors.js
-│   │   ├── prismaClient.js
-│   │   ├── token.js
-│   │   └── withAsync.js
+│   │   │   ├── customErrors.ts
+│   │   │   └── errorUtils.ts
+│   │   ├── constants.ts
+│   │   ├── cookies.ts
+│   │   ├── prismaClient.ts
+│   │   ├── token.ts
+│   │   └── withAsync.ts
+│   │
+│   ├── middlewares
+│   │   └── authenticate.ts
+│   │
+│   ├── repositories
+│   │   ├── articleRepository.ts
+│   │   ├── commentRepository.ts
+│   │   ├── likeRepository.ts
+│   │   ├── productRepository.ts
+│   │   └── userRepository.ts
 │   │
 │   ├── routers
-│   │   ├── articlesRouter.js
-│   │   ├── commentsRouter.js
-│   │   ├── imagesRouter.js
-│   │   ├── productsRouter.js
-│   │   └── usersRouter.js
+│   │   ├── articlesRouter.ts
+│   │   ├── commentsRouter.ts
+│   │   ├── imagesRouter.ts
+│   │   ├── productsRouter.ts
+│   │   └── usersRouter.ts
+│   │
+│   ├── services
+│   │   ├── articleService.ts
+│   │   ├── commentService.ts
+│   │   ├── imageService.ts
+│   │   ├── productService.ts
+│   │   └── userService.ts
 │   │
 │   ├── structs
-│   │   ├── articlesStructs.js
-│   │   ├── commentsStructs.js
-│   │   ├── commonStructs.js
-│   │   ├── productsStructs.js
-│   │   └── usersStructs.js
+│   │   ├── articlesStructs.ts
+│   │   ├── commentsStructs.ts
+│   │   ├── commonStructs.ts
+│   │   ├── productsStructs.ts
+│   │   └── usersStructs.ts
 │   │
-│   └── main.js
+│   └── main.ts
 │
 ├── tests
-│   ├── test.http
-│   ├── test.js
-│   └── test.png
-│
+├── types
 ├── package.json
 ├── package-lock.json
 └── readme.md
