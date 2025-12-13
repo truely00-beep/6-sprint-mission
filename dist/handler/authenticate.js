@@ -13,21 +13,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authenticate = authenticate;
-const prisma_js_1 = __importDefault(require("../lib/prisma.js"));
-const token_js_1 = require("../lib/token.js");
-const constants_js_1 = require("../lib/constants.js");
-const UnauthorizedError_js_1 = __importDefault(require("../lib/errors/UnauthorizedError.js"));
+const prisma_1 = __importDefault(require("../lib/prisma"));
+const token_1 = require("../lib/token");
+const constants_1 = require("../lib/constants");
+const UnauthorizedError_1 = __importDefault(require("../lib/errors/UnauthorizedError"));
 function authenticate(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const accessToken = req.cookies[constants_js_1.ACCESS_TOKEN_COOKIE_NAME];
+            const accessToken = req.cookies[constants_1.ACCESS_TOKEN_COOKIE_NAME];
             if (!accessToken) {
-                throw new UnauthorizedError_js_1.default('로그인이 필요합니다.');
+                throw new UnauthorizedError_1.default('로그인이 필요합니다.');
             }
-            const { userId } = (0, token_js_1.verifyAccessToken)(accessToken);
-            const user = yield prisma_js_1.default.user.findUnique({ where: { id: userId } });
+            const { userId } = (0, token_1.verifyAccessToken)(accessToken);
+            const user = yield prisma_1.default.user.findUnique({ where: { id: userId } });
             if (!user) {
-                throw new UnauthorizedError_js_1.default('유효하지 않은 토큰입니다.');
+                throw new UnauthorizedError_1.default('유효하지 않은 토큰입니다.');
             }
             req.user = user;
             return next();

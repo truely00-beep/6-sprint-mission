@@ -12,19 +12,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const likeService_1 = __importDefault(require("../service/likeService"));
+const likeRepository_1 = __importDefault(require("../repository/likeRepository"));
 const ValidationError_1 = __importDefault(require("../lib/errors/ValidationError"));
-class LikeController {
-    toggleLike(req, res) {
+class LikeService {
+    toggleLike(userId, targetId, baseUrl) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!req.user) {
-                throw new ValidationError_1.default('로그인이 필요합니다.');
+            if (!targetId) {
+                throw new ValidationError_1.default('유효하지 않은 targetId입니다.');
             }
-            const userId = req.user.id;
-            const targetId = Number(req.params.id);
-            const result = yield likeService_1.default.toggleLike(userId, targetId, req.baseUrl);
-            res.status(200).send(result);
+            const type = baseUrl.includes('/products') ? 'Product' : 'Article';
+            const existing = yield likeRepository_1.default.findExistingLike(type, userId, targetId);
+            const isLiked = yield likeRepository_1.default.toggleLikeTransaction(type, userId, targetId, existing === null || existing === void 0 ? void 0 : existing.id);
+            return {
+                isLiked,
+                message: isLiked ? '좋아요 등록됨' : '좋아요 해제됨',
+            };
         });
     }
 }
-exports.default = new LikeController();
+exports.default = new LikeService();

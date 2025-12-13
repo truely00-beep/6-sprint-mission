@@ -6,19 +6,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.defaultNotFoundHandler = defaultNotFoundHandler;
 exports.errorHandler = errorHandler;
 const superstruct_1 = require("superstruct");
-const BadRequestError_js_1 = __importDefault(require("../lib/errors/BadRequestError.js"));
-const NotFoundError_js_1 = __importDefault(require("../lib/errors/NotFoundError.js"));
-const ConflictError_js_1 = __importDefault(require("../lib/errors/ConflictError.js"));
-const ValidationError_js_1 = __importDefault(require("../lib/errors/ValidationError.js"));
-const UnauthorizedError_js_1 = __importDefault(require("../lib/errors/UnauthorizedError.js"));
-const ForbiddenError_js_1 = __importDefault(require("../lib/errors/ForbiddenError.js"));
+const BadRequestError_1 = __importDefault(require("../lib/errors/BadRequestError"));
+const NotFoundError_1 = __importDefault(require("../lib/errors/NotFoundError"));
+const ConflictError_1 = __importDefault(require("../lib/errors/ConflictError"));
+const ValidationError_1 = __importDefault(require("../lib/errors/ValidationError"));
+const UnauthorizedError_1 = __importDefault(require("../lib/errors/UnauthorizedError"));
+const ForbiddenError_1 = __importDefault(require("../lib/errors/ForbiddenError"));
 const client_1 = require("@prisma/client");
 function defaultNotFoundHandler(req, res, next) {
     return res.status(404).send({ message: 'Not found' });
 }
 function errorHandler(err, req, res, next) {
     /** From superstruct or application error */
-    if (err instanceof superstruct_1.StructError || err instanceof BadRequestError_js_1.default) {
+    if (err instanceof superstruct_1.StructError || err instanceof BadRequestError_1.default) {
         return res.status(400).send({ message: err.message });
     }
     /** From express.json middleware */
@@ -31,23 +31,23 @@ function errorHandler(err, req, res, next) {
         return res.status(500).send({ message: err.message });
     }
     /** Application error */
-    if (err instanceof NotFoundError_js_1.default) {
+    if (err instanceof NotFoundError_1.default) {
         return res.status(404).send({ message: err.message });
     }
     //입력 데이터 검증 실패
-    if (err instanceof ValidationError_js_1.default) {
+    if (err instanceof ValidationError_1.default) {
         return res.status(400).send({ message: err.message });
     }
     //중복된 데이터 존재
-    if (err instanceof ConflictError_js_1.default) {
+    if (err instanceof ConflictError_1.default) {
         return res.status(409).send({ message: err.message });
     }
     //인증/인가 실패 (비밀번호 불일치)
-    if (err instanceof UnauthorizedError_js_1.default) {
+    if (err instanceof UnauthorizedError_1.default) {
         return res.status(401).send({ message: err.message });
     }
     //권한 없음
-    if (err instanceof ForbiddenError_js_1.default) {
+    if (err instanceof ForbiddenError_1.default) {
         return res.status(403).send({ message: err.message });
     }
     console.error(err);

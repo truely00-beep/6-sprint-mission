@@ -1,62 +1,51 @@
 import prisma from '../lib/prisma';
 
 class ArticleRepository {
-  async findArticleById(id: number) {
+  findMany(where: any, orderBy: any, skip: number, take: number) {
+    return prisma.article.findMany({ where, orderBy, skip, take });
+  }
+
+  create(data: any) {
+    return prisma.article.create({ data });
+  }
+
+  findById(id: number) {
     return prisma.article.findUnique({ where: { id } });
   }
 
-  async updateArticle(id: number, data: Partial<{ title: string; content: string }>) {
+  update(id: number, data: any) {
     return prisma.article.update({
       where: { id },
       data,
     });
   }
 
-  async deleteArticle(id: number) {
-    return prisma.article.delete({
-      where: { id },
-    });
+  delete(id: number) {
+    return prisma.article.delete({ where: { id } });
   }
 
-  async createArticle(data: { title: string; content: string; userId: number }) {
-    return prisma.article.create({
-      data,
-    });
-  }
-
-  async findAllArticles(where: object, orderBy: object, offset: number, limit: number) {
-    return prisma.article.findMany({
-      where,
-      orderBy,
-      skip: offset,
-      take: limit,
-    });
-  }
-
-  async createComment(data: { content: string; userId: number; articleId: number }) {
+  createComment(articleId: number, content: string) {
     return prisma.comment.create({
-      data,
+      data: {
+        content,
+        article: { connect: { id: articleId } },
+      },
+      include: { article: true },
     });
   }
 
-  async getComments(articleId: number, cursor: number | undefined, limit: number) {
+  findComments(articleId: number, cursor: number | undefined, take: number) {
     return prisma.comment.findMany({
-      where: { articleId: Number(articleId) },
-      select: {
-        id: true,
-        content: true,
-        createdAt: true,
-      },
-      take: limit,
+      where: { articleId },
+      select: { id: true, content: true, createdAt: true },
+      take,
       ...(cursor
         ? {
             skip: 1,
             cursor: { id: cursor },
           }
         : {}),
-      orderBy: {
-        createdAt: 'desc',
-      },
+      orderBy: { createdAt: 'desc' },
     });
   }
 }

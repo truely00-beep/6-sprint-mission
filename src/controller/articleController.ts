@@ -2,83 +2,77 @@ import { Request, Response } from 'express';
 import { assert } from 'superstruct';
 import { CreateArticle, PatchArticle } from '../structs/articleStructs';
 import { CreateComment } from '../structs/commentStructs';
-import { AuthenticatedRequest } from '../types/auth.js';
+import { AuthenticatedRequest } from '../types/auth';
 import articleService from '../service/articleService';
 
 class ArticleController {
-  async getArticles(
-    req: Request<
-      any,
-      any,
-      any,
-      { offset?: string; limit?: string; order?: string; search?: string }
-    >,
-    res: Response,
-  ) {
-    const { offset = '0', limit = '10', order = 'newest', search = '' } = req.query;
+  async getArticles(req: Request, res: Response) {
+    const offset = String(req.query.offset ?? '0');
+    const limit = String(req.query.limit ?? '10');
+    const order = String(req.query.order ?? 'newest');
+    const search = String(req.query.search ?? '');
 
-    const articles = await articleService.getArticles(
-      parseInt(offset),
-      parseInt(limit),
+    const articles = await articleService.getArticles({
+      offset,
+      limit,
       order,
       search,
-    );
+    });
+
     res.send(articles);
   }
+
   async createArticle(req: AuthenticatedRequest, res: Response) {
     assert(req.body, CreateArticle);
 
-    const newArticle = await articleService.createArticle({
+    const article = await articleService.createArticle({
       ...req.body,
       userId: req.user.id,
     });
-    res.status(201).send(newArticle);
+
+    res.status(201).send(article);
   }
+
   async getArticleById(req: Request, res: Response) {
-    const id = Number(req.params.id);
-    const article = await articleService.getArticleById(id);
+    const articleId = Number(req.params.id);
+    const article = await articleService.getArticleById(articleId);
     res.send(article);
   }
+
   async updateArticle(req: AuthenticatedRequest<{ id: number }>, res: Response) {
     assert(req.body, PatchArticle);
 
-    const id = Number(req.params.id);
-    const loginUser = req.user;
+    const articleId = Number(req.params.id);
+    const updated = await articleService.updateArticle(articleId, req.body, req.user.id);
 
-    const updatedArticle = await articleService.updateArticle(id, req.body, loginUser.id);
-    res.send(updatedArticle);
+    res.send(updated);
   }
+
   async deleteArticle(req: AuthenticatedRequest<{ id: number }>, res: Response) {
-    const id = Number(req.params.id);
+    const articleId = Number(req.params.id);
 
-    const loginUser = req.user;
-    await articleService.deleteArticle(id, loginUser.id);
-    res.status(204).send();
+    await articleService.deleteArticle(articleId, req.user.id);
+    res.sendStatus(204);
   }
-  async createComment(req: AuthenticatedRequest, res: Response) {
+
+  async createComment(req: Request, res: Response) {
     assert(req.body, CreateComment);
 
     const articleId = Number(req.params.id);
-    const { content } = req.body;
-    const loginUser = req.user;
+    const content = req.body.content;
 
-    const comments = await articleService.createComment({
-      content,
-      articleId,
-      userId: loginUser.id,
-    });
-    res.status(201).send(comments);
+    const comment = await articleService.createComment(articleId, content);
+    res.status(201).send(comment);
   }
-  async getComment(
-    req: Request<{ id: string }, any, any, { cursor?: number; limit?: string }>,
-    res: Response,
-  ) {
-    const articleId = Number(req.params.id);
-    const cursor = req.query.cursor;
-    const limit = parseInt(req.query.limit || '10');
 
-    const comments = await articleService.getComments(articleId, cursor, limit);
-    res.send(comments);
+  async getComment(req: Request, res: Response) {
+    const articleId = Number(req.params.id);
+    const cursor = req.query.cursor ? Number(req.query.cursor) : undefined;
+    const limit = String(req.query.limit ?? '10');
+
+    const result = await articleService.getComments(articleId, cursor, limit);
+
+    res.send(result);
   }
 }
 
