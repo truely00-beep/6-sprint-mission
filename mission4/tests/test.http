@@ -2,7 +2,6 @@
 GET http://localhost:3000/articles/?page=1&pageSize=10&orderBy=recent
 Accept: application/json
 
-
 ### 새로운 Article 만들기
 POST http://localhost:3000/articles
 Content-Type: application/json
@@ -14,7 +13,7 @@ Content-Type: application/json
 }
 
 ### 특정 ID의 Article 가져오기(좋아요 포함)
-GET http://localhost:3000/articles/9
+GET http://localhost:3000/articles
 Accept: application/json
 
 ### Article 업데이트하기
@@ -197,3 +196,4 @@ Accept: application/json
 ### 내가 등록한 상품 목록 가져오기 테스트, &keword=세탁기(상품이 꽤 많이 있을 경우 페이징 처리, 키워드 검색 가능)
 GET http://localhost:3000/products/me/?page=1&pageSize=10&orderBy=recent
 Accept: application/json
+

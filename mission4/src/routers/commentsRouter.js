@@ -5,7 +5,7 @@ import authenticate from '../../middlewares/authenticate.js';
 
 const commentsRouter = express.Router();
 
-commentsRouter.patch('/:id', authenticate, withAsync(updateComment));
-commentsRouter.delete('/:id', authenticate, withAsync(deleteComment));
+commentsRouter.patch('/:id', authenticate(), withAsync(updateComment));
+commentsRouter.delete('/:id', authenticate(), withAsync(deleteComment));
 
 export default commentsRouter;

@@ -20,9 +20,6 @@ export async function createArticle(req, res) {
 export async function getArticle(req, res) {
   const { id } = create(req.params, IdParamsStruct);
   const user = req.user;
-  if (!user) {
-    throw new UnauthorizedError();
-  }
   const article = await prisma.article.findUniqueOrThrow({
     where: { id },
     include: user
@@ -34,7 +31,10 @@ export async function getArticle(req, res) {
         }
       : undefined,
   });
-  const isLiked = user ? article.likes.length > 0 : false;
+  if (!user) {
+    return res.send(article);
+  }
+  const isLiked = article.likes?.length > 0;
   const { likes, ...articleWithoutLikes } = article;
   return res.send({ ...articleWithoutLikes, isLiked });
 }
@@ -68,24 +68,27 @@ export async function getArticleList(req, res) {
   const where = {
     title: keyword ? { contains: keyword } : undefined,
   };
-
   const totalCount = await prisma.article.count({ where });
+  const include = user
+    ? {
+        likes: {
+          where: { userId: user.id },
+          select: { id: true },
+        },
+      }
+    : undefined;
   const articles = await prisma.article.findMany({
     skip: (page - 1) * pageSize,
     take: pageSize,
-    orderBy: orderBy === 'recent' ? { createdAt: 'desc' } : { id: 'asc' },
+    orderBy: orderBy === 'recent' ? { createdAt: 'desc' } : { createdAt: 'asc' },
     where,
-    include: user
-      ? {
-          likes: {
-            where: { userId: user.id },
-            select: { id: true },
-          },
-        }
-      : undefined,
+    include,
   });
+  if (!user) {
+    return res.send({ list: articles, totalCount });
+  }
   const articlesWithIsLiked = articles.map((m) => {
-    const isLiked = user ? m.likes.length > 0 : false;
+    const isLiked = m.likes?.length > 0;
     const { likes, ...articleWithoutLikes } = m;
     return { ...articleWithoutLikes, isLiked };
   });
@@ -139,9 +142,6 @@ export async function getCommentList(req, res) {
 export async function likeArticle(req, res) {
   const { id: articleId } = create(req.params, IdParamsStruct);
   const user = req.user;
-  if (!user) {
-    throw new UnauthorizedError();
-  }
   const article = await prisma.article.findUniqueOrThrow({ where: { id: articleId } });
   const existingLike = await prisma.like.findUnique({
     where: {
@@ -158,7 +158,6 @@ export async function likeArticle(req, res) {
     data: {
       userId: user.id,
       articleId,
-      productId: null,
     },
   });
   return res.status(200).send({ message: `${article.title}게시글에 좋아요를 눌렀습니다` });
@@ -167,9 +166,6 @@ export async function likeArticle(req, res) {
 export async function unlikeArticle(req, res) {
   const { id: articleId } = create(req.params, IdParamsStruct);
   const user = req.user;
-  if (!user) {
-    throw new UnauthorizedError();
-  }
   const article = await prisma.article.findUniqueOrThrow({ where: { id: articleId } });
   try {
     await prisma.like.delete({
