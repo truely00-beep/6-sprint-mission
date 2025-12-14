@@ -1,30 +1,66 @@
-### 상품 등록
+###
+// 상품 등록 
+// POST http://localhost:3000/products
 POST http://localhost:3000/products
 Content-Type: application/json
+Cookie: access-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzY1NjAwODk4LCJleHAiOjE3NjU2NzI4OTh9.3GolPNJDxlQFAOee3VUQRzhW0A_qBGAYARbAicWhTnc;
+
 
 {
-  "name": "마스크 팩",
-  "description": "에띠뜌",
-  "price": 35000,
-  "tags": "BEAUTY"
+  "name": "축구공",
+  "description": "손흥민 축구공",
+  "price": 30000,
+  "tags": "SPORTS"
 }
 
-### 상품 상세 조회
-GET http://localhost:3000/products/{productId}
-
-
-### 상품 수정
-PATCH http://localhost:3000/products/d2670680-d7c0-426c-abf7-c5d664f74028
+###
+// 상품 수정 
+// PATCH http://localhost:3000/products/{productId}
+PATCH http://localhost:3000/products/1
 Content-Type: application/json
+Cookie: access-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzY1NjAwODk4LCJleHAiOjE3NjU2NzI4OTh9.3GolPNJDxlQFAOee3VUQRzhW0A_qBGAYARbAicWhTnc;
+
 
 {
   "description": "화장품",
   "price" : 6400
 }
 
-### 상품 삭제
-DELETE http://localhost:3000/products/dd9f263a-5a97-4c84-81e4-e2d33cda0f37
+
+###
+// 상품 삭제 
+// DELETE http://localhost:3000/products/{productId}
+DELETE http://localhost:3000/products/2
+Cookie: access-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzY1NjAwODk4LCJleHAiOjE3NjU2NzI4OTh9.3GolPNJDxlQFAOee3VUQRzhW0A_qBGAYARbAicWhTnc;
 
 
-### 상품 목록 조회
-GET http://localhost:3000/products?keyword=마스크&offset=0&limit=3&order=newest
+###
+// 로그인 한 유저의 특정 상품 상세조회 
+// GET http://localhost:3000/products/{productId} 
+GET http://localhost:3000/products/2
+Cookie: access-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzY1NjAwODk4LCJleHAiOjE3NjU2NzI4OTh9.3GolPNJDxlQFAOee3VUQRzhW0A_qBGAYARbAicWhTnc;
+
+
+
+###
+// 로그인 안 한 유저의 상품 조회 (검색, 페이지네이션) 좋아요는 못 봄
+// GET http://localhost:3000/products?offset=0&limit=10&order=newest&keyword=nike
+GET http://localhost:3000/products?offset=0&limit=10&order=newest
+
+
+
+###
+// 로그인 한 유저가 상품에 '좋아요' 클릭
+// POST http://localhost:3000/products/{productId}/like
+POST http://localhost:3000/products/2/like
+Cookie: access-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImlhdCI6MTc2NDI4OTYxOSwiZXhwIjoxNzY0MzYxNjE5fQ.ZhvbfnuoCADq6F2rf_H8td0LB8gavIZMogoLQt_9Dc8;
+
+
+###
+// 로그인 한 유저가 상품에 '좋아요 취소' 클릭
+// DELETE http://localhost:3000/products/{productId}/like
+DELETE http://localhost:3000/products/10/like
+Cookie: access-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImlhdCI6MTc2NDI4OTYxOSwiZXhwIjoxNzY0MzYxNjE5fQ.ZhvbfnuoCADq6F2rf_H8td0LB8gavIZMogoLQt_9Dc8;
+
+
+

@@ -1,4 +1,14 @@
 import * as s from 'superstruct'
+import isEmail from 'is-email'
+
+// 유저(User)
+export const CreateUser = s.object({
+  email: s.define("Email", isEmail),
+  nickname: s.size(s.string(), 1, 20),
+  password: s.size(s.string(), 1, 20)
+})
+
+export const PatchUser = s.partial(CreateUser)
 
 const TAGS = [
   'FASHION',
