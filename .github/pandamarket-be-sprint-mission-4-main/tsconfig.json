@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es2016" /* 최신 자바스크립트 문법으로 바꿀게요 */,
+    "module": "commonjs" /* Node.js가 좋아하는 모듈 방식을 쓸게요 */,
+    "outDir": "./dist" /* 번역된 파일은 dist 폴더에 모아주세요 */,
+    "rootDir": "./src" /* 우리 코드는 src 폴더에 있어요 */,
+    "strict": true /* 타입을 엄격하게 검사해주세요 (중요!) */,
+    "moduleResolution": "node" /* 모듈을 찾을 때 Node.js 방식을 따를게요 */,
+    "esModuleInterop": true /* 호환성 문제를 해결해주세요 */,
+    "skipLibCheck": true /* 라이브러리 검사는 건너뛰고 우리 코드만 검사해요 */,
+    "forceConsistentCasingInFileNames": true /* 파일 이름 대소문자를 정확히 지킬게요 */
+  },
+  "include": ["src/**/*"] /* src 폴더 안의 모든 파일을 포함해요 */,
+  "exclude": ["node_modules"] /* node_modules는 건드리지 마세요 */
+}
