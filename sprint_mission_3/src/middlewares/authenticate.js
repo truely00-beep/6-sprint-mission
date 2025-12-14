@@ -19,5 +19,17 @@ export const authenticate = asyncHandler(async(req, res, next) => {
     return res.status(401).json({ message: 'Unauthorized' })
   }
   req.user = user
+  // console.log("여기까지")
+  // console.log('authenticate에서 req.user 찍은 결과 :', req.user)
   next()
 })
+
+
+// req.user = {
+//   id: 1,
+//   email: 'qkrrjstns23@gmail.com',
+//   nickname: '박건순',
+//   password: '$2b$10$w/o0v52ymo641D2y5I/gHOMwSYGGFTKz980vRePhZXrT21jwwUeA6',
+//   createdAt: 2025-12-12T14:33:58.909Z,
+//   updatedAt: 2025-12-12T14:33:58.909Z
+// }

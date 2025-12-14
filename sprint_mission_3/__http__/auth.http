@@ -3,8 +3,8 @@ POST http://localhost:3000/auth/register
 Content-Type: application/json
 
 {
-  "email" : "kim@gmail.com",
-  "nickname" : "김진호",
+  "email" : "qkrrjstns123@gmail.com",
+  "nickname" : "박건순",
   "password": "1234"
 }
 
@@ -13,28 +13,26 @@ POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 {
-  "email" : "kim@gmail.com",
-  "nickname" : "김진호",
+  "email" : "qkrrjstns123@gmail.com",
+  "nickname" : "박건순",
   "password": "1234"
 }
 
 ### 유저 로그아웃
 POST http://localhost:3000/auth/logout
-Cookie: access-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiaWF0IjoxNzY0MzI1OTY2LCJleHAiOjE3NjQzOTc5NjZ9.NqGU7lR0yfaYZM7gE8O-PCGUhr_ZyHX5bf3Kn3TZTWk;
 
 
 
-
-### refresh 토큰으로 access_token, refresh_token 재발급
+### refresh 토큰으로 access_token, refresh_token 재발급 
+//토큰이 무효화된게 아니고 쿠키가 무효화된거랑 다시 refresh 사용 가능
 POST http://localhost:3000/auth/refresh
 Content-Type: application/json
-Cookie: refresh-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiaWF0IjoxNzY0MzI1OTY2LCJleHAiOjE3NjQ0MTIzNjZ9.oDKEkIiL0vuLmEhhMJFibuIToSOhXdT2EXCf-kHmd5E;
+Cookie: refresh-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzY1NjkwNjMxLCJleHAiOjE3NjU3NzcwMzF9.IpJy9BE9SBdi5fUjS4nbGFVsZAmUnyfrfpfEd_Nm1sw
 
 
-
-###
-// GET http://localhost:3000/auth/{userId}
-# GET http://localhost:3000/auth/6
-# Cookie: access-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiaWF0IjoxNzY0MzI2MDIxLCJleHAiOjE3NjQzOTgwMjF9.h6-MSEgxyAoeMJtaqJYKw-fC0Az7Bk1TExxhht_c9Ok;
+# ###
+# // GET http://localhost:3000/auth/{userId}
+# GET http://localhost:3000/auth/{}
+# Cookie: access-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiaWF0IjoxNzY0MTM1Nzk2LCJleHAiOjE3NjQyMDc3OTZ9.NFH58zbUCuDzcIBmCENLh46qHa2FMg42HRS8foAtXbI;
 
 
